@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import LockedField from '@/components/LockedField';
+import IhIcon from '@/components/IhIcon';
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
   if (value === undefined || value === null || value === '') return null;
@@ -317,7 +318,9 @@ function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
           <img src={h.handlerLogoImage} alt={h.handlerName}
             className="w-12 h-12 rounded-lg object-contain bg-gray-100 p-1 flex-shrink-0" />
         ) : (
-          <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] text-xl flex-shrink-0">✈</div>
+          <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] flex-shrink-0 p-2">
+            <IhIcon name="handler" className="w-full h-full" />
+          </div>
         )}
         <div>
           <h3 className="text-gray-900 font-semibold">{h.handlerName}</h3>
@@ -353,7 +356,9 @@ function FboCard({ fbo: f }: { fbo: FboRecord }) {
           <img src={f.fboLogo} alt={f.fboName}
             className="w-12 h-12 rounded-lg object-contain bg-gray-100 p-1 flex-shrink-0" />
         ) : (
-          <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] text-xl flex-shrink-0">🏢</div>
+          <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] flex-shrink-0 p-2">
+            <IhIcon name="fbo" className="w-full h-full" />
+          </div>
         )}
         <div>
           <h3 className="text-gray-900 font-semibold">{f.fboName}</h3>

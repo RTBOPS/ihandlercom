@@ -18,6 +18,7 @@ import {
 } from '@/lib/portal-options';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import IhIcon from '@/components/IhIcon';
 
 type Tab = 'company' | 'services' | 'carRental' | 'catering' | 'hotel';
 
@@ -168,14 +169,14 @@ function LogoUpload({ currentUrl, uid, companyType, onUploaded }: {
 
 // ─── Car Rental / Catering / Hotel shared helpers ─────────────────────────────
 
-function ServiceCard({ title, children, editing, onEdit, onSave, onCancel, saving }: {
-  title: string; children: React.ReactNode; editing: boolean;
+function ServiceCard({ title, titleIcon, children, editing, onEdit, onSave, onCancel, saving }: {
+  title: string; titleIcon?: React.ReactNode; children: React.ReactNode; editing: boolean;
   onEdit: () => void; onSave: () => void; onCancel: () => void; saving: boolean;
 }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
       <div className="bg-gray-50 px-5 py-3 border-b border-gray-200 flex items-center justify-between">
-        <span className="font-semibold text-gray-800 text-sm">{title}</span>
+        <span className="font-semibold text-gray-800 text-sm flex items-center gap-2">{titleIcon}{title}</span>
         {!editing ? (
           <button onClick={onEdit} className="text-xs text-[#F34707] hover:text-[#d93d06] font-medium">Edit</button>
         ) : (
@@ -249,7 +250,7 @@ function CarRentalTab({ icao, uid }: { icao: string; uid: string }) {
         <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400 text-sm">No car rental companies yet. Click Add to create one.</div>
       )}
       {records.map((r) => (
-        <ServiceCard key={r.id} title={`🚗 ${r.companyName}`} editing={editingId === r.id}
+        <ServiceCard key={r.id} title={r.companyName} titleIcon={<IhIcon name="limo" className="w-5 h-5 text-[#F34707]" />} editing={editingId === r.id}
           onEdit={() => { setEditingId(r.id); setEditData({ companyName: r.companyName, phone: r.phone || '', email: r.email || '', website: r.website || '', address: r.address || '', poc: r.poc || '', whatsapp: r.whatsapp || '', remarks: r.remarks || '' }); }}
           onSave={saveEdit} onCancel={() => setEditingId(null)} saving={saving}>
           {editingId === r.id ? (
@@ -340,7 +341,7 @@ function CateringTab({ icao, uid }: { icao: string; uid: string }) {
         <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400 text-sm">No catering services yet.</div>
       )}
       {records.map((r) => (
-        <ServiceCard key={r.id} title={`🍽️ ${r.companyName}${r.cuisineType ? ` · ${r.cuisineType}` : ''}`} editing={editingId === r.id}
+        <ServiceCard key={r.id} title={`${r.companyName}${r.cuisineType ? ` · ${r.cuisineType}` : ''}`} titleIcon={<IhIcon name="catering" className="w-5 h-5 text-[#F34707]" />} editing={editingId === r.id}
           onEdit={() => { setEditingId(r.id); setEditData({ companyName: r.companyName, phone: r.phone || '', email: r.email || '', website: r.website || '', address: r.address || '', poc: r.poc || '', whatsapp: r.whatsapp || '', cuisineType: r.cuisineType || '', remarks: r.remarks || '' }); }}
           onSave={saveEdit} onCancel={() => setEditingId(null)} saving={saving}>
           {editingId === r.id ? (
@@ -433,7 +434,7 @@ function HotelTab({ icao, uid }: { icao: string; uid: string }) {
         <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400 text-sm">No hotels yet.</div>
       )}
       {records.map((r) => (
-        <ServiceCard key={r.id} title={`🏨 ${r.name} ${starLabel(r.stars)}`} editing={editingId === r.id}
+        <ServiceCard key={r.id} title={`${r.name} ${starLabel(r.stars)}`} titleIcon={<IhIcon name="hotel" className="w-5 h-5 text-[#F34707]" />} editing={editingId === r.id}
           onEdit={() => { setEditingId(r.id); setEditData({ name: r.name, phone: r.phone || '', email: r.email || '', website: r.website || '', address: r.address || '', stars: r.stars || '', distanceFromAirport: r.distanceFromAirport || '', shuttle: r.shuttle || '', remarks: r.remarks || '' }); }}
           onSave={saveEdit} onCancel={() => setEditingId(null)} saving={saving}>
           {editingId === r.id ? (
@@ -610,12 +611,13 @@ export default function PortalPage() {
   const langKey = isFbo ? 'fboLanguageSpoken' : 'handlerLanguageSpoken';
   const accredKey = isFbo ? 'fboAccreditations' : 'handlerAccreditations';
 
-  const tabs: { id: Tab; label: string; icon: string }[] = [
-    { id: 'company',   label: 'My Company',  icon: isFbo ? '🏢' : '✈️' },
-    { id: 'services',  label: 'Services',     icon: '⚙️' },
-    { id: 'carRental', label: 'Car Rental',   icon: '🚗' },
-    { id: 'catering',  label: 'Catering',     icon: '🍽️' },
-    { id: 'hotel',     label: 'Hotels',       icon: '🏨' },
+  type IhIconName = 'fbo' | 'handler' | 'fuel' | 'limo' | 'catering' | 'hotel' | 'aircraft' | 'runway' | 'pilot';
+  const tabs: { id: Tab; label: string; iconName: IhIconName }[] = [
+    { id: 'company',   label: 'My Company',  iconName: isFbo ? 'fbo' : 'handler' },
+    { id: 'services',  label: 'Services',     iconName: 'fuel' },
+    { id: 'carRental', label: 'Car Rental',   iconName: 'limo' },
+    { id: 'catering',  label: 'Catering',     iconName: 'catering' },
+    { id: 'hotel',     label: 'Hotels',       iconName: 'hotel' },
   ];
 
   const setArr = (key: string, val: string[]) => setArrayData((p) => ({ ...p, [key]: val }));
@@ -629,7 +631,7 @@ export default function PortalPage() {
           {/* Header */}
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F34707]/10 text-[#F34707] text-xs font-semibold mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
+              <IhIcon name={isFbo ? 'fbo' : 'handler'} className="w-3.5 h-3.5" />
               {isFbo ? 'FBO' : 'Handler'} Portal
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-1">{profile.companyName}</h1>
@@ -651,7 +653,7 @@ export default function PortalPage() {
             {tabs.map((t) => (
               <button key={t.id} onClick={() => setActiveTab(t.id)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                <span>{t.icon}</span> {t.label}
+                <IhIcon name={t.iconName} className="w-4 h-4" /> {t.label}
               </button>
             ))}
           </div>
