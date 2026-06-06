@@ -17,7 +17,7 @@ export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 pb-20 px-4">
+      <main className="min-h-screen pt-24 pb-20 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h1 className="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#F34707] to-[#FC8C00] mb-4">
@@ -28,21 +28,21 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Services checklist */}
             <div>
-              <h2 className="text-xl font-semibold text-white mb-6">How we can help you</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">How we can help you</h2>
               <ul className="space-y-4">
                 {services.map((s) => (
                   <li key={s} className="flex items-start gap-3">
                     <svg className="w-5 h-5 text-[#F34707] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-white/70 text-sm leading-relaxed">{s}</span>
+                    <span className="text-gray-600 text-sm leading-relaxed">{s}</span>
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 pt-8 border-t border-white/10">
-                <p className="text-white/40 text-sm">
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <p className="text-gray-400 text-sm">
                   You can also reach us directly at{' '}
-                  <a href="mailto:operation@i-handler.app" className="text-[#F34707] hover:text-[#FC8C00] transition-colors">
+                  <a href="mailto:operation@i-handler.app" className="text-[#F34707] hover:text-[#d93d06] transition-colors">
                     operation@i-handler.app
                   </a>
                 </p>

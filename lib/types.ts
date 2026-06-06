@@ -203,6 +203,67 @@ export interface HandlerRecord {
   uid?: string;
 }
 
+export interface CarRentalRecord {
+  id: string;
+  icao: string;
+  companyName: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  address?: string;
+  poc?: string;
+  whatsapp?: string;
+  remarks?: string;
+  updatedBy?: string;
+  updatedAt?: unknown;
+}
+
+export interface CateringRecord {
+  id: string;
+  icao: string;
+  companyName: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  address?: string;
+  poc?: string;
+  whatsapp?: string;
+  cuisineType?: string;
+  remarks?: string;
+  updatedBy?: string;
+  updatedAt?: unknown;
+}
+
+export interface HotelRecord {
+  id: string;
+  icao: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  address?: string;
+  stars?: string;
+  distanceFromAirport?: string;
+  shuttle?: string;
+  remarks?: string;
+  updatedBy?: string;
+  updatedAt?: unknown;
+}
+
+export interface InvitationRecord {
+  id: string;
+  email: string;
+  companyName: string;
+  companyType: 'fbo' | 'handler';
+  icao: string;
+  emailType: 'new' | 'annual';
+  contactName?: string;
+  status: string;
+  uid?: string;
+  isExisting?: boolean;
+  sentAt?: unknown;
+}
+
 export interface FboRecord {
   id: string;
   fboName: string;

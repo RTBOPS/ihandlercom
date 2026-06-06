@@ -2,43 +2,85 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public directory — anyone can read, only authenticated owners can write their own record
+    // ── Airports: public read, no client writes ────────────────────────────────
     match /airports/{document} {
       allow read: if true;
-      allow create, write, delete: if false; // admin-only via Firebase console
+      allow write, create, delete: if false;
     }
 
+    // ── FBO: public read, owner can update (not create/delete) ────────────────
     match /fbo/{document} {
       allow read: if true;
-      allow write: if request.auth != null
-        && isOwnerOf('fbo', resource.data);
-      allow create: if false; // new records added by admin only
-      allow delete: if false;
+      allow update: if request.auth != null && isOwnerOf('fbo', resource.data);
+      allow create, delete: if false;
     }
 
+    // ── Handler: public read, owner can update ────────────────────────────────
     match /handler/{document} {
       allow read: if true;
-      allow write: if request.auth != null
-        && isOwnerOf('handler', resource.data);
-      allow create: if false; // new records added by admin only
-      allow delete: if false;
+      allow update: if request.auth != null && isOwnerOf('handler', resource.data);
+      allow create, delete: if false;
     }
 
+    // ── Users: owner CRUD on their own doc only ───────────────────────────────
     match /users/{userId} {
-      allow create: if request.auth.uid == userId;
-      allow read, write: if request.auth.uid == userId;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
       allow delete: if false;
     }
 
-    // Helper: check that the authenticated user's profile links to this record
+    // ── Invitations: written by Firebase Admin SDK (server-side) ─────────────
+    // Authenticated users can read their own invitation by email
+    match /invitations/{email} {
+      allow read: if request.auth != null && request.auth.token.email == email;
+      allow write, create, delete: if false; // Only Admin SDK can write
+    }
+
+    // ── Car Rental: public read, approved owner of same ICAO can write ────────
+    match /carRental/{document} {
+      allow read: if true;
+      allow create: if request.auth != null && isApprovedAtIcao(request.resource.data.icao);
+      allow update: if request.auth != null && isApprovedAtIcao(resource.data.icao);
+      allow delete: if false;
+    }
+
+    // ── Catering: public read, approved owner of same ICAO can write ──────────
+    match /catering/{document} {
+      allow read: if true;
+      allow create: if request.auth != null && isApprovedAtIcao(request.resource.data.icao);
+      allow update: if request.auth != null && isApprovedAtIcao(resource.data.icao);
+      allow delete: if false;
+    }
+
+    // ── Hotel: public read, approved owner of same ICAO can write ─────────────
+    match /hotel/{document} {
+      allow read: if true;
+      allow create: if request.auth != null && isApprovedAtIcao(request.resource.data.icao);
+      allow update: if request.auth != null && isApprovedAtIcao(resource.data.icao);
+      allow delete: if false;
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    // Owner of a specific fbo or handler record (matches ICAO + company name)
     function isOwnerOf(type, data) {
       let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
       return userDoc.companyType == type
         && userDoc.status == 'approved'
         && (
-          (type == 'fbo' && userDoc.icao == data.fboIcao && userDoc.companyName == data.fboName)
-          || (type == 'handler' && userDoc.icao == data.handlerIcao && userDoc.companyName == data.handlerName)
+          (type == 'fbo'
+            && userDoc.icao == data.fboIcao
+            && userDoc.companyName == data.fboName)
+          || (type == 'handler'
+            && userDoc.icao == data.handlerIcao
+            && userDoc.companyName == data.handlerName)
         );
+    }
+
+    // Any approved FBO or Handler owner at a given ICAO
+    function isApprovedAtIcao(icao) {
+      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return userDoc.status == 'approved' && userDoc.icao == icao;
     }
   }
 }

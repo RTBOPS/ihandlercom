@@ -1,0 +1,373 @@
+'use client';
+
+import { useState, useEffect, useRef, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+
+type CompanyType = 'fbo' | 'handler' | '';
+type EmailType = 'new' | 'annual' | '';
+
+type InviteResult = {
+  success: boolean;
+  isExisting: boolean;
+  tempPassword: string | null;
+  companyName: string;
+  companyType: CompanyType;
+  icao: string;
+  email: string;
+  emailType: EmailType;
+  contactName: string;
+};
+
+function buildEmailBody(result: InviteResult): string {
+  const { companyName, icao, email, tempPassword, isExisting, emailType, contactName } = result;
+  const greeting = contactName ? `Dear ${contactName},` : `Dear ${companyName} Team,`;
+  const loginUrl = 'https://ihandler-landing.vercel.app/login';
+
+  if (emailType === 'new') {
+    return `${greeting}
+
+We hope this message finds you well.
+
+My name is [Your Name] from i-Handler, the leading digital platform for international private aviation operations. We are pleased to inform you that ${companyName} has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide to find FBOs and ground handlers at airports around the globe.
+
+Your company is listed under ICAO ${icao}.
+
+We would like to invite you to access your private portal to verify and update your company information. Keeping your data current ensures that aviation professionals around the world can reach you with accurate contact details.
+
+${isExisting
+  ? `As a returning user, you can access your portal with your existing credentials at:\n${loginUrl}`
+  : `To access your portal, please use the following credentials:
+
+──────────────────────────────────────
+  🔐 YOUR LOGIN CREDENTIALS
+  Portal:   ${loginUrl}
+  Email:    ${email}
+  Password: ${tempPassword}
+──────────────────────────────────────
+
+Please log in and change your password after your first access.`}
+
+In your portal you will be able to update:
+  • Company contact information (phone, email, website, address)
+  • Point of contact details
+  • Car rental options at your airport
+  • Catering services at your airport
+  • Nearby hotel information
+
+We would also love to schedule a brief call to introduce you to all the features i-Handler offers to FBOs and ground handlers. Please reply to this email to arrange a convenient time.
+
+Thank you for being part of the i-Handler community.
+
+Best regards,
+[Your Name]
+i-Handler Operations Team
+operation@i-handler.app
+www.i-handler.app`;
+  }
+
+  // Annual update
+  return `${greeting}
+
+We hope the year has been going well for ${companyName}.
+
+As part of our annual directory maintenance, we kindly ask you to review and update your company's information in the i-Handler platform. Accurate, up-to-date information ensures that aviation operators worldwide can contact you reliably.
+
+${isExisting
+  ? `Please log in to your portal using your existing credentials:\n\n──────────────────────────────────────\n  🔐 YOUR LOGIN CREDENTIALS\n  Portal:   ${loginUrl}\n  Email:    ${email}\n──────────────────────────────────────`
+  : `Please log in to your portal using the credentials below:\n\n──────────────────────────────────────\n  🔐 YOUR LOGIN CREDENTIALS\n  Portal:   ${loginUrl}\n  Email:    ${email}\n  Password: ${tempPassword}\n──────────────────────────────────────`}
+
+Fields to review:
+  • Contact information (phone, email, website)
+  • Point of contact name and title
+  • Car rental options near the airport
+  • Catering services available
+  • Nearby accommodation
+
+This process takes only a few minutes, and we greatly appreciate your cooperation in keeping the i-Handler directory accurate and up-to-date.
+
+If you have any questions, please do not hesitate to reach out.
+
+Warm regards,
+[Your Name]
+i-Handler Operations Team
+operation@i-handler.app
+www.i-handler.app`;
+}
+
+function InviteForm() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [adminSecret, setAdminSecret] = useState('');
+  const [authed, setAuthed] = useState(false);
+
+  const [emailType, setEmailType] = useState<EmailType>((searchParams.get('type') as EmailType) || '');
+  const [companyType, setCompanyType] = useState<CompanyType>('');
+  const [companyName, setCompanyName] = useState('');
+  const [icao, setIcao] = useState('');
+  const [email, setEmail] = useState(searchParams.get('resend') || '');
+  const [contactName, setContactName] = useState('');
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<InviteResult | null>(null);
+  const [copied, setCopied] = useState(false);
+  const emailBodyRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem('ih_admin_secret');
+    if (stored) { setAdminSecret(stored); setAuthed(true); }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailType || !companyType) { setError('Please select both email type and company type.'); return; }
+    setError('');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/create-invitation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminSecret, email, companyName, companyType, icao, emailType, contactName }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || 'Request failed.'); return; }
+
+      setResult({
+        success: true,
+        isExisting: data.isExisting,
+        tempPassword: data.tempPassword,
+        companyName, companyType, icao, email, emailType, contactName,
+      });
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!result) return;
+    const body = buildEmailBody(result);
+    await navigator.clipboard.writeText(body);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  };
+
+  const handleOpenMailto = () => {
+    if (!result) return;
+    const subject = result.emailType === 'new'
+      ? `i-Handler – Invitation to manage your listing at ${result.icao}`
+      : `i-Handler – Annual Directory Update Request for ${result.companyName}`;
+    const body = buildEmailBody(result);
+    window.open(`mailto:${result.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+  };
+
+  if (!authed) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500 mb-4">You must be signed into the admin portal first.</p>
+        <Link href="/admin" className="text-[#F34707] font-semibold hover:underline">← Go to Admin Login</Link>
+      </div>
+    );
+  }
+
+  if (result) {
+    const emailBody = buildEmailBody(result);
+    return (
+      <div className="space-y-6">
+        {/* Success banner */}
+        <div className="rounded-2xl border border-green-200 bg-green-50 p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-green-800 text-lg">
+                {result.isExisting ? 'Existing account found' : 'New account created'}
+              </h3>
+              <p className="text-green-700 text-sm mt-1">
+                {result.isExisting
+                  ? `${result.companyName} already has an account. The email template below contains their login URL.`
+                  : `Account created for ${result.companyName} (${result.email}). Temporary password: `}
+                {!result.isExisting && (
+                  <code className="bg-green-100 px-2 py-0.5 rounded text-green-900 font-mono font-bold ml-1">{result.tempPassword}</code>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Email preview */}
+        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-700">Email Template</h3>
+              <p className="text-xs text-gray-400 mt-0.5">Edit, then copy or open in your email client</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={handleCopy}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+              <button onClick={handleOpenMailto}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#F34707] text-white text-xs font-semibold hover:bg-[#d93d06] transition-colors">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Open in Email
+              </button>
+            </div>
+          </div>
+          <div className="p-4">
+            <div className="text-xs text-gray-400 mb-2 font-medium">
+              To: {result.email} &nbsp;·&nbsp;
+              Subject: {result.emailType === 'new'
+                ? `i-Handler – Invitation to manage your listing at ${result.icao}`
+                : `i-Handler – Annual Directory Update Request for ${result.companyName}`}
+            </div>
+            <textarea ref={emailBodyRef} defaultValue={emailBody} rows={28}
+              className="w-full text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-4 resize-none focus:outline-none focus:border-[#F34707] font-mono leading-relaxed" />
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3">
+          <button onClick={() => { setResult(null); setCompanyName(''); setIcao(''); setEmail(''); setContactName(''); setEmailType(''); setCompanyType(''); }}
+            className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold transition-colors">
+            Send Another Invitation
+          </button>
+          <Link href="/admin"
+            className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-500 text-sm hover:bg-gray-50 transition-colors">
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>
+      )}
+
+      {/* Email Type */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-3">Email Type</label>
+        <div className="grid grid-cols-2 gap-4">
+          {([
+            {
+              value: 'new', label: 'New Company', icon: '🌟',
+              desc: 'First contact — company presentation + portal invitation',
+            },
+            {
+              value: 'annual', label: 'Annual Update', icon: '🔄',
+              desc: 'Yearly reminder for existing companies to verify their data',
+            },
+          ] as { value: EmailType; label: string; icon: string; desc: string }[]).map((t) => (
+            <button key={t.value} type="button" onClick={() => setEmailType(t.value)}
+              className={`p-5 rounded-2xl border-2 text-left transition-all ${emailType === t.value ? 'border-[#F34707] bg-[#F34707]/5' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+              <div className="text-2xl mb-2">{t.icon}</div>
+              <div className={`font-semibold text-sm mb-1 ${emailType === t.value ? 'text-[#F34707]' : 'text-gray-900'}`}>{t.label}</div>
+              <div className="text-xs text-gray-500 leading-relaxed">{t.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Company Type */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-3">Company Type</label>
+        <div className="grid grid-cols-2 gap-4">
+          {([
+            { value: 'handler', label: '✈️ Ground Handler', desc: 'Ramp & ground services' },
+            { value: 'fbo', label: '🏢 FBO', desc: 'Fixed Base Operator' },
+          ] as { value: CompanyType; label: string; desc: string }[]).map((t) => (
+            <button key={t.value} type="button" onClick={() => setCompanyType(t.value)}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${companyType === t.value ? 'border-[#F34707] bg-[#F34707]/5' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+              <div className={`font-semibold text-sm mb-0.5 ${companyType === t.value ? 'text-[#F34707]' : 'text-gray-900'}`}>{t.label}</div>
+              <div className="text-xs text-gray-500">{t.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Fields */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="sm:col-span-2">
+          <label className="block text-sm text-gray-600 mb-1.5">Company Name <span className="text-red-400">*</span></label>
+          <input type="text" required value={companyName} onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="Exact name as it appears in the directory"
+            className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm" />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-600 mb-1.5">Airport ICAO Code <span className="text-red-400">*</span></label>
+          <input type="text" required value={icao} onChange={(e) => setIcao(e.target.value.toUpperCase())} maxLength={4}
+            placeholder="e.g. KJFK"
+            className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm font-mono uppercase" />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-600 mb-1.5">Contact Person Name</label>
+          <input type="text" value={contactName} onChange={(e) => setContactName(e.target.value)}
+            placeholder="e.g. John Smith (optional)"
+            className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm" />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="block text-sm text-gray-600 mb-1.5">Owner Email Address <span className="text-red-400">*</span></label>
+          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+            placeholder="owner@company.com"
+            className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm" />
+          <p className="mt-1.5 text-xs text-gray-400">
+            If this email already has an account, credentials will not be reset — only the invitation record is updated.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex gap-3 pt-2">
+        <button type="submit" disabled={loading}
+          className="px-6 py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors disabled:opacity-50 shadow-md">
+          {loading ? 'Processing...' : 'Create Account & Generate Email'}
+        </button>
+        <Link href="/admin"
+          className="px-6 py-3 rounded-xl border border-gray-200 text-gray-500 text-sm hover:bg-gray-50 transition-colors">
+          Cancel
+        </Link>
+      </div>
+    </form>
+  );
+}
+
+export default function InvitePage() {
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen pt-24 pb-20 px-4 bg-white">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-8">
+            <Link href="/admin" className="inline-flex items-center gap-2 text-gray-400 hover:text-gray-700 text-sm mb-6 transition-colors">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Dashboard
+            </Link>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">Send Invitation</h1>
+            <p className="text-gray-400 text-sm">Create a portal account and generate a customized invitation email</p>
+          </div>
+          <Suspense fallback={<div className="text-gray-400 text-sm">Loading...</div>}>
+            <InviteForm />
+          </Suspense>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}

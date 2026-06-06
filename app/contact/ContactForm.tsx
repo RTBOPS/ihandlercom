@@ -18,8 +18,8 @@ export default function ContactForm() {
     return (
       <div className="rounded-2xl border border-[#F34707]/30 bg-[#F34707]/10 p-8 text-center">
         <div className="text-4xl mb-3">✈️</div>
-        <h3 className="text-white font-semibold text-lg mb-2">Message ready!</h3>
-        <p className="text-white/50 text-sm">Your email client should have opened. If not, email us directly at{' '}
+        <h3 className="text-gray-900 font-semibold text-lg mb-2">Message ready!</h3>
+        <p className="text-gray-500 text-sm">Your email client should have opened. If not, email us directly at{' '}
           <a href="mailto:operation@i-handler.app" className="text-[#F34707]">operation@i-handler.app</a>
         </p>
       </div>
@@ -27,38 +27,38 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
       <div>
-        <label className="block text-sm text-white/60 mb-1.5">Full Name</label>
+        <label className="block text-sm text-gray-600 mb-1.5">Full Name</label>
         <input
           type="text"
           required
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           placeholder="Your name"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
         />
       </div>
       <div>
-        <label className="block text-sm text-white/60 mb-1.5">Work Email</label>
+        <label className="block text-sm text-gray-600 mb-1.5">Work Email</label>
         <input
           type="email"
           required
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           placeholder="you@company.com"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
         />
       </div>
       <div>
-        <label className="block text-sm text-white/60 mb-1.5">Message</label>
+        <label className="block text-sm text-gray-600 mb-1.5">Message</label>
         <textarea
           required
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           placeholder="How can we help you?"
           rows={6}
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm resize-none"
+          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm resize-none"
         />
       </div>
       <button

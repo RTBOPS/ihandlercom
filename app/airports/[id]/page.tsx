@@ -8,39 +8,18 @@ import { AirportRecord, HandlerRecord, FboRecord } from '@/lib/types';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import LockedField from '@/components/LockedField';
 
 function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
   if (value === undefined || value === null || value === '') return null;
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-3 border-b border-white/5 last:border-0">
-      <span className="text-white/40 text-xs uppercase tracking-wider w-52 flex-shrink-0 pt-0.5">{label}</span>
-      <span className="text-white/90 text-sm">{String(value)}</span>
+    <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-3 border-b border-gray-100 last:border-0">
+      <span className="text-gray-400 text-xs uppercase tracking-wider w-52 flex-shrink-0 pt-0.5">{label}</span>
+      <span className="text-gray-800 text-sm">{String(value)}</span>
     </div>
   );
 }
 
-function LinkRow({ label, value }: { label: string; value?: string }) {
-  if (!value) return null;
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-3 border-b border-white/5 last:border-0">
-      <span className="text-white/40 text-xs uppercase tracking-wider w-52 flex-shrink-0 pt-0.5">{label}</span>
-      <a href={value.startsWith('http') ? value : `https://${value}`} target="_blank" rel="noopener noreferrer"
-        className="text-[#F34707] hover:text-[#FC8C00] text-sm transition-colors truncate">{value}</a>
-    </div>
-  );
-}
-
-function EmailRow({ label, value }: { label: string; value?: string }) {
-  if (!value) return null;
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-3 border-b border-white/5 last:border-0">
-      <span className="text-white/40 text-xs uppercase tracking-wider w-52 flex-shrink-0 pt-0.5">{label}</span>
-      <a href={`mailto:${value}`} className="text-[#F34707] hover:text-[#FC8C00] text-sm transition-colors">{value}</a>
-    </div>
-  );
-}
-
-// Phone contact table row
 interface ContactDept {
   dept: string;
   phone?: string;
@@ -57,25 +36,25 @@ function ContactTable({ contacts }: { contacts: ContactDept[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/10">
-            <th className="text-left py-2 pr-4 text-xs text-white/40 uppercase tracking-wider font-medium">Department</th>
-            <th className="text-left py-2 pr-4 text-xs text-white/40 uppercase tracking-wider font-medium">Phone</th>
-            <th className="text-left py-2 pr-4 text-xs text-white/40 uppercase tracking-wider font-medium">Fax</th>
-            <th className="text-left py-2 pr-4 text-xs text-white/40 uppercase tracking-wider font-medium">Frequency</th>
-            <th className="text-left py-2 text-xs text-white/40 uppercase tracking-wider font-medium">Email / Website</th>
+          <tr className="border-b border-gray-200">
+            <th className="text-left py-2 pr-4 text-xs text-gray-400 uppercase tracking-wider font-medium">Department</th>
+            <th className="text-left py-2 pr-4 text-xs text-gray-400 uppercase tracking-wider font-medium">Phone</th>
+            <th className="text-left py-2 pr-4 text-xs text-gray-400 uppercase tracking-wider font-medium">Fax</th>
+            <th className="text-left py-2 pr-4 text-xs text-gray-400 uppercase tracking-wider font-medium">Frequency</th>
+            <th className="text-left py-2 text-xs text-gray-400 uppercase tracking-wider font-medium">Email / Website</th>
           </tr>
         </thead>
         <tbody>
           {visible.map((c) => (
-            <tr key={c.dept} className="border-b border-white/5 hover:bg-white/[0.02]">
-              <td className="py-2.5 pr-4 text-white/80 font-medium whitespace-nowrap">{c.dept}</td>
-              <td className="py-2.5 pr-4 text-white/60 whitespace-nowrap">{c.phone || '—'}</td>
-              <td className="py-2.5 pr-4 text-white/60 whitespace-nowrap">{c.fax || '—'}</td>
-              <td className="py-2.5 pr-4 text-white/60 whitespace-nowrap">{c.frequency || '—'}</td>
-              <td className="py-2.5">
-                {c.email && <a href={`mailto:${c.email}`} className="text-[#F34707] hover:text-[#FC8C00] block text-xs transition-colors">{c.email}</a>}
-                {c.website && <a href={c.website.startsWith('http') ? c.website : `https://${c.website}`} target="_blank" rel="noopener noreferrer" className="text-[#F34707]/70 hover:text-[#FC8C00] block text-xs transition-colors truncate max-w-[160px]">{c.website}</a>}
-                {!c.email && !c.website && <span className="text-white/30">—</span>}
+            <tr key={c.dept} className="border-b border-gray-100 hover:bg-orange-50 transition-colors">
+              <td className="py-2.5 pr-4 text-gray-800 font-medium whitespace-nowrap">{c.dept}</td>
+              <td className="py-2.5 pr-4 text-gray-500 whitespace-nowrap">{c.phone || '—'}</td>
+              <td className="py-2.5 pr-4 text-gray-500 whitespace-nowrap">{c.fax || '—'}</td>
+              <td className="py-2.5 pr-4 text-gray-500 whitespace-nowrap">{c.frequency || '—'}</td>
+              <td className="py-2.5 space-y-1">
+                {c.email  && <LockedField type="email"   inline />}
+                {c.website && <LockedField type="website" inline />}
+                {!c.email && !c.website && <span className="text-gray-300">—</span>}
               </td>
             </tr>
           ))}
@@ -99,7 +78,6 @@ export default function AirportDetailPage() {
         if (!snap.exists()) return;
         const airport = { id: snap.id, ...snap.data() } as AirportRecord;
         setAirport(airport);
-
         if (airport.icao) {
           const [hSnap, fSnap] = await Promise.all([
             getDocs(query(collection(db, 'handler'), where('handlerIcao', '==', airport.icao))),
@@ -108,11 +86,8 @@ export default function AirportDetailPage() {
           setHandlers(hSnap.docs.map((d) => ({ id: d.id, ...d.data() } as HandlerRecord)));
           setFbos(fSnap.docs.map((d) => ({ id: d.id, ...d.data() } as FboRecord)));
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
     }
     load();
   }, [id]);
@@ -121,8 +96,8 @@ export default function AirportDetailPage() {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen pt-24 flex items-center justify-center">
-          <div className="flex items-center gap-3 text-white/40">
+        <main className="min-h-screen pt-24 flex items-center justify-center bg-white">
+          <div className="flex items-center gap-3 text-gray-400">
             <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -138,9 +113,9 @@ export default function AirportDetailPage() {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen pt-24 flex items-center justify-center">
+        <main className="min-h-screen pt-24 flex items-center justify-center bg-white">
           <div className="text-center">
-            <p className="text-white/40 mb-4">Airport not found.</p>
+            <p className="text-gray-400 mb-4">Airport not found.</p>
             <Link href="/airports" className="text-[#F34707] hover:underline text-sm">← Back to Search</Link>
           </div>
         </main>
@@ -148,7 +123,6 @@ export default function AirportDetailPage() {
     );
   }
 
-  // Build contact departments table — all fields now typed on AirportRecord
   const ap = airport;
   const contactDepts: ContactDept[] = [
     { dept: 'Airport Admin',     phone: ap.airportAdminPhone,       fax: ap.airportAdminFax,       email: ap.airportAdminEmail,       website: ap.airportAdminWebsite,       frequency: ap.airportAdminFrequency },
@@ -175,60 +149,61 @@ export default function AirportDetailPage() {
   ];
 
   const airportDiagram = airport.airportDiagram;
+  const hasAirportEmail   = !!(ap.airportEmail);
+  const hasAirportWebsite = !!(ap.airportWebsite);
+  const hasAipWeb         = !!(ap.aipWeb);
 
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 pb-20 px-4">
+      <main className="min-h-screen pt-24 pb-20 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
 
           {/* Back */}
-          <Link href="/airports" className="inline-flex items-center gap-2 text-white/40 hover:text-white text-sm mb-8 transition-colors">
+          <Link href="/airports" className="inline-flex items-center gap-2 text-gray-400 hover:text-gray-700 text-sm mb-8 transition-colors">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back to Search
           </Link>
 
+          {/* Airport diagram */}
+          {airportDiagram && (
+            <div className="mb-8">
+              <a href={airportDiagram} target="_blank" rel="noopener noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={airportDiagram}
+                  alt={`${airport.name} airport diagram`}
+                  className="w-full rounded-2xl border border-gray-200 shadow-md object-contain max-h-[500px] hover:shadow-lg transition-shadow"
+                />
+              </a>
+              <p className="text-gray-400 text-xs mt-2 text-center">Click to open full-size diagram</p>
+            </div>
+          )}
+
           {/* Airport header */}
-          <div className="mb-8 flex flex-col lg:flex-row lg:items-start gap-6">
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-2">
-                {airport.icao && (
-                  <span className="px-3 py-1 rounded-lg bg-[#F34707]/20 text-[#F34707] text-sm font-mono font-bold">{airport.icao}</span>
-                )}
-                {airport.iata && (
-                  <span className="px-3 py-1 rounded-lg bg-white/10 text-white/60 text-sm font-mono">{airport.iata}</span>
-                )}
-                {airport.faa && (
-                  <span className="px-3 py-1 rounded-lg bg-white/10 text-white/60 text-sm font-mono">FAA: {airport.faa}</span>
-                )}
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-1">{airport.name}</h1>
-              {airport.locatedIn && (
-                <p className="text-white/40 text-sm">{airport.locatedIn}</p>
+          <div className="mb-8">
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              {airport.icao && (
+                <span className="px-3 py-1 rounded-lg bg-[#F34707]/10 text-[#F34707] text-sm font-mono font-bold">{airport.icao}</span>
+              )}
+              {airport.iata && (
+                <span className="px-3 py-1 rounded-lg bg-gray-100 text-gray-500 text-sm font-mono">{airport.iata}</span>
+              )}
+              {airport.faa && (
+                <span className="px-3 py-1 rounded-lg bg-gray-100 text-gray-500 text-sm font-mono">FAA: {airport.faa}</span>
               )}
             </div>
-
-            {/* Airport diagram / image */}
-            {airportDiagram && (
-              <div className="lg:w-72 flex-shrink-0">
-                <a href={airportDiagram} target="_blank" rel="noopener noreferrer">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={airportDiagram}
-                    alt={`${airport.name} diagram`}
-                    className="w-full h-48 object-cover rounded-2xl border border-white/10 hover:border-[#F34707]/50 transition-colors"
-                  />
-                </a>
-                <p className="text-white/30 text-xs mt-1 text-center">Click to enlarge</p>
-              </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-1">{airport.name}</h1>
+            {airport.locatedIn && (
+              <p className="text-gray-400 text-sm">{airport.locatedIn}</p>
             )}
           </div>
 
           {/* Operational Info */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 mb-6">
-            <h2 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Operational Information</h2>
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 mb-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Operational Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
               <div>
                 <InfoRow label="Latitude" value={airport.latitude} />
@@ -255,30 +230,52 @@ export default function AirportDetailPage() {
                 <InfoRow label="Sunset" value={airport.sunset} />
               </div>
             </div>
-            <EmailRow label="Airport Email" value={airport.airportEmail} />
-            <LinkRow label="Airport Website" value={airport.airportWebsite} />
-            <LinkRow label="AIP Web" value={airport.aipWeb} />
+
+            {/* Airport-level locked fields */}
+            {(hasAirportEmail || hasAirportWebsite || hasAipWeb) && (
+              <div className="mt-2 pt-2 border-t border-gray-100 space-y-0">
+                {hasAirportEmail   && (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 py-3 border-b border-gray-100">
+                    <span className="text-gray-400 text-xs uppercase tracking-wider w-52 flex-shrink-0">Airport Email</span>
+                    <LockedField type="email" />
+                  </div>
+                )}
+                {hasAirportWebsite && (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 py-3 border-b border-gray-100">
+                    <span className="text-gray-400 text-xs uppercase tracking-wider w-52 flex-shrink-0">Airport Website</span>
+                    <LockedField type="website" />
+                  </div>
+                )}
+                {hasAipWeb && (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 py-3">
+                    <span className="text-gray-400 text-xs uppercase tracking-wider w-52 flex-shrink-0">AIP Web</span>
+                    <LockedField type="website" />
+                  </div>
+                )}
+              </div>
+            )}
+
             {airport.airportGeneralRemarks && (
-              <div className="pt-3">
-                <span className="text-white/40 text-xs uppercase tracking-wider block mb-2">General Remarks</span>
-                <p className="text-white/80 text-sm leading-relaxed">{airport.airportGeneralRemarks}</p>
+              <div className="pt-3 border-t border-gray-100 mt-2">
+                <span className="text-gray-400 text-xs uppercase tracking-wider block mb-2">General Remarks</span>
+                <p className="text-gray-700 text-sm leading-relaxed">{airport.airportGeneralRemarks}</p>
               </div>
             )}
           </div>
 
-          {/* Phone / Contact Table */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 mb-6">
-            <h2 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Contacts & Frequencies</h2>
+          {/* Contact Table */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 mb-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Contacts & Frequencies</h2>
             <ContactTable contacts={contactDepts} />
           </div>
 
           {/* Handlers */}
           <div className="mb-6">
-            <h2 className="text-xl font-bold text-white mb-4">
-              Ground Handlers {handlers.length > 0 && <span className="text-white/40 font-normal text-base ml-1">({handlers.length})</span>}
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Ground Handlers {handlers.length > 0 && <span className="text-gray-400 font-normal text-base ml-1">({handlers.length})</span>}
             </h2>
             {handlers.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 p-6 text-center text-white/30 text-sm">
+              <div className="rounded-2xl border border-gray-200 p-6 text-center text-gray-400 text-sm">
                 No handlers found for {airport.icao}
               </div>
             ) : (
@@ -290,11 +287,11 @@ export default function AirportDetailPage() {
 
           {/* FBOs */}
           <div>
-            <h2 className="text-xl font-bold text-white mb-4">
-              FBOs {fbos.length > 0 && <span className="text-white/40 font-normal text-base ml-1">({fbos.length})</span>}
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              FBOs {fbos.length > 0 && <span className="text-gray-400 font-normal text-base ml-1">({fbos.length})</span>}
             </h2>
             {fbos.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 p-6 text-center text-white/30 text-sm">
+              <div className="rounded-2xl border border-gray-200 p-6 text-center text-gray-400 text-sm">
                 No FBOs found for {airport.icao}
               </div>
             ) : (
@@ -313,35 +310,33 @@ export default function AirportDetailPage() {
 
 function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-[#F34707]/40 transition-colors">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 hover:border-[#F34707]/40 hover:shadow-md transition-all shadow-sm">
       <div className="flex items-start gap-3 mb-4">
         {h.handlerLogoImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={h.handlerLogoImage} alt={h.handlerName}
-            className="w-12 h-12 rounded-lg object-contain bg-white/10 p-1 flex-shrink-0" />
+            className="w-12 h-12 rounded-lg object-contain bg-gray-100 p-1 flex-shrink-0" />
         ) : (
           <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] text-xl flex-shrink-0">✈</div>
         )}
         <div>
-          <h3 className="text-white font-semibold">{h.handlerName}</h3>
-          <p className="text-white/40 text-xs">{[h.handlerCity, h.handlerState, h.handlerCountry].filter(Boolean).join(', ')}</p>
+          <h3 className="text-gray-900 font-semibold">{h.handlerName}</h3>
+          <p className="text-gray-400 text-xs">{[h.handlerCity, h.handlerState, h.handlerCountry].filter(Boolean).join(', ')}</p>
         </div>
       </div>
-
       <div className="space-y-1.5 text-sm">
-        {h.handlerPhone && <p className="text-white/60">📞 {h.handlerPhone}</p>}
-        {h.handlerAfterHoursPhone && <p className="text-white/60">🌙 After hours: {h.handlerAfterHoursPhone}</p>}
-        {h.handlerTollFreePhone && <p className="text-white/60">📞 Toll-free: {h.handlerTollFreePhone}</p>}
-        {h.handlerEmail && <a href={`mailto:${h.handlerEmail}`} className="text-[#F34707] hover:text-[#FC8C00] transition-colors block">✉ {h.handlerEmail}</a>}
-        {h.handlerWebsite && <a href={h.handlerWebsite.startsWith('http') ? h.handlerWebsite : `https://${h.handlerWebsite}`} target="_blank" rel="noopener noreferrer" className="text-[#F34707]/70 hover:text-[#FC8C00] transition-colors block text-xs">🌐 {h.handlerWebsite}</a>}
-        {h.handlerPoc && <p className="text-white/50 text-xs mt-2">Contact: {h.handlerPoc}{h.handlerPocTitle ? ` — ${h.handlerPocTitle}` : ''}</p>}
-        {h.handlerWhatsapp && <p className="text-white/50 text-xs">WhatsApp: {h.handlerWhatsapp}</p>}
+        {h.handlerPhone            && <p className="text-gray-600">📞 {h.handlerPhone}</p>}
+        {h.handlerAfterHoursPhone  && <p className="text-gray-600">🌙 After hours: {h.handlerAfterHoursPhone}</p>}
+        {h.handlerTollFreePhone    && <p className="text-gray-600">📞 Toll-free: {h.handlerTollFreePhone}</p>}
+        {h.handlerEmail            && <LockedField type="email" />}
+        {h.handlerWebsite          && <LockedField type="website" />}
+        {h.handlerPoc              && <p className="text-gray-400 text-xs mt-2">Contact: {h.handlerPoc}{h.handlerPocTitle ? ` — ${h.handlerPocTitle}` : ''}</p>}
+        {h.handlerWhatsapp         && <p className="text-gray-400 text-xs">WhatsApp: {h.handlerWhatsapp}</p>}
       </div>
-
       {h.handlerSvcsCategories && h.handlerSvcsCategories.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1">
           {h.handlerSvcsCategories.map((s) => (
-            <span key={s} className="px-2 py-0.5 rounded-full bg-white/10 text-white/50 text-xs">{s}</span>
+            <span key={s} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">{s}</span>
           ))}
         </div>
       )}
@@ -351,34 +346,33 @@ function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
 
 function FboCard({ fbo: f }: { fbo: FboRecord }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-[#F34707]/40 transition-colors">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 hover:border-[#F34707]/40 hover:shadow-md transition-all shadow-sm">
       <div className="flex items-start gap-3 mb-4">
         {f.fboLogo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={f.fboLogo} alt={f.fboName}
-            className="w-12 h-12 rounded-lg object-contain bg-white/10 p-1 flex-shrink-0" />
+            className="w-12 h-12 rounded-lg object-contain bg-gray-100 p-1 flex-shrink-0" />
         ) : (
           <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] text-xl flex-shrink-0">🏢</div>
         )}
         <div>
-          <h3 className="text-white font-semibold">{f.fboName}</h3>
-          <p className="text-white/40 text-xs">{[f.fboCity, f.fboState, f.fboCountry].filter(Boolean).join(', ')}</p>
+          <h3 className="text-gray-900 font-semibold">{f.fboName}</h3>
+          <p className="text-gray-400 text-xs">{[f.fboCity, f.fboState, f.fboCountry].filter(Boolean).join(', ')}</p>
         </div>
       </div>
-
       <div className="space-y-1.5 text-sm">
-        {f.fboPhne && <p className="text-white/60">📞 {f.fboPhne}</p>}
-        {f.fboAfterHoursPhone && <p className="text-white/60">🌙 After hours: {f.fboAfterHoursPhone}</p>}
-        {f.fboEmail && <a href={`mailto:${f.fboEmail}`} className="text-[#F34707] hover:text-[#FC8C00] transition-colors block">✉ {f.fboEmail}</a>}
-        {f.fboWebsite && <a href={f.fboWebsite.startsWith('http') ? f.fboWebsite : `https://${f.fboWebsite}`} target="_blank" rel="noopener noreferrer" className="text-[#F34707]/70 hover:text-[#FC8C00] transition-colors block text-xs">🌐 {f.fboWebsite}</a>}
-        {f.fboPocName && <p className="text-white/50 text-xs mt-2">Contact: {f.fboPocName}{f.fboPocTitle ? ` — ${f.fboPocTitle}` : ''}</p>}
-        {f.fboWhatsapp && <p className="text-white/50 text-xs">WhatsApp: {f.fboWhatsapp}</p>}
+        {f.fboPhne             && <p className="text-gray-600">📞 {f.fboPhne}</p>}
+        {f.fboAfterHoursPhone  && <p className="text-gray-600">🌙 After hours: {f.fboAfterHoursPhone}</p>}
+        {f.fboTollFreePhone    && <p className="text-gray-600">📞 Toll-free: {f.fboTollFreePhone}</p>}
+        {f.fboEmail            && <LockedField type="email" />}
+        {f.fboWebsite          && <LockedField type="website" />}
+        {f.fboPocName          && <p className="text-gray-400 text-xs mt-2">Contact: {f.fboPocName}{f.fboPocTitle ? ` — ${f.fboPocTitle}` : ''}</p>}
+        {f.fboWhatsapp         && <p className="text-gray-400 text-xs">WhatsApp: {f.fboWhatsapp}</p>}
       </div>
-
       {f.fboServiceCategories && f.fboServiceCategories.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1">
           {f.fboServiceCategories.map((s) => (
-            <span key={s} className="px-2 py-0.5 rounded-full bg-white/10 text-white/50 text-xs">{s}</span>
+            <span key={s} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">{s}</span>
           ))}
         </div>
       )}

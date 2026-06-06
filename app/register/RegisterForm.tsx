@@ -63,16 +63,16 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
       {error && (
-        <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+        <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
           {error}
         </div>
       )}
 
       {/* Company Type */}
       <div>
-        <label className="block text-sm text-white/60 mb-2">Company Type</label>
+        <label className="block text-sm text-gray-600 mb-2">Company Type</label>
         <div className="grid grid-cols-2 gap-3">
           {([
             { value: 'handler', label: '✈️ Ground Handler', desc: 'Ramp, fuel, passenger handling' },
@@ -84,8 +84,8 @@ export default function RegisterForm() {
               onClick={() => setCompanyType(t.value)}
               className={`p-4 rounded-xl border text-left transition-all ${
                 companyType === t.value
-                  ? 'border-[#F34707] bg-[#F34707]/10 text-white'
-                  : 'border-white/20 bg-white/5 text-white/60 hover:border-white/40'
+                  ? 'border-[#F34707] bg-[#F34707]/10 text-gray-900'
+                  : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300'
               }`}
             >
               <div className="font-medium text-sm mb-0.5">{t.label}</div>
@@ -97,20 +97,20 @@ export default function RegisterForm() {
 
       {/* Company Name */}
       <div>
-        <label className="block text-sm text-white/60 mb-1.5">Company Name</label>
+        <label className="block text-sm text-gray-600 mb-1.5">Company Name</label>
         <input
           type="text"
           required
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
           placeholder="Your FBO or Handler name"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
         />
       </div>
 
       {/* ICAO */}
       <div>
-        <label className="block text-sm text-white/60 mb-1.5">Airport ICAO Code</label>
+        <label className="block text-sm text-gray-600 mb-1.5">Airport ICAO Code</label>
         <input
           type="text"
           required
@@ -118,46 +118,46 @@ export default function RegisterForm() {
           onChange={(e) => setIcao(e.target.value.toUpperCase())}
           placeholder="e.g. KJFK"
           maxLength={4}
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm font-mono uppercase"
+          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm font-mono uppercase"
         />
-        <p className="mt-1 text-xs text-white/30">The airport where your company operates</p>
+        <p className="mt-1 text-xs text-gray-400">The airport where your company operates</p>
       </div>
 
       {/* Email */}
       <div>
-        <label className="block text-sm text-white/60 mb-1.5">Work Email</label>
+        <label className="block text-sm text-gray-600 mb-1.5">Work Email</label>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
-          className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
+          className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
         />
       </div>
 
       {/* Password */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-white/60 mb-1.5">Password</label>
+          <label className="block text-sm text-gray-600 mb-1.5">Password</label>
           <input
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Min. 8 characters"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
+            className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm text-white/60 mb-1.5">Confirm Password</label>
+          <label className="block text-sm text-gray-600 mb-1.5">Confirm Password</label>
           <input
             type="password"
             required
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Repeat password"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/25 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
+            className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
           />
         </div>
       </div>
@@ -165,12 +165,12 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors disabled:opacity-50"
+        className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors disabled:opacity-50 shadow-md"
       >
         {loading ? 'Creating account...' : 'Create Account'}
       </button>
 
-      <p className="text-xs text-white/30 text-center">
+      <p className="text-xs text-gray-400 text-center">
         After registering your account will be reviewed before your listing goes live.
       </p>
     </form>
