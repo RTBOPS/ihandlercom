@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public directory — anyone can read, only authenticated owners can write their own record
+    match /airports/{document} {
+      allow read: if true;
+      allow create, write, delete: if false; // admin-only via Firebase console
+    }
+
+    match /fbo/{document} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && isOwnerOf('fbo', resource.data);
+      allow create: if false; // new records added by admin only
+      allow delete: if false;
+    }
+
+    match /handler/{document} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && isOwnerOf('handler', resource.data);
+      allow create: if false; // new records added by admin only
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow create: if request.auth.uid == userId;
+      allow read, write: if request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // Helper: check that the authenticated user's profile links to this record
+    function isOwnerOf(type, data) {
+      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return userDoc.companyType == type
+        && userDoc.status == 'approved'
+        && (
+          (type == 'fbo' && userDoc.icao == data.fboIcao && userDoc.companyName == data.fboName)
+          || (type == 'handler' && userDoc.icao == data.handlerIcao && userDoc.companyName == data.handlerName)
+        );
+    }
+  }
+}
