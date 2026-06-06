@@ -102,32 +102,32 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
-                  icon: <IhIcon name="aircraft" className="w-8 h-8" />,
+                  icon: <IhIcon name="oflp" className="w-8 h-8" />,
                   title: 'Global Permits & Overflights',
                   desc: 'Landing and overflight permits managed quickly and accurately across all international jurisdictions.',
                 },
                 {
-                  icon: <IhIcon name="runway" className="w-8 h-8" />,
+                  icon: <IhIcon name="icao-fltplan" className="w-8 h-8" />,
                   title: 'ICAO Flight Plans & GENDEC',
                   desc: 'Complete documentation support including ICAO flight plans, GENDEC, and eAPIS compliance.',
                 },
                 {
-                  icon: <IhIcon name="fbo" className="w-8 h-8" />,
+                  icon: <IhIcon name="handler" className="w-8 h-8" />,
                   title: 'FBO & Ground Handling',
                   desc: 'Direct coordination with FBOs and handlers worldwide for seamless ground operations.',
                 },
                 {
-                  icon: <IhIcon name="pilot" className="w-8 h-8" />,
+                  icon: <IhIcon name="crew" className="w-8 h-8" />,
                   title: 'Built for Crews',
                   desc: 'Optimized for pilots and flight crew — full operational control at your fingertips, anywhere.',
                 },
                 {
-                  icon: <IhIcon name="handler" className="w-8 h-8" />,
+                  icon: <IhIcon name="mapamundi" className="w-8 h-8" />,
                   title: 'Worldwide Coverage',
                   desc: 'Access a comprehensive database of airports, handlers, and FBOs across the globe.',
                 },
                 {
-                  icon: <IhIcon name="fuel" className="w-8 h-8" />,
+                  icon: <IhIcon name="clock" className="w-8 h-8" />,
                   title: 'Fast Response',
                   desc: 'Dedicated support for private and business aviation with rapid turnaround for urgent requests.',
                 },
@@ -180,12 +180,12 @@ export default function HomePage() {
               {/* Right: service icon grid */}
               <div className="grid grid-cols-3 gap-4">
                 {[
-                  { name: 'handler'  as const, label: 'Ground Handlers' },
-                  { name: 'fbo'      as const, label: 'FBOs' },
-                  { name: 'fuel'     as const, label: 'Fuel Services' },
-                  { name: 'hotel'    as const, label: 'Hotels' },
-                  { name: 'catering' as const, label: 'Catering' },
-                  { name: 'limo'     as const, label: 'Car Rentals' },
+                  { name: 'handler'    as const, label: 'Ground Handlers' },
+                  { name: 'fbo-vip'    as const, label: 'FBOs' },
+                  { name: 'fuel'       as const, label: 'Fuel Services' },
+                  { name: 'hotel'      as const, label: 'Hotels' },
+                  { name: 'catering-b' as const, label: 'Catering' },
+                  { name: 'limo'       as const, label: 'Car Rentals' },
                 ].map((item) => (
                   <div key={item.name}
                     className="flex flex-col items-center gap-3 p-5 rounded-2xl border border-gray-200 bg-white hover:border-[#F34707]/40 hover:shadow-md transition-all group cursor-default">
@@ -202,7 +202,7 @@ export default function HomePage() {
 
         {/* ── Marshaller full-bleed ─────────────────────────────────────────── */}
         <section className="relative h-72 sm:h-96 overflow-hidden">
-          <Image src="/images/Marshaller.png" alt="Ground handler marshalling aircraft"
+          <Image src="/images/marshaller-new.jpg" alt="Ground handler marshalling aircraft"
             fill className="object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           <div className="relative h-full flex items-center">
@@ -224,8 +224,17 @@ export default function HomePage() {
         </section>
 
         {/* ── Clients section ───────────────────────────────────────────────── */}
-        <section className="py-24 bg-gray-950 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative py-24 bg-gray-950 overflow-hidden">
+          {/* Background photo */}
+          <Image
+            src="/images/teamwork-cockpit.jpg"
+            alt=""
+            fill
+            className="object-cover object-center opacity-20"
+            priority={false}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-transparent to-gray-950/80" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
               {/* Left: text */}
@@ -284,8 +293,18 @@ export default function HomePage() {
         </section>
 
         {/* ── Airport Search CTA ────────────────────────────────────────────── */}
-        <section className="py-20 bg-[#F34707]">
-          <div className="max-w-3xl mx-auto px-4 text-center">
+        <section className="relative py-20 overflow-hidden bg-[#F34707]">
+          {/* Background photo */}
+          <Image
+            src="/images/pilot-cockpit-night.jpg"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority={false}
+          />
+          {/* Orange overlay to keep brand colour while showing photo */}
+          <div className="absolute inset-0 bg-[#F34707]/75" />
+          <div className="relative max-w-3xl mx-auto px-4 text-center">
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-white p-3">
                 <IhIcon name="runway" className="w-full h-full" />
@@ -308,6 +327,7 @@ export default function HomePage() {
         </section>
 
       </main>
+
       <Footer />
     </>
   );

@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ContactForm from './ContactForm';
+import Image from 'next/image';
 
 const services = [
   'Dedicated support for private and business aviation',
@@ -26,8 +27,19 @@ export default function ContactPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            {/* Services checklist */}
+            {/* Left: image + services */}
             <div>
+              {/* Multiplatform image */}
+              <div className="mb-8 rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center p-4">
+                <Image
+                  src="/images/multiplatforms.png"
+                  alt="i-Handler available on all platforms"
+                  width={480}
+                  height={320}
+                  className="w-full h-auto object-contain max-h-56"
+                />
+              </div>
+
               <h2 className="text-xl font-semibold text-gray-900 mb-6">How we can help you</h2>
               <ul className="space-y-4">
                 {services.map((s) => (

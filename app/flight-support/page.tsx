@@ -1,11 +1,13 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import IhIcon from '@/components/IhIcon';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const services = [
   {
     title: 'Flight Planning',
-    icon: '🗺️',
+    icon: 'icao-fltplan' as const,
     items: [
       'ICAO flight plan filing and management',
       'Navigation log preparation',
@@ -15,7 +17,7 @@ const services = [
   },
   {
     title: 'International Permits',
-    icon: '📄',
+    icon: 'oflp' as const,
     items: [
       'Landing permit applications',
       'Overflight permit requests',
@@ -25,7 +27,7 @@ const services = [
   },
   {
     title: 'Customs & Immigration',
-    icon: '🛂',
+    icon: 'gendec' as const,
     items: [
       'GENDEC preparation and filing',
       'eAPIS compliance (US)',
@@ -35,7 +37,7 @@ const services = [
   },
   {
     title: 'Ground Operations',
-    icon: '🏢',
+    icon: 'handler' as const,
     items: [
       'FBO coordination and reservations',
       'Ground handler arrangements',
@@ -45,7 +47,7 @@ const services = [
   },
   {
     title: 'VIP Support',
-    icon: '⭐',
+    icon: 'fbo-vip' as const,
     items: [
       'Dedicated trip support coordinator',
       'VIP lounge access arrangements',
@@ -55,7 +57,7 @@ const services = [
   },
   {
     title: 'Slot Management',
-    icon: '🕐',
+    icon: 'clock' as const,
     items: [
       'Slot request and coordination',
       'Busy airport slot optimization',
@@ -69,30 +71,50 @@ export default function FlightSupportPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 pb-20 px-4 bg-white">
-        <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-              International Documentation for{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F34707] to-[#FC8C00]">
-                Private Aviation
-              </span>
-            </h1>
-            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-              We simplify international flight coordination, documentation, and permits — delivering
-              precision, speed, and reliability for aviation professionals worldwide.
-            </p>
+      <main className="min-h-screen bg-white">
+
+        {/* ── Hero with flight coordination image ─────────────────────────── */}
+        <section className="relative h-72 sm:h-96 overflow-hidden">
+          <Image
+            src="/images/flight-coordination.png"
+            alt="Flight coordination"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
+          <div className="relative h-full flex items-end pb-12">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white/80 text-xs font-semibold mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
+                Flight Support
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-bold text-white">
+                International Documentation for{' '}
+                <span className="text-[#F34707]">Private Aviation</span>
+              </h1>
+            </div>
           </div>
+        </section>
+
+        {/* ── Services ──────────────────────────────────────────────────────── */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto text-center mb-12">
+            We simplify international flight coordination, documentation, and permits — delivering
+            precision, speed, and reliability for aviation professionals worldwide.
+          </p>
 
           {/* Services grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {services.map((s) => (
               <div
                 key={s.title}
-                className="rounded-2xl border border-gray-200 bg-white p-6 hover:border-[#F34707]/40 hover:shadow-md transition-all shadow-sm"
+                className="rounded-2xl border border-gray-200 bg-white p-6 hover:border-[#F34707]/40 hover:shadow-md transition-all shadow-sm group"
               >
-                <div className="text-3xl mb-3">{s.icon}</div>
+                <div className="w-12 h-12 rounded-xl bg-[#F34707]/10 flex items-center justify-center text-[#F34707] mb-4 p-2.5 group-hover:bg-[#F34707] group-hover:text-white transition-colors">
+                  <IhIcon name={s.icon} className="w-full h-full" />
+                </div>
                 <h3 className="text-gray-900 font-semibold text-lg mb-4">{s.title}</h3>
                 <ul className="space-y-2">
                   {s.items.map((item) => (
