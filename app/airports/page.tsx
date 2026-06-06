@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { collection, query, getDocs, limit } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, startAt, endAt } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AirportRecord } from '@/lib/types';
 import Link from 'next/link';
@@ -21,19 +21,32 @@ export default function AirportsPage() {
     setSearched(true);
 
     try {
-      const term = searchTerm.trim().toUpperCase();
-      const snap = await getDocs(query(collection(db, 'airports'), limit(200)));
-      const filtered = snap.docs
-        .map((d) => ({ id: d.id, ...d.data() } as AirportRecord))
-        .filter(
-          (a) =>
-            (a.icao && a.icao.toUpperCase().includes(term)) ||
-            (a.iata && a.iata.toUpperCase().includes(term)) ||
-            (a.name && a.name.toUpperCase().includes(term))
-        );
-      setResults(filtered);
+      const upper = searchTerm.trim().toUpperCase();
+      const nameRaw = searchTerm.trim();
+      //  is a high Unicode char used as Firestore prefix-range end
+      const hi = '';
+
+      // Three parallel prefix queries: ICAO, IATA (uppercase), name (as typed)
+      const [icaoSnap, iataSnap, nameSnap] = await Promise.all([
+        getDocs(query(collection(db, 'airports'), orderBy('icao'), startAt(upper), endAt(upper + hi))),
+        getDocs(query(collection(db, 'airports'), orderBy('iata'), startAt(upper), endAt(upper + hi))),
+        getDocs(query(collection(db, 'airports'), orderBy('name'), startAt(nameRaw), endAt(nameRaw + hi))),
+      ]);
+
+      // Merge & deduplicate by doc id
+      const seen = new Set<string>();
+      const merged: AirportRecord[] = [];
+      for (const snap of [icaoSnap, iataSnap, nameSnap]) {
+        for (const d of snap.docs) {
+          if (!seen.has(d.id)) {
+            seen.add(d.id);
+            merged.push({ id: d.id, ...d.data() } as AirportRecord);
+          }
+        }
+      }
+      setResults(merged);
     } catch (err) {
-      console.error(err);
+      console.error('Search error:', err);
     } finally {
       setLoading(false);
     }
@@ -60,7 +73,7 @@ export default function AirportsPage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Enter ICAO, IATA or Airport name (e.g. KJFK, JFK, John F. Kennedy)"
+              placeholder="Enter ICAO, IATA or Airport name (e.g. KJFK, JFK, Kennedy)"
               className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder:text-white/30 focus:outline-none focus:border-[#F34707] transition-colors text-sm"
             />
             <button
