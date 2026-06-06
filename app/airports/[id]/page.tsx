@@ -6,7 +6,6 @@ import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firesto
 import { db } from '@/lib/firebase';
 import { AirportRecord, HandlerRecord, FboRecord } from '@/lib/types';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -149,33 +148,33 @@ export default function AirportDetailPage() {
     );
   }
 
-  // Build contact departments table
-  const a = airport as AirportRecord & Record<string, string>;
+  // Build contact departments table — all fields now typed on AirportRecord
+  const ap = airport;
   const contactDepts: ContactDept[] = [
-    { dept: 'Airport Admin',    phone: a.airportAdminPhone,    fax: a.airportAdminFax,    email: a.airportAdminEmail,    website: a.airportAdminWebsite },
-    { dept: 'Airport Authority',phone: a.airportAutorityPhone || (a as Record<string,string>).airportAuthorityPhone, fax: a.airportAuthorityFax, email: a.airportAuthorityEmail, website: a.airportAuthorityWebsite, frequency: (a as Record<string,string>).airportAutorityFrequency },
-    { dept: 'Airport Manager',  phone: a.airportManagerPhone,  fax: a.airportManagerFax,  email: a.airportManagerEmail,  website: a.airportManagerWebsite, frequency: (a as Record<string,string>).airportManagerFrequency },
-    { dept: 'Operations',       phone: a.airportOperationsPhpne, fax: a.airportOperationsFax, email: a.airportOperationsEmail, website: a.airportOperationsWebsite, frequency: (a as Record<string,string>).airportOperationsFrequency },
-    { dept: 'Information',      phone: a.airportInfoPhone,     fax: a.airportInformationFax, email: a.airportInfoEmail, website: a.airportInformationWebsite, frequency: (a as Record<string,string>).airportInformationFrequency },
-    { dept: 'ATC',              phone: a.atcPhone,             fax: a.atcFax,             email: a.atcEmail,             website: a.atcWebsite,    frequency: (a as Record<string,string>).atcFrequency },
-    { dept: 'ATIS',             phone: a.atisPhone,            fax: a.atisFax,            email: a.atisEmail,            website: a.atisWebsite,   frequency: (a as Record<string,string>).atisFrequency },
-    { dept: 'ATS',              phone: a.atsPhone,             fax: a.atsFax,             email: a.atsEmail,             website: a.atsWebsite,    frequency: (a as Record<string,string>).atsFrequency },
-    { dept: 'AIS',              phone: a.aisPhone,             fax: a.aisFax,             email: a.aisEmail,             website: a.aisWebsite,    frequency: (a as Record<string,string>).aisFrequency },
-    { dept: 'ARO',              phone: a.aroPhone,             fax: a.aroFax,             email: a.aroEmail,             website: a.aroWebsite },
-    { dept: 'Tower',            phone: (a as Record<string,string>).towerPhone, fax: (a as Record<string,string>).towerFax, email: (a as Record<string,string>).towerEmail, website: (a as Record<string,string>).towerWebsite, frequency: (a as Record<string,string>).towerFrequency },
-    { dept: 'Customs',          phone: (a as Record<string,string>).customsPhone, fax: (a as Record<string,string>).customsFax, email: (a as Record<string,string>).customsEmail, website: (a as Record<string,string>).customsWebsite },
-    { dept: 'Immigration',      phone: (a as Record<string,string>).immigrationPhpne, fax: (a as Record<string,string>).immigrationFax, email: (a as Record<string,string>).immigrationEmail, website: (a as Record<string,string>).immigrationWebsite },
-    { dept: 'PPR',              phone: (a as Record<string,string>).pprPhone, fax: (a as Record<string,string>).pprFax, email: (a as Record<string,string>).pprEmail, website: (a as Record<string,string>).pprWebsite, frequency: (a as Record<string,string>).pprFrequency },
-    { dept: 'Slot Request',     phone: (a as Record<string,string>).slotRequestPhpne, fax: (a as Record<string,string>).slotRequestFax, email: (a as Record<string,string>).slotRequestEmail, website: (a as Record<string,string>).slotRequestWebsite, frequency: (a as Record<string,string>).slotRequestFrequency },
-    { dept: 'Flight Plan',      phone: (a as Record<string,string>).flightPlanPhone, email: (a as Record<string,string>).flightPlanEmail, website: (a as Record<string,string>).flightPlanWebsite, frequency: (a as Record<string,string>).flightPlanFrequency },
-    { dept: 'MET',              phone: (a as Record<string,string>).metPhone, fax: (a as Record<string,string>).metFax, email: (a as Record<string,string>).metEmail, website: (a as Record<string,string>).metWebsite, frequency: (a as Record<string,string>).metFrequcny },
-    { dept: 'CAA',              phone: (a as Record<string,string>).caaPhone, fax: (a as Record<string,string>).caaFax, email: (a as Record<string,string>).caaEmail, website: (a as Record<string,string>).caaWebsite },
-    { dept: 'DSA',              phone: (a as Record<string,string>).dsaPhone, fax: (a as Record<string,string>).dsaFax, email: (a as Record<string,string>).dsaEmail, website: (a as Record<string,string>).dsaWebsite },
-    { dept: 'Military Base',    phone: (a as Record<string,string>).militaryBasePhone, fax: (a as Record<string,string>).militaryBaseFax, email: (a as Record<string,string>).militaryBaseEmail, website: (a as Record<string,string>).militaryBaseWebsite },
-    { dept: 'Austro Control',   phone: a.austroControlPhone,   fax: (a as Record<string,string>).austroControlFax, email: (a as Record<string,string>).austroControlEmail, website: (a as Record<string,string>).austroControlWebsite },
+    { dept: 'Airport Admin',     phone: ap.airportAdminPhone,       fax: ap.airportAdminFax,       email: ap.airportAdminEmail,       website: ap.airportAdminWebsite,       frequency: ap.airportAdminFrequency },
+    { dept: 'Airport Authority', phone: ap.airportAutorityPhone,    fax: ap.airportAuthorityFax,   email: ap.airportAuthorityEmail,   website: ap.airportAuthorityWebsite,   frequency: ap.airportAutorityFrequency },
+    { dept: 'Airport Manager',   phone: ap.airportManagerPhone,     fax: ap.airportManagerFax,     email: ap.airportManagerEmail,     website: ap.airportManagerWebsite,     frequency: ap.airportManagerFrequency },
+    { dept: 'Operations',        phone: ap.airportOperationsPhpne,  fax: ap.airportOperationsFax,  email: ap.airportOperationsEmail,  website: ap.airportOperationsWebsite,  frequency: ap.airportOperationsFrequency },
+    { dept: 'Information',       phone: ap.airportInfoPhone,        fax: ap.airportInformationFax, email: ap.airportInfoEmail,        website: ap.airportInformationWebsite, frequency: ap.airportInformationFrequency },
+    { dept: 'ATC',               phone: ap.atcPhone,                fax: ap.atcFax,                email: ap.atcEmail,                website: ap.atcWebsite,                frequency: ap.atcFrequency },
+    { dept: 'ATIS',              phone: ap.atisPhone,               fax: ap.atisFax,               email: ap.atisEmail,               website: ap.atisWebsite,               frequency: ap.atisFrequency },
+    { dept: 'ATS',               phone: ap.atsPhone,                fax: ap.atsFax,                email: ap.atsEmail,                website: ap.atsWebsite,                frequency: ap.atsFrequency },
+    { dept: 'AIS',               phone: ap.aisPhone,                fax: ap.aisFax,                email: ap.aisEmail,                website: ap.aisWebsite,                frequency: ap.aisFrequency },
+    { dept: 'ARO',               phone: ap.aroPhone,                fax: ap.aroFax,                email: ap.aroEmail,                website: ap.aroWebsite },
+    { dept: 'Tower',             phone: ap.towerPhone,              fax: ap.towerFax,              email: ap.towerEmail,              website: ap.towerWebsite,              frequency: ap.towerFrequency },
+    { dept: 'Customs',           phone: ap.customsPhone,            fax: ap.customsFax,            email: ap.customsEmail,            website: ap.customsWebsite },
+    { dept: 'Immigration',       phone: ap.immigrationPhpne,        fax: ap.immigrationFax,        email: ap.immigrationEmail,        website: ap.immigrationWebsite },
+    { dept: 'PPR',               phone: ap.pprPhone,                fax: ap.pprFax,                email: ap.pprEmail,                website: ap.pprWebsite,                frequency: ap.pprFrequency },
+    { dept: 'Slot Request',      phone: ap.slotRequestPhpne,        fax: ap.slotRequestFax,        email: ap.slotRequestEmail,        website: ap.slotRequestWebsite,        frequency: ap.slotRequestFrequency },
+    { dept: 'Flight Plan',       phone: ap.flightPlanPhone,                                        email: ap.flightPlanEmail,         website: ap.flightPlanWebsite,         frequency: ap.flightPlanFrequency },
+    { dept: 'MET',               phone: ap.metPhone,                fax: ap.metFax,                email: ap.metEmail,                website: ap.metWebsite,                frequency: ap.metFrequcny },
+    { dept: 'CAA',               phone: ap.caaPhone,                fax: ap.caaFax,                email: ap.caaEmail,                website: ap.caaWebsite },
+    { dept: 'DSA',               phone: ap.dsaPhone,                fax: ap.dsaFax,                email: ap.dsaEmail,                website: ap.dsaWebsite },
+    { dept: 'Military Base',     phone: ap.militaryBasePhone,       fax: ap.militaryBaseFax,       email: ap.militaryBaseEmail,       website: ap.militaryBaseWebsite },
+    { dept: 'Austro Control',    phone: ap.austroControlPhone,      fax: ap.austroControlFax,      email: ap.austroControlEmail,      website: ap.austroControlWebsite },
   ];
 
-  const airportDiagram = (airport as Record<string, string>).airportDiagram;
+  const airportDiagram = airport.airportDiagram;
 
   return (
     <>
@@ -201,13 +200,13 @@ export default function AirportDetailPage() {
                 {airport.iata && (
                   <span className="px-3 py-1 rounded-lg bg-white/10 text-white/60 text-sm font-mono">{airport.iata}</span>
                 )}
-                {(airport as Record<string,string>).faa && (
-                  <span className="px-3 py-1 rounded-lg bg-white/10 text-white/60 text-sm font-mono">FAA: {(airport as Record<string,string>).faa}</span>
+                {airport.faa && (
+                  <span className="px-3 py-1 rounded-lg bg-white/10 text-white/60 text-sm font-mono">FAA: {airport.faa}</span>
                 )}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-1">{airport.name}</h1>
-              {(airport as Record<string,string>).locatedIn && (
-                <p className="text-white/40 text-sm">{(airport as Record<string,string>).locatedIn}</p>
+              {airport.locatedIn && (
+                <p className="text-white/40 text-sm">{airport.locatedIn}</p>
               )}
             </div>
 
@@ -215,11 +214,10 @@ export default function AirportDetailPage() {
             {airportDiagram && (
               <div className="lg:w-72 flex-shrink-0">
                 <a href={airportDiagram} target="_blank" rel="noopener noreferrer">
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={airportDiagram}
                     alt={`${airport.name} diagram`}
-                    width={288}
-                    height={200}
                     className="w-full h-48 object-cover rounded-2xl border border-white/10 hover:border-[#F34707]/50 transition-colors"
                   />
                 </a>
@@ -318,7 +316,8 @@ function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-[#F34707]/40 transition-colors">
       <div className="flex items-start gap-3 mb-4">
         {h.handlerLogoImage ? (
-          <Image src={h.handlerLogoImage} alt={h.handlerName} width={48} height={48}
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={h.handlerLogoImage} alt={h.handlerName}
             className="w-12 h-12 rounded-lg object-contain bg-white/10 p-1 flex-shrink-0" />
         ) : (
           <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] text-xl flex-shrink-0">✈</div>
@@ -355,7 +354,8 @@ function FboCard({ fbo: f }: { fbo: FboRecord }) {
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-[#F34707]/40 transition-colors">
       <div className="flex items-start gap-3 mb-4">
         {f.fboLogo ? (
-          <Image src={f.fboLogo} alt={f.fboName} width={48} height={48}
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={f.fboLogo} alt={f.fboName}
             className="w-12 h-12 rounded-lg object-contain bg-white/10 p-1 flex-shrink-0" />
         ) : (
           <div className="w-12 h-12 rounded-lg bg-[#F34707]/10 flex items-center justify-center text-[#F34707] text-xl flex-shrink-0">🏢</div>

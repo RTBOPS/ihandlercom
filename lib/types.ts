@@ -29,6 +29,91 @@ export interface AirportRecord {
   airportDistanceFromCity?: string;
   airportHours?: string;
   airportOfEntryRemarks?: string;
+  // Extra fields present in Firestore but not in original schema
+  airportDiagram?: string;
+  faa?: string;
+  locatedIn?: string;
+  country?: string;
+  sita?: string;
+  dst?: string;
+  variation?: string;
+  // Authority (typo variant used in Firestore)
+  airportAutorityPhone?: string;
+  airportAutorityFrequency?: string;
+  airportManagerFrequency?: string;
+  airportOperationsFrequency?: string;
+  airportInformationFrequency?: string;
+  airportAdminFrequency?: string;
+  // Tower
+  towerPhone?: string;
+  towerFax?: string;
+  towerEmail?: string;
+  towerWebsite?: string;
+  towerFrequency?: string;
+  // Customs & Immigration
+  customsPhone?: string;
+  customsFax?: string;
+  customsEmail?: string;
+  customsWebsite?: string;
+  immigrationPhpne?: string;
+  immigrationFax?: string;
+  immigrationEmail?: string;
+  immigrationWebsite?: string;
+  usCustomsClereance?: string;
+  // PPR & Slot
+  pprPhone?: string;
+  pprFax?: string;
+  pprEmail?: string;
+  pprWebsite?: string;
+  pprFrequency?: string;
+  slotRequestPhpne?: string;
+  slotRequestFax?: string;
+  slotRequestEmail?: string;
+  slotRequestWebsite?: string;
+  slotRequestFrequency?: string;
+  // Flight plan
+  flightPlanPhone?: string;
+  flightPlanEmail?: string;
+  flightPlanWebsite?: string;
+  flightPanWebsite?: string;
+  flightPlanFrequency?: string;
+  // MET
+  metPhone?: string;
+  metFax?: string;
+  metEmail?: string;
+  metWebsite?: string;
+  metFrequcny?: string;
+  // CAA
+  caaPhone?: string;
+  caaFax?: string;
+  caaEmail?: string;
+  caaWebsite?: string;
+  // DSA
+  dsaPhone?: string;
+  dsaFax?: string;
+  dsaEmail?: string;
+  dsaWebsite?: string;
+  // Military
+  militaryBasePhone?: string;
+  militaryBaseFax?: string;
+  militaryBaseEmail?: string;
+  militaryBaseWebsite?: string;
+  // Austro Control
+  austroControlPhone?: string;
+  austroControlFax?: string;
+  austroControlEmail?: string;
+  austroControlWebsite?: string;
+  // Frequencies
+  atcFrequency?: string;
+  atisFrequency?: string;
+  atsFrequency?: string;
+  aisFrequency?: string;
+  airportInformationFreq?: string;
+  airportAutorityFreq?: string;
+  ctafFrequency?: string;
+  unicomFrequency?: string;
+  lightsFrequency?: string;
+  afsAftn?: string;
   // Admin contacts
   airportAdminEmail?: string;
   airportAdminPhone?: string;
