@@ -29,14 +29,14 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Left: image + services */}
             <div>
-              {/* Multiplatform image */}
-              <div className="mb-8 rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center p-4">
+              {/* Ramp photo */}
+              <div className="mb-8 rounded-2xl overflow-hidden shadow-md">
                 <Image
-                  src="/images/multiplatforms.png"
-                  alt="i-Handler available on all platforms"
-                  width={480}
-                  height={320}
-                  className="w-full h-auto object-contain max-h-56"
+                  src="/images/contact-ramp.jpg"
+                  alt="i-Handler ground operations on the ramp"
+                  width={720}
+                  height={332}
+                  className="w-full h-auto object-cover"
                 />
               </div>
 

@@ -152,19 +152,17 @@ export default function HomePage() {
 
               {/* Left: text */}
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F34707]/10 text-[#F34707] text-xs font-semibold mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F34707]/10 text-[#F34707] text-xs font-semibold mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
                   Aviation Directory
                 </div>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 flex-shrink-0">
-                    <Image src="/images/brands/privateflight.png" alt="Private Flight" width={64} height={64} className="w-full h-full object-contain" />
-                  </div>
-                  <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-                    Every airport. Every service.{' '}
-                    <span className="text-[#F34707]">All in one place.</span>
-                  </h2>
+                <div className="mb-5">
+                  <Image src="/images/brands/privateflight.png" alt="Private Flight" width={120} height={120} className="w-28 h-28 object-contain" />
                 </div>
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                  Every airport. Every service.{' '}
+                  <span className="text-[#F34707]">All in one place.</span>
+                </h2>
                 <p className="text-gray-500 text-lg leading-relaxed mb-8">
                   Our database covers handlers, FBOs, hotels, catering, car rentals,
                   and fuel services at thousands of airports worldwide — always kept
@@ -212,14 +210,12 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           <div className="relative h-full flex items-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-14 h-14 flex-shrink-0 drop-shadow-lg">
-                  <Image src="/images/brands/GROUND HANDLING.png" alt="Ground Handling" width={56} height={56} className="w-full h-full object-contain" />
-                </div>
-                <p className="text-white/70 text-sm font-semibold uppercase tracking-widest">
-                  Trusted by aviation professionals worldwide
-                </p>
+              <div className="w-20 h-20 mb-4 drop-shadow-lg">
+                <Image src="/images/brands/GROUND HANDLING.png" alt="Ground Handling" width={80} height={80} className="w-full h-full object-contain" />
               </div>
+              <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-2">
+                Trusted by aviation professionals worldwide
+              </p>
               <h2 className="text-3xl sm:text-4xl font-bold text-white max-w-xl">
                 From the ramp to the runway — we have you covered.
               </h2>
@@ -284,19 +280,18 @@ export default function HomePage() {
               </div>
 
               {/* Right: scrollable logo image */}
-              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl max-h-[600px] overflow-y-auto scrollbar-hide">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl max-h-[600px] overflow-y-auto scrollbar-hide bg-gray-900">
                 {/* top fade */}
-                <div className="sticky top-0 left-0 right-0 h-12 bg-gradient-to-b from-gray-950 to-transparent z-10 pointer-events-none" />
+                <div className="sticky top-0 left-0 right-0 h-12 bg-gradient-to-b from-gray-900 to-transparent z-10 pointer-events-none" />
                 <Image
-                  src="/images/clients-dark.gif"
-                  alt="i-Handler client logos"
+                  src="/images/clients-logos-white.jpg"
+                  alt="i-Handler client logos — over 100 aviation companies worldwide"
                   width={780}
                   height={2400}
-                  className="w-full h-auto"
-                  unoptimized
+                  className="w-full h-auto brightness-0 invert opacity-75"
                 />
                 {/* bottom fade */}
-                <div className="sticky bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-950 to-transparent pointer-events-none" />
+                <div className="sticky bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none" />
               </div>
             </div>
           </div>
@@ -312,12 +307,13 @@ export default function HomePage() {
             className="object-cover object-center"
             priority={false}
           />
-          {/* Orange overlay to keep brand colour while showing photo */}
-          <div className="absolute inset-0 bg-[#F34707]/75" />
+          {/* Dark overlay for text readability — no orange tint */}
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
           <div className="relative max-w-3xl mx-auto px-4 text-center">
             <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 flex items-center justify-center drop-shadow-lg">
-                <Image src="/images/brands/tripsupport.png" alt="Trip Support" width={80} height={80} className="w-full h-full object-contain" />
+              <div className="w-24 h-24 flex items-center justify-center drop-shadow-xl">
+                <Image src="/images/brands/tripsupport.png" alt="Trip Support" width={96} height={96} className="w-full h-full object-contain" />
               </div>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">

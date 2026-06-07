@@ -18,19 +18,19 @@ const serviceIcons = [
   { src: '/images/brands/CATERING.png',       label: 'Catering' },
   { src: '/images/brands/HOTAC.png',          label: 'Hotels' },
   { src: '/images/brands/tripsupport.png',    label: 'Trip Support' },
-  { src: '/images/brands/software.png',       label: 'Operations Software' },
+  { src: '/images/brands/software.png',       label: 'Ops Software' },
 ];
 
 const aircraftBrands = [
-  { src: '/images/brands/BombardierWT.png',      alt: 'Bombardier' },
-  { src: '/images/brands/learjetWT.png',         alt: 'Learjet' },
-  { src: '/images/brands/gulstreamWT.png',       alt: 'Gulfstream' },
-  { src: '/images/brands/cessnaWT.png',          alt: 'Cessna' },
-  { src: '/images/brands/AirbusWT.png',          alt: 'Airbus' },
-  { src: '/images/brands/BoeingWT.png',          alt: 'Boeing' },
-  { src: '/images/brands/EmbraerWT.png',         alt: 'Embraer' },
-  { src: '/images/brands/pilatusWT.png',         alt: 'Pilatus' },
-  { src: '/images/brands/beachcraftWT.png',      alt: 'Beechcraft' },
+  { src: '/images/brands/BombardierWT.png',         alt: 'Bombardier' },
+  { src: '/images/brands/learjetWT.png',            alt: 'Learjet' },
+  { src: '/images/brands/gulstreamWT.png',          alt: 'Gulfstream' },
+  { src: '/images/brands/cessnaWT.png',             alt: 'Cessna' },
+  { src: '/images/brands/AirbusWT.png',             alt: 'Airbus' },
+  { src: '/images/brands/BoeingWT.png',             alt: 'Boeing' },
+  { src: '/images/brands/EmbraerWT.png',            alt: 'Embraer' },
+  { src: '/images/brands/pilatusWT.png',            alt: 'Pilatus' },
+  { src: '/images/brands/beachcraftWT.png',         alt: 'Beechcraft' },
   { src: '/images/brands/nbaa-main-logo-white.png', alt: 'NBAA' },
 ];
 
@@ -69,21 +69,38 @@ export default function AirportsPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-white flex flex-col">
 
         {/* ── Hero / Search ─────────────────────────────────────────────────── */}
-        <div className="pt-28 pb-10 px-4 bg-white">
+        <div className="pt-28 pb-10 px-4 bg-white flex-1">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10">
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+
+            {/* Title */}
+            <div className="text-center mb-8">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
                 Worldwide Gateway for{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F34707] to-[#FC8C00]">
                   Aviation Services
                 </span>
               </h1>
-              <p className="text-gray-500 text-lg">Search by ICAO code, IATA code, or airport name</p>
             </div>
 
+            {/* ── Service icons — above the search bar ───────────────────── */}
+            <div className="flex flex-wrap justify-center gap-5 mb-8 pb-8 border-b border-gray-100">
+              {serviceIcons.map((item) => (
+                <div key={item.label} className="flex flex-col items-center gap-2 group">
+                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gray-50 border border-gray-200 p-2.5 group-hover:shadow-md group-hover:border-[#F34707]/30 transition-all">
+                    <Image src={item.src} alt={item.label} width={44} height={44} className="w-full h-full object-contain" />
+                  </div>
+                  <span className="text-[10px] font-medium text-gray-400 text-center leading-tight max-w-[60px]">{item.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Search label */}
+            <p className="text-center text-gray-500 text-base mb-4">Search by ICAO code, IATA code, or airport name</p>
+
+            {/* Search form */}
             <form onSubmit={handleSearch} className="flex gap-3 mb-10">
               <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Enter ICAO, IATA or Airport name (e.g. KJFK, JFK, Kennedy)"
@@ -104,6 +121,7 @@ export default function AirportsPage() {
               </button>
             </form>
 
+            {/* Results */}
             {searched && (
               <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-12">
                 {results.length === 0 ? (
@@ -152,39 +170,10 @@ export default function AirportsPage() {
           </div>
         </div>
 
-        {/* ── Services covered ──────────────────────────────────────────────── */}
-        <section className="py-16 px-4 bg-gray-50 border-t border-gray-100">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F34707]/10 text-[#F34707] text-xs font-semibold mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
-                What We Cover
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Every service your flight needs
-              </h2>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-6">
-              {serviceIcons.map((item) => (
-                <div key={item.label} className="flex flex-col items-center gap-3 group">
-                  <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-white border border-gray-200 shadow-sm p-3 group-hover:shadow-md group-hover:border-[#F34707]/30 transition-all">
-                    <Image src={item.src} alt={item.label} width={48} height={48} className="w-full h-full object-contain" />
-                  </div>
-                  <span className="text-xs font-medium text-gray-500 text-center leading-tight">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Aircraft brands strip ─────────────────────────────────────────── */}
+        {/* ── Aircraft brands strip — bottom of page ────────────────────────── */}
         <section className="bg-gray-950 py-5 overflow-hidden border-t border-white/5">
-          <div className="flex items-center gap-2 mb-3 px-6">
-            <span className="text-white/30 text-xs font-semibold uppercase tracking-widest">Compatible with</span>
-          </div>
-          {/* Marquee — duplicated list for seamless loop */}
           <div className="relative flex overflow-x-hidden">
-            <div className="flex animate-marquee whitespace-nowrap items-center gap-12 px-8">
+            <div className="flex animate-marquee whitespace-nowrap items-center gap-14 px-8">
               {[...aircraftBrands, ...aircraftBrands].map((brand, i) => (
                 <div key={i} className="flex-shrink-0 h-8 flex items-center">
                   <Image
@@ -192,7 +181,7 @@ export default function AirportsPage() {
                     alt={brand.alt}
                     width={120}
                     height={32}
-                    className="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity brightness-0 invert"
+                    className="h-7 w-auto object-contain opacity-60 hover:opacity-100 transition-opacity brightness-0 invert"
                   />
                 </div>
               ))}
