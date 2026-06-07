@@ -156,10 +156,15 @@ export default function HomePage() {
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
                   Aviation Directory
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                  Every airport. Every service.{' '}
-                  <span className="text-[#F34707]">All in one place.</span>
-                </h2>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 flex-shrink-0">
+                    <Image src="/images/brands/privateflight.png" alt="Private Flight" width={64} height={64} className="w-full h-full object-contain" />
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+                    Every airport. Every service.{' '}
+                    <span className="text-[#F34707]">All in one place.</span>
+                  </h2>
+                </div>
                 <p className="text-gray-500 text-lg leading-relaxed mb-8">
                   Our database covers handlers, FBOs, hotels, catering, car rentals,
                   and fuel services at thousands of airports worldwide — always kept
@@ -207,9 +212,14 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           <div className="relative h-full flex items-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-2">
-                Trusted by aviation professionals worldwide
-              </p>
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-14 h-14 flex-shrink-0 drop-shadow-lg">
+                  <Image src="/images/brands/GROUND HANDLING.png" alt="Ground Handling" width={56} height={56} className="w-full h-full object-contain" />
+                </div>
+                <p className="text-white/70 text-sm font-semibold uppercase tracking-widest">
+                  Trusted by aviation professionals worldwide
+                </p>
+              </div>
               <h2 className="text-3xl sm:text-4xl font-bold text-white max-w-xl">
                 From the ramp to the runway — we have you covered.
               </h2>
@@ -306,8 +316,8 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-[#F34707]/75" />
           <div className="relative max-w-3xl mx-auto px-4 text-center">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-white p-3">
-                <IhIcon name="runway" className="w-full h-full" />
+              <div className="w-20 h-20 flex items-center justify-center drop-shadow-lg">
+                <Image src="/images/brands/tripsupport.png" alt="Trip Support" width={80} height={80} className="w-full h-full object-contain" />
               </div>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
