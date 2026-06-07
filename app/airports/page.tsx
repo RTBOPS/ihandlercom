@@ -18,20 +18,6 @@ const serviceIcons = [
   { src: '/images/brands/CATERING.png',       label: 'Catering' },
   { src: '/images/brands/HOTAC.png',          label: 'Hotels' },
   { src: '/images/brands/tripsupport.png',    label: 'Trip Support' },
-  { src: '/images/brands/software.png',       label: 'Ops Software' },
-];
-
-const aircraftBrands = [
-  { src: '/images/brands/BombardierWT.png',         alt: 'Bombardier' },
-  { src: '/images/brands/learjetWT.png',            alt: 'Learjet' },
-  { src: '/images/brands/gulstreamWT.png',          alt: 'Gulfstream' },
-  { src: '/images/brands/cessnaWT.png',             alt: 'Cessna' },
-  { src: '/images/brands/AirbusWT.png',             alt: 'Airbus' },
-  { src: '/images/brands/BoeingWT.png',             alt: 'Boeing' },
-  { src: '/images/brands/EmbraerWT.png',            alt: 'Embraer' },
-  { src: '/images/brands/pilatusWT.png',            alt: 'Pilatus' },
-  { src: '/images/brands/beachcraftWT.png',         alt: 'Beechcraft' },
-  { src: '/images/brands/nbaa-main-logo-white.png', alt: 'NBAA' },
 ];
 
 export default function AirportsPage() {
@@ -169,25 +155,6 @@ export default function AirportsPage() {
             )}
           </div>
         </div>
-
-        {/* ── Aircraft brands strip — bottom of page ────────────────────────── */}
-        <section className="bg-gray-950 py-5 overflow-hidden border-t border-white/5">
-          <div className="relative flex overflow-x-hidden">
-            <div className="flex animate-marquee whitespace-nowrap items-center gap-14 px-8">
-              {[...aircraftBrands, ...aircraftBrands].map((brand, i) => (
-                <div key={i} className="flex-shrink-0 h-8 flex items-center">
-                  <Image
-                    src={brand.src}
-                    alt={brand.alt}
-                    width={120}
-                    height={32}
-                    className="h-7 w-auto object-contain opacity-60 hover:opacity-100 transition-opacity brightness-0 invert"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
       </main>
       <Footer />

@@ -30,14 +30,21 @@ export default function ContactPage() {
             {/* Left: image + services */}
             <div>
               {/* Ramp photo */}
-              <div className="mb-8 rounded-2xl overflow-hidden shadow-md">
+              <div className="mb-8 rounded-2xl overflow-hidden shadow-lg relative">
                 <Image
                   src="/images/contact-ramp.jpg"
                   alt="i-Handler ground operations on the ramp"
                   width={720}
                   height={332}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover brightness-110 contrast-105 saturate-125"
                 />
+                {/* Subtle warm gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <span className="text-xs font-semibold text-white/80 bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
+                    i-Handler on the ramp
+                  </span>
+                </div>
               </div>
 
               <h2 className="text-xl font-semibold text-gray-900 mb-6">How we can help you</h2>

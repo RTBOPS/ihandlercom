@@ -107,7 +107,7 @@ export default function HomePage() {
                   desc: 'Landing and overflight permits managed quickly and accurately across all international jurisdictions.',
                 },
                 {
-                  icon: <IhIcon name="icao-fltplan" className="w-8 h-8" />,
+                  icon: <IhIcon name="icao-fltplan" className="w-11 h-11" />,
                   title: 'ICAO Flight Plans & GENDEC',
                   desc: 'Complete documentation support including ICAO flight plans, GENDEC, and eAPIS compliance.',
                 },
@@ -122,7 +122,7 @@ export default function HomePage() {
                   desc: 'Optimized for pilots and flight crew — full operational control at your fingertips, anywhere.',
                 },
                 {
-                  icon: <IhIcon name="mapamundi" className="w-8 h-8" />,
+                  icon: <IhIcon name="mapamundi" className="w-11 h-11" />,
                   title: 'Worldwide Coverage',
                   desc: 'Access a comprehensive database of airports, handlers, and FBOs across the globe.',
                 },
@@ -156,7 +156,7 @@ export default function HomePage() {
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
                   Aviation Directory
                 </div>
-                <div className="mb-5">
+                <div className="mb-5 flex justify-center">
                   <Image src="/images/brands/privateflight.png" alt="Private Flight" width={120} height={120} className="w-28 h-28 object-contain" />
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -209,9 +209,11 @@ export default function HomePage() {
             fill className="object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           <div className="relative h-full flex items-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="w-20 h-20 mb-4 drop-shadow-lg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+              <div className="flex justify-center w-full mb-4">
+              <div className="w-20 h-20 drop-shadow-lg">
                 <Image src="/images/brands/GROUND HANDLING.png" alt="Ground Handling" width={80} height={80} className="w-full h-full object-contain" />
+              </div>
               </div>
               <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-2">
                 Trusted by aviation professionals worldwide
@@ -240,76 +242,52 @@ export default function HomePage() {
             priority={false}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-gray-950/60 via-transparent to-gray-950/80" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-              {/* Left: text */}
-              <div className="lg:sticky lg:top-32">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/70 text-xs font-semibold mb-4">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
-                  Our Clients
-                </div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                  Trusted by the world&apos;s aviation professionals
-                </h2>
-                <p className="text-white/50 text-base leading-relaxed mb-8">
-                  Over the years i-Handler has supported charter operators, flight departments,
-                  handling companies, and military contractors across six continents —
-                  delivering seamless permits, ground handling, and flight support worldwide.
-                </p>
-                <Link href="/customers"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors shadow-lg">
-                  View all clients
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-
-                {/* Count callout */}
-                <div className="mt-10 grid grid-cols-2 gap-4">
-                  {[
-                    { value: '100+', label: 'Companies served' },
-                    { value: '6',    label: 'Continents covered' },
-                  ].map((s) => (
-                    <div key={s.label} className="rounded-2xl bg-white/5 border border-white/10 p-5">
-                      <p className="text-3xl font-bold text-[#F34707]">{s.value}</p>
-                      <p className="text-sm text-white/40 mt-1">{s.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right: scrollable logo image */}
-              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl max-h-[600px] overflow-y-auto scrollbar-hide bg-gray-900">
-                {/* top fade */}
-                <div className="sticky top-0 left-0 right-0 h-12 bg-gradient-to-b from-gray-900 to-transparent z-10 pointer-events-none" />
-                <Image
-                  src="/images/clients-logos-white.jpg"
-                  alt="i-Handler client logos — over 100 aviation companies worldwide"
-                  width={780}
-                  height={2400}
-                  className="w-full h-auto brightness-0 invert opacity-75"
-                />
-                {/* bottom fade */}
-                <div className="sticky bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none" />
-              </div>
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/70 text-xs font-semibold mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
+              Our Clients
             </div>
+            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-5">
+              Trusted by the world&apos;s aviation professionals
+            </h2>
+            <p className="text-white/55 text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
+              Over the years i-Handler has supported charter operators, flight departments,
+              handling companies, and military contractors across six continents —
+              delivering seamless permits, ground handling, and flight support worldwide.
+            </p>
+            <div className="flex flex-wrap gap-8 justify-center mb-10">
+              {[
+                { value: '100+', label: 'Companies served' },
+                { value: '6',    label: 'Continents covered' },
+                { value: '15+',  label: 'Years of experience' },
+              ].map((s) => (
+                <div key={s.label} className="rounded-2xl bg-white/5 border border-white/10 px-8 py-5">
+                  <p className="text-4xl font-bold text-[#F34707]">{s.value}</p>
+                  <p className="text-sm text-white/40 mt-1">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <Link href="/customers"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors shadow-lg">
+              View all clients
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </section>
 
         {/* ── Airport Search CTA ────────────────────────────────────────────── */}
-        <section className="relative py-20 overflow-hidden bg-[#F34707]">
-          {/* Background photo */}
-          <Image
-            src="/images/pilot-cockpit-night.jpg"
-            alt=""
-            fill
-            className="object-cover object-center"
-            priority={false}
+        <section className="relative py-20 overflow-hidden bg-black">
+          {/* Background video */}
+          <video
+            autoPlay muted loop playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            src="/videos/promo.mp4"
           />
-          {/* Dark overlay for text readability — no orange tint */}
-          <div className="absolute inset-0 bg-black/55" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
           <div className="relative max-w-3xl mx-auto px-4 text-center">
             <div className="flex justify-center mb-6">
               <div className="w-24 h-24 flex items-center justify-center drop-shadow-xl">

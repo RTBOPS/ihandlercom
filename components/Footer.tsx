@@ -1,6 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
+const aircraftBrands = [
+  { src: '/images/brands/BombardierWT.png',         alt: 'Bombardier' },
+  { src: '/images/brands/learjetWT.png',            alt: 'Learjet' },
+  { src: '/images/brands/gulstreamWT.png',          alt: 'Gulfstream' },
+  { src: '/images/brands/cessnaWT.png',             alt: 'Cessna' },
+  { src: '/images/brands/AirbusWT.png',             alt: 'Airbus' },
+  { src: '/images/brands/BoeingWT.png',             alt: 'Boeing' },
+  { src: '/images/brands/EmbraerWT.png',            alt: 'Embraer' },
+  { src: '/images/brands/pilatusWT.png',            alt: 'Pilatus' },
+  { src: '/images/brands/beachcraftWT.png',         alt: 'Beechcraft' },
+  { src: '/images/brands/nbaa-main-logo-white.png', alt: 'NBAA' },
+];
+
 export default function Footer() {
   return (
     <footer className="relative overflow-hidden">
@@ -57,6 +70,23 @@ export default function Footer() {
               operation@i-handler.app
             </a>
           </div>
+        </div>
+      </div>
+
+      {/* ── Aircraft brands marquee strip ─────────────────────────────────── */}
+      <div className="relative z-10 border-t border-white/5 py-4 overflow-hidden">
+        <div className="flex animate-marquee whitespace-nowrap items-center gap-14 px-8">
+          {[...aircraftBrands, ...aircraftBrands].map((brand, i) => (
+            <div key={i} className="flex-shrink-0 h-7 flex items-center">
+              <Image
+                src={brand.src}
+                alt={brand.alt}
+                width={110}
+                height={28}
+                className="h-6 w-auto object-contain opacity-50 hover:opacity-90 transition-opacity brightness-0 invert"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </footer>

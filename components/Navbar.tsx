@@ -30,16 +30,34 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
-          <Image
-            src="/images/I-HANDLER_APP_LOGO.png"
-            alt="i-Handler"
-            width={140}
-            height={56}
-            className="h-10 w-auto object-contain"
-          />
-        </Link>
+        {/* Logo — links home */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <Link href="/">
+            <Image
+              src="/images/I-HANDLER_APP_LOGO.png"
+              alt="i-Handler"
+              width={140}
+              height={56}
+              className="h-9 w-auto object-contain"
+            />
+          </Link>
+          {/* App store link with square logo */}
+          <a
+            href="https://i-handler.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 hover:opacity-85 transition-opacity"
+            title="Open i-Handler App"
+          >
+            <Image
+              src="/images/logo-square.png"
+              alt="i-Handler.app"
+              width={36}
+              height={36}
+              className="h-9 w-9 object-contain rounded-lg shadow-sm"
+            />
+          </a>
+        </div>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
