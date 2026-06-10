@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { collection, query, getDocs, orderBy, startAt, endAt } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { AirportRecord } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -34,27 +32,16 @@ export default function AirportsPage() {
     setSearched(true);
     setSearchError(null);
     try {
-      const upper = searchTerm.trim().toUpperCase();
-      const nameRaw = searchTerm.trim();
-      const hi = '';
-      const [icaoSnap, iataSnap, nameSnap] = await Promise.all([
-        getDocs(query(collection(db, 'airports'), orderBy('icao'), startAt(upper), endAt(upper + hi))),
-        getDocs(query(collection(db, 'airports'), orderBy('iata'), startAt(upper), endAt(upper + hi))),
-        getDocs(query(collection(db, 'airports'), orderBy('name'), startAt(nameRaw), endAt(nameRaw + hi))),
-      ]);
-      const seen = new Set<string>();
-      const merged: AirportRecord[] = [];
-      for (const snap of [icaoSnap, iataSnap, nameSnap]) {
-        for (const d of snap.docs) {
-          if (!seen.has(d.id)) { seen.add(d.id); merged.push({ id: d.id, ...d.data() } as AirportRecord); }
-        }
-      }
-      setResults(merged);
+      const res = await fetch(`/api/airports/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Search failed');
+      setResults(data.results as AirportRecord[]);
     } catch (err) {
       console.error('Search error:', err);
       setSearchError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
-    finally { setLoading(false); }
   };
 
   return (
