@@ -52,7 +52,7 @@ function buildEmailBody(r: BulkResult, emailType: EmailType): string {
 
 We hope this message finds you well.
 
-My name is [Your Name] from i-Handler, the leading digital platform for international private aviation operations. We are pleased to inform you that ${r.companyName} has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide to find FBOs and ground handlers at airports around the globe.
+My name is Felipe Aguilar from i-Handler, the leading digital platform for international private aviation operations. We are pleased to inform you that ${r.companyName} has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide to find FBOs and ground handlers at airports around the globe.
 
 Your company is listed under ICAO ${r.icao}.
 
@@ -74,7 +74,7 @@ We would love to schedule a brief call to introduce you to all the features i-Ha
 Thank you for being part of the i-Handler community.
 
 Best regards,
-[Your Name]
+Felipe Aguilar
 i-Handler Operations Team
 operations@i-handler.app
 www.i-handler.app`;
@@ -102,7 +102,7 @@ This process takes only a few minutes, and we greatly appreciate your cooperatio
 If you have any questions, please do not hesitate to reach out.
 
 Warm regards,
-[Your Name]
+Felipe Aguilar
 i-Handler Operations Team
 operations@i-handler.app
 www.i-handler.app`;

@@ -31,7 +31,7 @@ function buildEmailBody(result: InviteResult): string {
 
 We hope this message finds you well.
 
-My name is [Your Name] from i-Handler, the leading digital platform for international private aviation operations. We are pleased to inform you that ${companyName} has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide to find FBOs and ground handlers at airports around the globe.
+My name is Felipe Aguilar from i-Handler, the leading digital platform for international private aviation operations. We are pleased to inform you that ${companyName} has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide to find FBOs and ground handlers at airports around the globe.
 
 Your company is listed under ICAO ${icao}.
 
@@ -62,7 +62,7 @@ We would also love to schedule a brief call to introduce you to all the features
 Thank you for being part of the i-Handler community.
 
 Best regards,
-[Your Name]
+Felipe Aguilar
 i-Handler Operations Team
 operations@i-handler.app
 www.i-handler.app`;
@@ -91,7 +91,7 @@ This process takes only a few minutes, and we greatly appreciate your cooperatio
 If you have any questions, please do not hesitate to reach out.
 
 Warm regards,
-[Your Name]
+Felipe Aguilar
 i-Handler Operations Team
 operations@i-handler.app
 www.i-handler.app`;
@@ -262,7 +262,7 @@ function InviteForm() {
 
                 {result.emailType === 'new' ? (<>
                   <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '16px' }}>
-                    We hope this message finds you well. My name is <strong>[Your Name]</strong> from i-Handler, the leading digital platform for international private aviation operations.
+                    We hope this message finds you well. My name is <strong>Felipe Aguilar</strong> from i-Handler, the leading digital platform for international private aviation operations.
                   </p>
                   <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '16px' }}>
                     We are pleased to inform you that <strong>{result.companyName}</strong> has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide.
