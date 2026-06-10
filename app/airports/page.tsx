@@ -76,12 +76,12 @@ export default function AirportsPage() {
             </div>
 
             {/* Search label */}
-            <p className="text-center text-gray-500 text-base mb-4">Search by ICAO code, IATA code, or airport name</p>
+            <p className="text-center text-gray-500 text-base mb-4">Search by ICAO code or IATA code</p>
 
             {/* Search form */}
             <form onSubmit={handleSearch} className="flex gap-3 mb-10">
               <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Enter ICAO, IATA or Airport name (e.g. KJFK, JFK, Kennedy)"
+                placeholder="Enter ICAO or IATA code (e.g. KJFK or JFK)"
                 className="flex-1 px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-all text-sm" />
               <button type="submit" disabled={loading}
                 className="px-6 py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors flex items-center gap-2 disabled:opacity-50 shadow-md">
