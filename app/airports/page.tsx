@@ -25,16 +25,18 @@ export default function AirportsPage() {
   const [results, setResults] = useState<AirportRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     setLoading(true);
     setSearched(true);
+    setSearchError(null);
     try {
       const upper = searchTerm.trim().toUpperCase();
       const nameRaw = searchTerm.trim();
-      const hi = '';
+      const hi = '';
       const [icaoSnap, iataSnap, nameSnap] = await Promise.all([
         getDocs(query(collection(db, 'airports'), orderBy('icao'), startAt(upper), endAt(upper + hi))),
         getDocs(query(collection(db, 'airports'), orderBy('iata'), startAt(upper), endAt(upper + hi))),
@@ -48,7 +50,10 @@ export default function AirportsPage() {
         }
       }
       setResults(merged);
-    } catch (err) { console.error('Search error:', err); }
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchError(err instanceof Error ? err.message : String(err));
+    }
     finally { setLoading(false); }
   };
 
@@ -108,6 +113,11 @@ export default function AirportsPage() {
             </form>
 
             {/* Results */}
+            {searchError && (
+              <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-mono break-all">
+                Error: {searchError}
+              </div>
+            )}
             {searched && (
               <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-12">
                 {results.length === 0 ? (
