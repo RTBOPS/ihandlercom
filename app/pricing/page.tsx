@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
@@ -26,6 +29,37 @@ const PRO_FEATURES = [
 ];
 
 export default function PricingPage() {
+  const [showForm, setShowForm]   = useState(false);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState('');
+  const [form, setForm] = useState({ name: '', email: '', company: '', country: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!form.name || !form.email || !form.company || !form.country) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout failed');
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.');
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -79,7 +113,6 @@ export default function PricingPage() {
 
             {/* Pro */}
             <div className="rounded-2xl border-2 border-[#F34707] bg-white p-7 shadow-lg relative overflow-hidden">
-              {/* Popular badge */}
               <div className="absolute top-5 right-5">
                 <span className="px-2.5 py-1 rounded-full bg-[#F34707] text-white text-xs font-bold">
                   Most Popular
@@ -107,13 +140,67 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              <a href="mailto:operation@i-handler.app?subject=Pro%20Plan%20%E2%80%94%20%24290%2Fyear&body=Hi%2C%0A%0AI%27d%20like%20to%20subscribe%20to%20the%20i-Handler%20Pro%20Plan%20(%24290%2Fyear).%0A%0AName%3A%0ACompany%3A%0AEmail%3A%0A"
-                className="block w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-center text-white font-bold text-sm transition-colors shadow-md">
-                Get Pro Access · $290/year
-              </a>
-              <p className="text-center text-gray-400 text-xs mt-3">
-                Reply to this email and we&apos;ll set up your account within 24 hours
-              </p>
+              {!showForm ? (
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="block w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-center text-white font-bold text-sm transition-colors shadow-md">
+                  Get Pro Access · $290/year
+                </button>
+              ) : (
+                <form onSubmit={handleSubscribe} className="space-y-3 mt-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Your details</p>
+                  {[
+                    { name: 'name',    placeholder: 'Full name',     type: 'text'  },
+                    { name: 'email',   placeholder: 'Email address', type: 'email' },
+                    { name: 'company', placeholder: 'Company name',  type: 'text'  },
+                    { name: 'country', placeholder: 'Country',       type: 'text'  },
+                  ].map((f) => (
+                    <input
+                      key={f.name}
+                      name={f.name}
+                      type={f.type}
+                      placeholder={f.placeholder}
+                      value={form[f.name as keyof typeof form]}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors"
+                    />
+                  ))}
+
+                  {error && (
+                    <p className="text-red-500 text-xs font-medium">{error}</p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-bold text-sm transition-colors shadow-md disabled:opacity-60 flex items-center justify-center gap-2">
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        Redirecting to Stripe…
+                      </>
+                    ) : (
+                      'Continue to Payment →'
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="w-full py-2 text-gray-400 text-xs hover:text-gray-600 transition-colors">
+                    Cancel
+                  </button>
+                </form>
+              )}
+
+              {!showForm && (
+                <p className="text-center text-gray-400 text-xs mt-3">
+                  Secure payment via Stripe · Cancel anytime
+                </p>
+              )}
             </div>
           </div>
 
@@ -135,25 +222,34 @@ export default function PricingPage() {
             </p>
           </div>
 
+          {/* Already subscribed? Manage */}
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 mb-10 text-center">
+            <p className="text-sm text-gray-500 mb-3">Already a subscriber? Manage your plan or billing.</p>
+            <Link href="/subscription/manage"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold text-sm transition-colors">
+              Manage Subscription
+            </Link>
+          </div>
+
           {/* FAQ */}
           <div className="space-y-4 max-w-2xl mx-auto">
             <h3 className="text-center text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">Questions</h3>
             {[
               {
                 q: 'How do I get access after paying?',
-                a: "Send an email using the button above. We'll create your account and send login credentials within 24 hours.",
+                a: 'After checkout you\'ll be redirected to a success page and receive a confirmation email. Your Pro access is activated immediately.',
               },
               {
                 q: 'Can I pay by card?',
-                a: 'We currently accept wire transfer and major credit cards. Reach out via email and we\'ll send an invoice.',
+                a: 'Yes — Stripe accepts Visa, Mastercard, Amex, and most major credit/debit cards. You can also contact us for invoice/wire.',
               },
               {
                 q: 'Is it a recurring subscription?',
-                a: 'Yes, billed annually at $290/year. We\'ll email you before renewal so you can choose to continue or cancel.',
+                a: 'Yes, billed annually at $290/year. Stripe will email you before renewal. You can cancel anytime from the Manage Subscription page.',
               },
               {
                 q: 'What if the data I need is missing?',
-                a: 'Contact us at operation@i-handler.app. We actively maintain the database and can prioritize airports or companies you need.',
+                a: 'Contact us at operations@i-handler.app. We actively maintain the database and can prioritize airports or companies you need.',
               },
             ].map((item) => (
               <div key={item.q} className="rounded-xl border border-gray-200 bg-white p-5">

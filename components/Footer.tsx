@@ -66,8 +66,8 @@ export default function Footer() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs text-gray-500">© {new Date().getFullYear()} i-Handler. All rights reserved.</p>
-            <a href="mailto:operation@i-handler.app" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
-              operation@i-handler.app
+            <a href="mailto:operations@i-handler.app" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              operations@i-handler.app
             </a>
           </div>
         </div>

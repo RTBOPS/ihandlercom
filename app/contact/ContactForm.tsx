@@ -10,7 +10,7 @@ export default function ContactForm() {
     e.preventDefault();
     const subject = encodeURIComponent('i-Handler Inquiry');
     const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`);
-    window.location.href = `mailto:operation@i-handler.app?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:operations@i-handler.app?subject=${subject}&body=${body}`;
     setSent(true);
   };
 
@@ -20,7 +20,7 @@ export default function ContactForm() {
         <div className="text-4xl mb-3">✈️</div>
         <h3 className="text-gray-900 font-semibold text-lg mb-2">Message ready!</h3>
         <p className="text-gray-500 text-sm">Your email client should have opened. If not, email us directly at{' '}
-          <a href="mailto:operation@i-handler.app" className="text-[#F34707]">operation@i-handler.app</a>
+          <a href="mailto:operations@i-handler.app" className="text-[#F34707]">operations@i-handler.app</a>
         </p>
       </div>
     );

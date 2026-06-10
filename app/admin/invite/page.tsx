@@ -64,7 +64,7 @@ Thank you for being part of the i-Handler community.
 Best regards,
 [Your Name]
 i-Handler Operations Team
-operation@i-handler.app
+operations@i-handler.app
 www.i-handler.app`;
   }
 
@@ -93,7 +93,7 @@ If you have any questions, please do not hesitate to reach out.
 Warm regards,
 [Your Name]
 i-Handler Operations Team
-operation@i-handler.app
+operations@i-handler.app
 www.i-handler.app`;
 }
 
@@ -177,6 +177,11 @@ function InviteForm() {
 
   if (result) {
     const emailBody = buildEmailBody(result);
+    const subject = result.emailType === 'new'
+      ? `i-Handler – Invitation to manage your listing at ${result.icao}`
+      : `i-Handler – Annual Directory Update Request for ${result.companyName}`;
+    const loginUrl = 'https://ihandler-landing.vercel.app/login';
+
     return (
       <div className="space-y-6">
         {/* Success banner */}
@@ -203,12 +208,13 @@ function InviteForm() {
           </div>
         </div>
 
-        {/* Email preview */}
+        {/* Tabs: Preview / Edit */}
         <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          {/* Toolbar */}
+          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-semibold text-gray-700">Email Template</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Edit, then copy or open in your email client</p>
+              <h3 className="text-sm font-semibold text-gray-700">Email Preview</h3>
+              <p className="text-xs text-gray-400 mt-0.5">To: {result.email} · {subject}</p>
             </div>
             <div className="flex gap-2">
               <button onClick={handleCopy}
@@ -216,25 +222,120 @@ function InviteForm() {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                {copied ? 'Copied!' : 'Copy'}
+                {copied ? 'Copied!' : 'Copy Text'}
               </button>
               <button onClick={handleOpenMailto}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#F34707] text-white text-xs font-semibold hover:bg-[#d93d06] transition-colors">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Open in Email
+                Open in Email Client
               </button>
             </div>
           </div>
-          <div className="p-4">
-            <div className="text-xs text-gray-400 mb-2 font-medium">
-              To: {result.email} &nbsp;·&nbsp;
-              Subject: {result.emailType === 'new'
-                ? `i-Handler – Invitation to manage your listing at ${result.icao}`
-                : `i-Handler – Annual Directory Update Request for ${result.companyName}`}
+
+          {/* HTML Visual Preview */}
+          <div className="p-6 bg-gray-100">
+            <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-md overflow-hidden">
+              {/* Email header with logo */}
+              <div style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' }} className="px-8 py-8 text-center">
+                {/* Logo using img tag so it works in email preview context */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/I-HANDLER_APP_LOGO.png"
+                  alt="i-Handler"
+                  style={{ height: '48px', width: 'auto', filter: 'brightness(0) invert(1)', display: 'inline-block' }}
+                />
+                <p style={{ color: '#F34707', fontSize: '11px', fontWeight: '600', letterSpacing: '0.15em', marginTop: '10px', textTransform: 'uppercase' }}>
+                  International Aviation Support
+                </p>
+              </div>
+
+              {/* Orange accent bar */}
+              <div style={{ height: '4px', background: 'linear-gradient(90deg, #F34707, #FC8C00)' }} />
+
+              {/* Body */}
+              <div className="px-8 py-8">
+                <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '16px' }}>
+                  {result.contactName ? `Dear ${result.contactName},` : `Dear ${result.companyName} Team,`}
+                </p>
+
+                {result.emailType === 'new' ? (<>
+                  <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '16px' }}>
+                    We hope this message finds you well. My name is <strong>[Your Name]</strong> from i-Handler, the leading digital platform for international private aviation operations.
+                  </p>
+                  <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '16px' }}>
+                    We are pleased to inform you that <strong>{result.companyName}</strong> has been included in our global aviation directory — the reference used by operators, pilots, and dispatchers worldwide.
+                  </p>
+                  <div style={{ background: '#FFF7F4', border: '1px solid #F34707', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
+                    <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '600' }}>Airport ICAO</p>
+                    <p style={{ fontSize: '22px', color: '#F34707', fontWeight: '800', fontFamily: 'monospace', margin: 0 }}>{result.icao}</p>
+                  </div>
+                  <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '20px' }}>
+                    We would like to invite you to access your private portal to verify and update your company information.
+                  </p>
+                </>) : (<>
+                  <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '16px' }}>
+                    We hope the year has been going well for <strong>{result.companyName}</strong>.
+                  </p>
+                  <p style={{ fontSize: '15px', color: '#374151', lineHeight: '1.7', marginBottom: '20px' }}>
+                    As part of our annual directory maintenance, we kindly ask you to review and update your company&apos;s information in the i-Handler platform.
+                  </p>
+                </>)}
+
+                {/* Credentials box */}
+                <div style={{ background: '#1a1a1a', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px' }}>
+                  <p style={{ color: '#F34707', fontSize: '11px', fontWeight: '700', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '12px' }}>
+                    🔐 Your Login Credentials
+                  </p>
+                  <div style={{ display: 'grid', gap: '6px' }}>
+                    {[
+                      ['Portal', loginUrl],
+                      ['Email', result.email],
+                      ...(!result.isExisting && result.tempPassword ? [['Password', result.tempPassword]] : []),
+                    ].map(([label, value]) => (
+                      <div key={label} style={{ display: 'flex', gap: '12px', alignItems: 'baseline' }}>
+                        <span style={{ color: '#6B7280', fontSize: '12px', minWidth: '70px', fontWeight: '600' }}>{label}</span>
+                        <span style={{ color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace', wordBreak: 'break-all' }}>{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  <a href={loginUrl}
+                    style={{ display: 'inline-block', background: '#F34707', color: '#FFFFFF', padding: '14px 32px', borderRadius: '10px', fontWeight: '700', fontSize: '14px', textDecoration: 'none', letterSpacing: '0.03em' }}>
+                    Access My Portal →
+                  </a>
+                </div>
+
+                <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.6' }}>
+                  If you have any questions, please reply to this email or contact us at{' '}
+                  <a href="mailto:operations@i-handler.app" style={{ color: '#F34707', textDecoration: 'none', fontWeight: '600' }}>
+                    operations@i-handler.app
+                  </a>
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div style={{ background: '#F9FAFB', borderTop: '1px solid #E5E7EB', padding: '20px 32px', textAlign: 'center' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/logo-square.png" alt="i-Handler App" style={{ height: '36px', width: '36px', borderRadius: '8px', display: 'inline-block', marginBottom: '8px' }} />
+                <p style={{ fontSize: '12px', color: '#9CA3AF', margin: '0 0 4px' }}>
+                  i-Handler — International Aviation Support
+                </p>
+                <p style={{ fontSize: '11px', color: '#D1D5DB', margin: 0 }}>
+                  operations@i-handler.app · www.i-handler.app
+                </p>
+              </div>
             </div>
-            <textarea ref={emailBodyRef} defaultValue={emailBody} rows={28}
+          </div>
+
+          {/* Editable plain text */}
+          <div className="px-6 pb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wide">Plain Text (editable — used when you click &ldquo;Open in Email Client&rdquo;)</p>
+            <textarea ref={emailBodyRef} defaultValue={emailBody} rows={20}
               className="w-full text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-4 resize-none focus:outline-none focus:border-[#F34707] font-mono leading-relaxed" />
           </div>
         </div>

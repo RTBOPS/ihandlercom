@@ -29,21 +29,26 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Left: image + services */}
             <div>
-              {/* Ramp photo */}
+              {/* Ramp photo — grayscale with i-Handler logo in orange */}
               <div className="mb-8 rounded-2xl overflow-hidden shadow-lg relative">
                 <Image
                   src="/images/contact-ramp.jpg"
                   alt="i-Handler ground operations on the ramp"
                   width={720}
                   height={332}
-                  className="w-full h-auto object-cover brightness-110 contrast-105 saturate-125"
+                  className="w-full h-auto object-cover grayscale brightness-105 contrast-110"
                 />
-                {/* Subtle warm gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4">
-                  <span className="text-xs font-semibold text-white/80 bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
-                    i-Handler on the ramp
-                  </span>
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                {/* i-Handler logo in white — bottom of photo */}
+                <div className="absolute bottom-5 left-0 right-0 flex justify-center">
+                  <Image
+                    src="/images/I-HANDLER_APP_LOGO.png"
+                    alt="i-Handler"
+                    width={200}
+                    height={80}
+                    className="h-14 w-auto object-contain drop-shadow-2xl brightness-0 invert"
+                  />
                 </div>
               </div>
 
@@ -61,8 +66,8 @@ export default function ContactPage() {
               <div className="mt-8 pt-8 border-t border-gray-200">
                 <p className="text-gray-400 text-sm">
                   You can also reach us directly at{' '}
-                  <a href="mailto:operation@i-handler.app" className="text-[#F34707] hover:text-[#d93d06] transition-colors">
-                    operation@i-handler.app
+                  <a href="mailto:operations@i-handler.app" className="text-[#F34707] hover:text-[#d93d06] transition-colors">
+                    operations@i-handler.app
                   </a>
                 </p>
               </div>

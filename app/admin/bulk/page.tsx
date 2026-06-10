@@ -76,7 +76,7 @@ Thank you for being part of the i-Handler community.
 Best regards,
 [Your Name]
 i-Handler Operations Team
-operation@i-handler.app
+operations@i-handler.app
 www.i-handler.app`;
   }
 
@@ -104,7 +104,7 @@ If you have any questions, please do not hesitate to reach out.
 Warm regards,
 [Your Name]
 i-Handler Operations Team
-operation@i-handler.app
+operations@i-handler.app
 www.i-handler.app`;
 }
 

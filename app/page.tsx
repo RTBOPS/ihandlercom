@@ -10,40 +10,35 @@ export default function HomePage() {
       <Navbar />
       <main>
 
-        {/* ── Hero ─────────────────────────────────────────────────────────── */}
-        <section className="relative min-h-screen flex items-end pb-16 pt-16 overflow-hidden bg-black">
-
-          {/* Full-bleed background video */}
+        {/* ── Hero video — full screen, no overlay, no text ─────────────────── */}
+        <section className="relative h-screen overflow-hidden bg-black">
           <video
             autoPlay muted loop playsInline
             className="absolute inset-0 w-full h-full object-cover"
             src="/videos/promo.mp4"
-            poster="/images/plane-B.png"
           />
+          {/* Subtle bottom fade into the next section */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-50 to-transparent" />
+        </section>
 
-          {/* Base white-tinted overlay to soften video and help all text */}
-          <div className="absolute inset-0 bg-white/20" />
-          {/* Directional darks for text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/25" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/30" />
-
-          {/* Content */}
-          <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* ── Hero text — below the video ───────────────────────────────────── */}
+        <section className="bg-gray-50 pt-16 pb-20 px-4">
+          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div className="max-w-2xl">
 
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold mb-6 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F34707]/10 border border-[#F34707]/20 text-[#F34707] text-xs font-semibold mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#F34707] animate-pulse" />
                 International Aviation Operations
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
                 The Smart Way to{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F34707] to-[#FC8C00]">
                   Manage International Private Aviation
                 </span>
               </h1>
 
-              <p className="text-white/70 text-lg leading-relaxed mb-10 max-w-xl">
+              <p className="text-gray-500 text-lg leading-relaxed mb-10 max-w-xl">
                 Intelligent, streamlined flight support — landing permits, navigation logs,
                 GENDEC, ICAO flight plans, eAPIS, FBO coordination, and ground handling,
                 all in one platform.
@@ -51,14 +46,14 @@ export default function HomePage() {
 
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact"
-                  className="px-6 py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors flex items-center gap-2 shadow-lg shadow-orange-900/40">
+                  className="px-6 py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors flex items-center gap-2 shadow-lg shadow-orange-900/20">
                   Get In Touch
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
                 <Link href="/airports"
-                  className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white font-semibold text-sm transition-colors flex items-center gap-2">
+                  className="px-6 py-3 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 font-semibold text-sm transition-colors flex items-center gap-2 shadow-sm">
                   Search Airports
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
@@ -67,15 +62,15 @@ export default function HomePage() {
               </div>
 
               {/* Stats row */}
-              <div className="mt-12 flex flex-wrap gap-10 border-t border-white/10 pt-10">
+              <div className="mt-12 flex flex-wrap gap-10 border-t border-gray-200 pt-10">
                 {[
                   { value: '10,000+', label: 'Airports' },
                   { value: '190+',    label: 'Countries' },
                   { value: '24 / 7',  label: 'Support' },
                 ].map((s) => (
                   <div key={s.label}>
-                    <p className="text-2xl font-bold text-white">{s.value}</p>
-                    <p className="text-sm text-white/50">{s.label}</p>
+                    <p className="text-2xl font-bold text-gray-900">{s.value}</p>
+                    <p className="text-sm text-gray-400">{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -232,7 +227,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Clients section ───────────────────────────────────────────────── */}
-        <section className="relative py-24 bg-gray-950 overflow-hidden">
+        <section className="relative py-24 bg-black overflow-hidden">
           {/* Background photo */}
           <Image
             src="/images/teamwork-cockpit.jpg"
@@ -278,30 +273,21 @@ export default function HomePage() {
         </section>
 
         {/* ── Airport Search CTA ────────────────────────────────────────────── */}
-        <section className="relative py-20 overflow-hidden bg-black">
-          {/* Background video */}
-          <video
-            autoPlay muted loop playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-            src="/videos/promo.mp4"
-          />
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
-          <div className="relative max-w-3xl mx-auto px-4 text-center">
+        <section className="py-20 bg-white">
+          <div className="max-w-3xl mx-auto px-4 text-center">
             <div className="flex justify-center mb-6">
-              <div className="w-24 h-24 flex items-center justify-center drop-shadow-xl">
+              <div className="w-24 h-24 flex items-center justify-center drop-shadow-md">
                 <Image src="/images/brands/tripsupport.png" alt="Trip Support" width={96} height={96} className="w-full h-full object-contain" />
               </div>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Worldwide Gateway for Aviation Services
             </h2>
-            <p className="text-white/80 text-lg mb-8">
+            <p className="text-gray-500 text-lg mb-8">
               Search airports worldwide and instantly find handlers, FBOs, contacts, and operational information.
             </p>
             <Link href="/airports"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-[#F34707] font-bold text-base transition-colors hover:bg-gray-100 shadow-lg">
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-bold text-base transition-colors shadow-lg">
               Search Airports
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />

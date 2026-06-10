@@ -4,7 +4,7 @@ import { getAuth } from 'firebase-admin/auth';
 
 let adminApp: App;
 
-function getAdminApp(): App {
+export function getAdminApp(): App {
   if (getApps().find((a) => a.name === 'admin')) {
     return getApps().find((a) => a.name === 'admin')!;
   }

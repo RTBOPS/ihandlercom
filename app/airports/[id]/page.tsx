@@ -65,6 +65,112 @@ function ContactTable({ contacts }: { contacts: ContactDept[] }) {
   );
 }
 
+// ── METAR / TAF box ───────────────────────────────────────────────────────────
+function MetarBox({ icao }: { icao: string }) {
+  const [metar, setMetar]       = useState<string>('');
+  const [taf, setTaf]           = useState<string>('');
+  const [wxLoading, setWxLoading] = useState(true);
+  const [wxError, setWxError]   = useState('');
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!icao) return;
+    setWxLoading(true);
+    setWxError('');
+    fetch(`/api/weather?icao=${icao}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.error) { setWxError(d.error); return; }
+        setMetar(d.metar ?? '');
+        setTaf(d.taf ?? '');
+      })
+      .catch(() => setWxError('Weather data unavailable'))
+      .finally(() => setWxLoading(false));
+  }, [icao]);
+
+  if (wxLoading) {
+    return (
+      <div className="mb-6 rounded-2xl border-4 border-yellow-400 bg-yellow-400 px-5 py-4 flex items-center gap-3">
+        <svg className="animate-spin w-5 h-5 text-black flex-shrink-0" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+        <span className="text-black font-bold text-sm">Loading live weather for {icao}…</span>
+      </div>
+    );
+  }
+
+  if (wxError || (!metar && !taf)) {
+    return (
+      <div className="mb-6 rounded-2xl border-4 border-yellow-400 bg-yellow-400 px-5 py-4">
+        <p className="text-black font-bold text-sm">⚠ WEATHER UNAVAILABLE</p>
+        <p className="text-black/70 text-xs mt-1">{wxError || `No METAR/TAF currently available for ${icao}`}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-6 rounded-2xl overflow-hidden border-4 border-yellow-400 shadow-md">
+
+      {/* ── Header bar — solid yellow ── */}
+      <div className="bg-yellow-400 px-5 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* Cloud icon */}
+          <svg className="w-5 h-5 text-black flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+          </svg>
+          <span className="font-black text-black text-sm uppercase tracking-widest">Live Weather · {icao}</span>
+        </div>
+        {taf && (
+          <button onClick={() => setExpanded((e) => !e)}
+            className="flex items-center gap-1 text-xs font-bold text-black hover:opacity-70 transition-opacity">
+            {expanded ? 'Hide TAF' : 'Show TAF'}
+            <svg className={`w-3.5 h-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* ── METAR ── */}
+      <div className="bg-yellow-50 px-5 pt-4 pb-4">
+        <p className="text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2">
+          METAR — Current Conditions
+        </p>
+        <p className="font-mono text-sm font-semibold text-black leading-relaxed break-words">
+          {metar}
+        </p>
+      </div>
+
+      {/* ── TAF collapsible ── */}
+      {expanded && taf && (
+        <div className="bg-yellow-100 px-5 pt-4 pb-5 border-t-2 border-yellow-400">
+          <p className="text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2">
+            TAF — Forecast
+          </p>
+          <p className="font-mono text-sm font-semibold text-black leading-relaxed whitespace-pre-wrap break-words">
+            {taf}
+          </p>
+        </div>
+      )}
+
+      {/* ── Footer ── */}
+      <div className="bg-yellow-400 px-5 py-2 flex items-center justify-between">
+        <p className="text-[10px] font-bold text-black/70 uppercase tracking-wide">
+          Source: NOAA Aviation Weather Center · Refreshes every 20–30 min
+        </p>
+        {taf && !expanded && (
+          <button onClick={() => setExpanded(true)}
+            className="text-[10px] font-black text-black hover:opacity-70 transition-opacity">
+            + TAF FORECAST ↓
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AirportDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [airport, setAirport] = useState<AirportRecord | null>(null);
@@ -170,7 +276,7 @@ export default function AirportDetailPage() {
 
           {/* Airport diagram */}
           {airportDiagram && (
-            <div className="mb-8">
+            <div className="mb-4">
               <a href={airportDiagram} target="_blank" rel="noopener noreferrer">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -179,9 +285,12 @@ export default function AirportDetailPage() {
                   className="w-full rounded-2xl border border-gray-200 shadow-md object-contain max-h-[500px] hover:shadow-lg transition-shadow"
                 />
               </a>
-              <p className="text-gray-400 text-xs mt-2 text-center">Click to open full-size diagram</p>
+              <p className="text-gray-400 text-xs mt-2 text-center mb-4">Click to open full-size diagram</p>
             </div>
           )}
+
+          {/* METAR / TAF live weather */}
+          {airport.icao && <MetarBox icao={airport.icao} />}
 
           {/* Airport header */}
           <div className="mb-8">

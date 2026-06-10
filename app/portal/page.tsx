@@ -663,7 +663,7 @@ export default function PortalPage() {
             !record ? (
               <div className="rounded-2xl border border-gray-200 p-8 text-center shadow-sm">
                 <p className="text-gray-500 text-sm mb-3">No listing found for your company name and ICAO.</p>
-                <p className="text-gray-400 text-xs">Contact <a href="mailto:operation@i-handler.app" className="text-[#F34707]">operation@i-handler.app</a></p>
+                <p className="text-gray-400 text-xs">Contact <a href="mailto:operations@i-handler.app" className="text-[#F34707]">operations@i-handler.app</a></p>
               </div>
             ) : (
               <form onSubmit={handleSave} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
@@ -745,7 +745,7 @@ export default function PortalPage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <p className="text-xs text-gray-400">To update logos not accepted, contact <a href="mailto:operation@i-handler.app" className="text-[#F34707]">operation@i-handler.app</a></p>
+                  <p className="text-xs text-gray-400">To update logos not accepted, contact <a href="mailto:operations@i-handler.app" className="text-[#F34707]">operations@i-handler.app</a></p>
                   <button type="submit" disabled={saving}
                     className="px-5 py-2.5 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm disabled:opacity-50 shadow-md">
                     {saving ? 'Saving…' : 'Save Changes'}

@@ -73,13 +73,13 @@ export default function FlightSupportPage() {
       <Navbar />
       <main className="min-h-screen bg-white">
 
-        {/* ── Hero with flight coordination image ─────────────────────────── */}
-        <section className="relative h-72 sm:h-96 overflow-hidden">
+        {/* ── Hero with cockpit image ──────────────────────────────────────── */}
+        <section className="relative h-[420px] sm:h-[520px] overflow-hidden">
           <Image
-            src="/images/flight-coordination.png"
-            alt="Flight coordination"
+            src="/images/teamwork-cockpit.jpg"
+            alt="Flight coordination cockpit"
             fill
-            className="object-cover object-center"
+            className="object-cover object-top"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-transparent" />
@@ -100,6 +100,33 @@ export default function FlightSupportPage() {
 
         {/* ── Services ──────────────────────────────────────────────────────── */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* App CTA — above intro text */}
+          <div className="flex flex-col items-center text-center mb-10 p-8 rounded-2xl bg-[#F34707]/5 border border-[#F34707]/15">
+            <a
+              href="https://i-handler.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-3 group"
+            >
+              <Image
+                src="/images/logo-square.png"
+                alt="i-Handler App"
+                width={128}
+                height={128}
+                className="w-32 h-32 rounded-3xl shadow-xl group-hover:shadow-2xl group-hover:scale-105 transition-all"
+              />
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#F34707] mb-1">Now available</p>
+                <p className="text-xl font-bold text-gray-900 group-hover:text-[#F34707] transition-colors">
+                  Manage it all from the i-Handler App →
+                </p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Permits, flight plans, handlers & more — in your pocket. Tap to open.
+                </p>
+              </div>
+            </a>
+          </div>
+
           <p className="text-gray-500 text-lg max-w-2xl mx-auto text-center mb-12">
             We simplify international flight coordination, documentation, and permits — delivering
             precision, speed, and reliability for aviation professionals worldwide.
