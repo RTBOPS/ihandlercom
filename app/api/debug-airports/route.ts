@@ -5,7 +5,15 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q') || 'KJFK';
 
-  const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'NOT SET';
+  const clientConfig = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? '✓ set' : '✗ MISSING',
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '✗ MISSING',
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '✗ MISSING',
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '✗ MISSING',
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '✗ MISSING',
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ? '✓ set' : '✗ MISSING',
+  };
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'NOT SET';
 
   try {
     const upper = q.trim().toUpperCase();
@@ -33,9 +41,9 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json({
-      projectId,
+      clientConfig,
+      adminProjectId: projectId,
       sampleCount: countSnap.size,
-      sampleDocs,
       query: upper,
       icaoResults,
     });
