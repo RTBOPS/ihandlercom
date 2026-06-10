@@ -68,6 +68,8 @@ export async function POST(req: NextRequest) {
       isExisting,
       sentAt: FieldValue.serverTimestamp(),
     };
+    // Persist temp password so admin can retrieve it later (new users only)
+    if (tempPassword) invitationData.tempPassword = tempPassword;
 
     await adminDb.collection('invitations').doc(email).set(invitationData, { merge: true });
 
