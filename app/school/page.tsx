@@ -5,6 +5,42 @@ import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+// ── Feature icons (inline SVG for calc + notes) ───────────────────────────────
+const CalcSvg = () => (
+  <svg viewBox="0 0 64 64" fill="currentColor" className="w-7 h-7">
+    <rect x="10" y="6" width="44" height="52" rx="6" fill="none" stroke="currentColor" strokeWidth="3.5"/>
+    <rect x="17" y="14" width="30" height="10" rx="2.5"/>
+    <circle cx="21" cy="34" r="3.5"/>
+    <circle cx="32" cy="34" r="3.5"/>
+    <circle cx="43" cy="34" r="3.5"/>
+    <circle cx="21" cy="46" r="3.5"/>
+    <circle cx="32" cy="46" r="3.5"/>
+    <rect x="39.5" y="42.5" width="7" height="7" rx="2"/>
+  </svg>
+);
+
+const NotesSvg = () => (
+  <svg viewBox="0 0 64 64" fill="currentColor" className="w-7 h-7">
+    <rect x="12" y="8" width="36" height="48" rx="5" fill="none" stroke="currentColor" strokeWidth="3.5"/>
+    <line x1="20" y1="22" x2="44" y2="22" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+    <line x1="20" y1="31" x2="44" y2="31" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+    <line x1="20" y1="40" x2="35" y2="40" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+    <circle cx="8" cy="16" r="3" fill="currentColor"/>
+    <circle cx="8" cy="32" r="3" fill="currentColor"/>
+    <circle cx="8" cy="48" r="3" fill="currentColor"/>
+  </svg>
+);
+
+// ── Feature icon paths (index matches features array in t) ────────────────────
+const featureIcons = [
+  { type: 'img', src: '/images/school/icons/handsfree.svg' },
+  { type: 'img', src: '/images/school/icons/unique.svg' },
+  { type: 'img', src: '/images/school/icons/official_manuals.svg' },
+  { type: 'img', src: '/images/school/icons/smart_study.svg' },
+  { type: 'svg', Cmp: CalcSvg },
+  { type: 'svg', Cmp: NotesSvg },
+] as const;
+
 // ── i18n ─────────────────────────────────────────────────────────────────────
 const t = {
   ES: {
@@ -21,10 +57,12 @@ const t = {
     featTitle: 'Diseñado para aprobar, no solo para estudiar',
     featSub: 'Cada función resuelve un problema real de quien estudia para su licencia de piloto.',
     features: [
-      { icon: '/images/school/icons/ppl.png', tag: 'Tu killer feature', title: 'Modo Voz Manos Libres', desc: 'Practica mientras conduces, corres o haces escala. El app lee las preguntas en voz alta y acepta tus respuestas por voz.' },
-      { icon: '/images/school/icons/combo.png', tag: 'Único en el mercado', title: 'Español · Inglés · Portugués', desc: 'Preguntas y explicaciones en tu idioma. Material oficial FAA traducido y verificado.' },
-      { icon: '/images/school/icons/single.png', tag: 'Biblioteca FAA completa', title: 'Manuales Oficiales Incluidos', desc: 'FAR/AIM, Pilot\'s Handbook, Weather Services y más — todos dentro del app, sin conexión.' },
-      { icon: '/images/school/icons/pilots.png', tag: 'Estudio inteligente', title: 'Enfócate en lo que Fallas', desc: 'El algoritmo identifica tus áreas débiles y te da más preguntas donde las necesitas. Estadísticas detalladas por tema.' },
+      { tag: 'Tu killer feature',       title: 'Modo Voz Manos Libres',         desc: 'Practica mientras conduces, corres o haces escala. El app lee las preguntas en voz alta y acepta tus respuestas por voz.' },
+      { tag: 'Único en el mercado',      title: 'Español · Inglés · Portugués',  desc: 'Preguntas y explicaciones en tu idioma. Material oficial FAA traducido y verificado.' },
+      { tag: 'Biblioteca FAA completa',  title: 'Manuales Oficiales Incluidos',  desc: 'FAR/AIM, Pilot\'s Handbook, Weather Services y más — todos dentro del app, sin conexión.' },
+      { tag: 'Estudio inteligente',      title: 'Enfócate en lo que Fallas',     desc: 'El algoritmo identifica tus áreas débiles y te da más preguntas donde las necesitas. Estadísticas detalladas por tema.' },
+      { tag: 'Herramienta integrada',    title: 'Calculadora de Piloto',         desc: 'Resuelve cálculos de navegación, combustible, velocidad y conversiones directamente en el app. Sin salir del modo de estudio.' },
+      { tag: 'Tu espacio de aprendizaje', title: 'Notas de Estudio Personales',  desc: 'Crea y organiza tus propias notas dentro del app. Ideal para resumir conceptos y prepararte con tu propio estilo.' },
     ],
     screenshotsTitle: 'Diseñado para iPhone y iPad',
     screensSub: 'Una experiencia nativa en todos tus dispositivos Apple.',
@@ -32,8 +70,8 @@ const t = {
     howSub: 'Tres pasos para llegar al centro de examen con confianza.',
     steps: [
       { num: '01', title: 'Elige tu certificación', desc: 'PPL, IFR, CPL, ATP, Dispatcher y más. 13 cursos disponibles.' },
-      { num: '02', title: 'Practica a tu manera', desc: 'Modo pantalla o modo voz manos libres — en tu idioma.' },
-      { num: '03', title: 'Aprueba a la primera', desc: 'Banco oficial FAA actualizado. Sin sorpresas el día del examen.' },
+      { num: '02', title: 'Practica a tu manera',   desc: 'Modo pantalla o modo voz manos libres — en tu idioma.' },
+      { num: '03', title: 'Aprueba a la primera',   desc: 'Banco oficial FAA actualizado. Sin sorpresas el día del examen.' },
     ],
     certsTitle: '13 certificaciones cubiertas',
     certsSub: 'Desde tu primer vuelo hasta capitán de aerolínea.',
@@ -78,10 +116,12 @@ const t = {
     featTitle: 'Built to pass, not just to study',
     featSub: 'Every feature solves a real problem for pilot license candidates.',
     features: [
-      { icon: '/images/school/icons/ppl.png', tag: 'Your killer feature', title: 'Hands-Free Voice Mode', desc: 'Practice while driving, running, or during a layover. The app reads questions aloud and accepts your voice answers.' },
-      { icon: '/images/school/icons/combo.png', tag: 'Unique on the market', title: 'Spanish · English · Portuguese', desc: 'Questions and explanations in your language. Official FAA material translated and verified.' },
-      { icon: '/images/school/icons/single.png', tag: 'Full FAA library', title: 'Official Manuals Included', desc: 'FAR/AIM, Pilot\'s Handbook, Weather Services and more — all inside the app, offline.' },
-      { icon: '/images/school/icons/pilots.png', tag: 'Smart study', title: 'Focus on Your Weak Areas', desc: 'The algorithm identifies your weak spots and gives you more questions where you need them. Detailed stats by topic.' },
+      { tag: 'Your killer feature',     title: 'Hands-Free Voice Mode',         desc: 'Practice while driving, running, or during a layover. The app reads questions aloud and accepts your voice answers.' },
+      { tag: 'Unique on the market',    title: 'Spanish · English · Portuguese', desc: 'Questions and explanations in your language. Official FAA material translated and verified.' },
+      { tag: 'Full FAA library',        title: 'Official Manuals Included',      desc: 'FAR/AIM, Pilot\'s Handbook, Weather Services and more — all inside the app, offline.' },
+      { tag: 'Smart study',             title: 'Focus on Your Weak Areas',       desc: 'The algorithm identifies your weak spots and gives you more questions where you need them. Detailed stats by topic.' },
+      { tag: 'Built-in tool',           title: 'Pilot Calculator',               desc: 'Solve navigation, fuel, speed, and conversion calculations directly inside the app. No need to leave study mode.' },
+      { tag: 'Your learning space',     title: 'Personal Study Notes',           desc: 'Create and organize your own notes inside the app. Perfect for summarizing concepts and studying your own way.' },
     ],
     screenshotsTitle: 'Built for iPhone and iPad',
     screensSub: 'A native experience on all your Apple devices.',
@@ -89,8 +129,8 @@ const t = {
     howSub: 'Three steps to walk into the testing center with confidence.',
     steps: [
       { num: '01', title: 'Choose your certification', desc: 'PPL, IFR, CPL, ATP, Dispatcher and more. 13 courses available.' },
-      { num: '02', title: 'Practice your way', desc: 'Screen mode or hands-free voice mode — in your language.' },
-      { num: '03', title: 'Pass on the first try', desc: 'Updated FAA official question bank. No surprises on exam day.' },
+      { num: '02', title: 'Practice your way',         desc: 'Screen mode or hands-free voice mode — in your language.' },
+      { num: '03', title: 'Pass on the first try',     desc: 'Updated FAA official question bank. No surprises on exam day.' },
     ],
     certsTitle: '13 certifications covered',
     certsSub: 'From your first flight to airline captain.',
@@ -135,19 +175,21 @@ const t = {
     featTitle: 'Feito para passar, não só para estudar',
     featSub: 'Cada recurso resolve um problema real de quem estuda para sua licença de piloto.',
     features: [
-      { icon: '/images/school/icons/ppl.png', tag: 'Seu recurso diferencial', title: 'Modo Voz Mãos Livres', desc: 'Pratique enquanto dirige, corre ou faz escala. O app lê as perguntas em voz alta e aceita suas respostas por voz.' },
-      { icon: '/images/school/icons/combo.png', tag: 'Único no mercado', title: 'Português · Espanhol · Inglês', desc: 'Perguntas e explicações no seu idioma. Material oficial FAA traduzido e verificado.' },
-      { icon: '/images/school/icons/single.png', tag: 'Biblioteca FAA completa', title: 'Manuais Oficiais Incluídos', desc: 'FAR/AIM, Pilot\'s Handbook, Weather Services e mais — tudo dentro do app, sem internet.' },
-      { icon: '/images/school/icons/pilots.png', tag: 'Estudo inteligente', title: 'Foco nas suas Fraquezas', desc: 'O algoritmo identifica suas áreas fracas e te dá mais questões onde você precisa. Estatísticas detalhadas por tema.' },
+      { tag: 'Seu recurso diferencial',   title: 'Modo Voz Mãos Livres',          desc: 'Pratique enquanto dirige, corre ou faz escala. O app lê as perguntas em voz alta e aceita suas respostas por voz.' },
+      { tag: 'Único no mercado',           title: 'Português · Espanhol · Inglês', desc: 'Perguntas e explicações no seu idioma. Material oficial FAA traduzido e verificado.' },
+      { tag: 'Biblioteca FAA completa',    title: 'Manuais Oficiais Incluídos',    desc: 'FAR/AIM, Pilot\'s Handbook, Weather Services e mais — tudo dentro do app, sem internet.' },
+      { tag: 'Estudo inteligente',         title: 'Foco nas suas Fraquezas',       desc: 'O algoritmo identifica suas áreas fracas e te dá mais questões onde você precisa. Estatísticas detalhadas por tema.' },
+      { tag: 'Ferramenta integrada',       title: 'Calculadora de Piloto',         desc: 'Resolva cálculos de navegação, combustível, velocidade e conversões diretamente no app. Sem sair do modo de estudo.' },
+      { tag: 'Seu espaço de aprendizado',  title: 'Notas de Estudo Pessoais',      desc: 'Crie e organize suas próprias notas dentro do app. Ideal para resumir conceitos e estudar do seu jeito.' },
     ],
     screenshotsTitle: 'Feito para iPhone e iPad',
     screensSub: 'Uma experiência nativa em todos os seus dispositivos Apple.',
     howTitle: 'Simples assim',
     howSub: 'Três passos para chegar ao centro de exame com confiança.',
     steps: [
-      { num: '01', title: 'Escolha sua certificação', desc: 'PPL, IFR, CPL, ATP, Despachante e mais. 13 cursos disponíveis.' },
-      { num: '02', title: 'Pratique do seu jeito', desc: 'Modo tela ou modo voz mãos livres — no seu idioma.' },
-      { num: '03', title: 'Passe na primeira tentativa', desc: 'Banco oficial FAA atualizado. Sem surpresas no dia do exame.' },
+      { num: '01', title: 'Escolha sua certificação',     desc: 'PPL, IFR, CPL, ATP, Despachante e mais. 13 cursos disponíveis.' },
+      { num: '02', title: 'Pratique do seu jeito',        desc: 'Modo tela ou modo voz mãos livres — no seu idioma.' },
+      { num: '03', title: 'Passe na primeira tentativa',  desc: 'Banco oficial FAA atualizado. Sem surpresas no dia do exame.' },
     ],
     certsTitle: '13 certificações cobertas',
     certsSub: 'Do seu primeiro voo até capitão de companhia aérea.',
@@ -201,21 +243,21 @@ const certs = [
 
 // ── Pricing ───────────────────────────────────────────────────────────────────
 const plansMonthly = [
-  { icon: '/images/school/icons/single.png',    name: 'Curso Individual',      price: '$4.99',  includes: ['1 curso a elección'],                                              tag: '' },
-  { icon: '/images/school/icons/pilots.png',    name: 'Pilotos de Avión',      price: '$9.99',  includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'],                          tag: 'mostPop' },
-  { icon: '/images/school/icons/ops.png',       name: 'Operaciones Aéreas',    price: '$5.99',  includes: ['ATC · Despachador', 'Navegante'],                                  tag: '' },
-  { icon: '/images/school/icons/tec.png',       name: 'Técnicos Aeronáuticos', price: '$5.99',  includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'],                tag: '' },
-  { icon: '/images/school/icons/heli_group.png',name: 'Helicóptero',           price: '$4.99',  includes: ['Piloto Privado Helicóptero'],                                      tag: '' },
-  { icon: '/images/school/icons/combo.png',     name: 'Todo Acceso',           price: '$14.99', includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'], tag: 'bestVal' },
+  { icon: '/images/school/icons/single.png',     name: 'Curso Individual',      price: '$4.99',  includes: ['1 curso a elección'],                                              tag: '' },
+  { icon: '/images/school/icons/pilots.png',     name: 'Pilotos de Avión',      price: '$9.99',  includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'],                          tag: 'mostPop' },
+  { icon: '/images/school/icons/ops.png',        name: 'Operaciones Aéreas',    price: '$5.99',  includes: ['ATC · Despachador', 'Navegante'],                                  tag: '' },
+  { icon: '/images/school/icons/tec.png',        name: 'Técnicos Aeronáuticos', price: '$5.99',  includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'],                tag: '' },
+  { icon: '/images/school/icons/heli_group.png', name: 'Helicóptero',           price: '$4.99',  includes: ['Piloto Privado Helicóptero'],                                      tag: '' },
+  { icon: '/images/school/icons/combo.png',      name: 'Todo Acceso',           price: '$14.99', includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'], tag: 'bestVal' },
 ];
 
 const plansAnnual = [
-  { icon: '/images/school/icons/single.png',    name: 'Curso Individual',      price: '$39.99',  equiv: '$3.33', includes: ['1 curso a elección'],                                              tag: '' },
-  { icon: '/images/school/icons/pilots.png',    name: 'Pilotos de Avión',      price: '$79.99',  equiv: '$6.67', includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'],                          tag: 'mostPop' },
-  { icon: '/images/school/icons/ops.png',       name: 'Operaciones Aéreas',    price: '$44.99',  equiv: '$3.75', includes: ['ATC · Despachador', 'Navegante'],                                  tag: '' },
-  { icon: '/images/school/icons/tec.png',       name: 'Técnicos Aeronáuticos', price: '$44.99',  equiv: '$3.75', includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'],                tag: '' },
-  { icon: '/images/school/icons/heli_group.png',name: 'Helicóptero',           price: '$34.99',  equiv: '$2.92', includes: ['Piloto Privado Helicóptero'],                                      tag: '' },
-  { icon: '/images/school/icons/combo.png',     name: 'Todo Acceso',           price: '$109.99', equiv: '$9.17', includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'], tag: 'bestVal', lifetime: '$249.99' },
+  { icon: '/images/school/icons/single.png',     name: 'Curso Individual',      price: '$39.99',  equiv: '$3.33', includes: ['1 curso a elección'],                                                 tag: '' },
+  { icon: '/images/school/icons/pilots.png',     name: 'Pilotos de Avión',      price: '$79.99',  equiv: '$6.67', includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'],                             tag: 'mostPop' },
+  { icon: '/images/school/icons/ops.png',        name: 'Operaciones Aéreas',    price: '$44.99',  equiv: '$3.75', includes: ['ATC · Despachador', 'Navegante'],                                     tag: '' },
+  { icon: '/images/school/icons/tec.png',        name: 'Técnicos Aeronáuticos', price: '$44.99',  equiv: '$3.75', includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'],                   tag: '' },
+  { icon: '/images/school/icons/heli_group.png', name: 'Helicóptero',           price: '$34.99',  equiv: '$2.92', includes: ['Piloto Privado Helicóptero'],                                         tag: '' },
+  { icon: '/images/school/icons/combo.png',      name: 'Todo Acceso',           price: '$109.99', equiv: '$9.17', includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'],  tag: 'bestVal', lifetime: '$249.99' },
 ];
 
 const iphoneScreenshots = [
@@ -236,7 +278,7 @@ const ipadScreenshots = [
   { src: '/images/school/screenshots/ipad_05.png', label: 'Calculadora' },
 ];
 
-// ── App Store SVGs ────────────────────────────────────────────────────────────
+// ── App Store icons ───────────────────────────────────────────────────────────
 const AppleIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
@@ -254,9 +296,12 @@ export default function SchoolPage() {
   const [lang, setLang] = useState<Lang>('ES');
   const [pricingTab, setPricingTab] = useState<'monthly' | 'annual'>('annual');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const txt = t[lang];
 
   const plans = pricingTab === 'monthly' ? plansMonthly : plansAnnual;
+
+  const langFlags: Record<Lang, string> = { ES: '🇪🇸', EN: '🇺🇸', PT: '🇧🇷' };
 
   return (
     <>
@@ -264,20 +309,46 @@ export default function SchoolPage() {
       <main className="min-h-screen bg-white">
 
         {/* ── HERO ──────────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 pt-28 pb-20 px-4">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#F34707]/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#FC8C00]/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+        <section className="relative overflow-hidden pt-28 pb-20 px-4">
+          {/* Background photo */}
+          <div className="absolute inset-0">
+            <Image
+              src="/images/school/school_background.jpg"
+              alt="i-Handler School background"
+              fill
+              className="object-cover object-center"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/65" />
+          </div>
 
-          <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          {/* Language switcher — top right */}
+          <div className="absolute top-20 right-4 md:right-8 z-20 flex gap-1 bg-black/40 backdrop-blur-sm rounded-xl p-1">
+            {(['ES', 'EN', 'PT'] as Lang[]).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${lang === l ? 'bg-[#F34707] text-white shadow' : 'text-white/60 hover:text-white'}`}
+              >
+                <span>{langFlags[l]}</span>
+                <span>{l}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="relative z-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
-              {/* Language switcher */}
-              <div className="flex gap-1 mb-6 w-fit bg-white/10 rounded-xl p-1">
-                {(['ES','EN','PT'] as Lang[]).map((l) => (
-                  <button key={l} onClick={() => setLang(l)}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${lang === l ? 'bg-[#F34707] text-white shadow' : 'text-white/60 hover:text-white'}`}>
-                    {l}
-                  </button>
-                ))}
+              {/* School logo — rounded, centered above badge */}
+              <div className="mb-5">
+                <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shadow-xl border-2 border-white/10">
+                  <Image
+                    src="/images/school/school_store_logo.png"
+                    alt="i-Handler School"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
 
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F34707]/20 border border-[#F34707]/30 text-[#FC8C00] text-xs font-semibold mb-5 uppercase tracking-wider">
@@ -302,20 +373,45 @@ export default function SchoolPage() {
               <p className="text-gray-400 text-sm">{txt.free}</p>
             </div>
 
-            {/* App icon + badge */}
-            <div className="flex justify-center">
+            {/* iPhone mockup — slightly tilted */}
+            <div className="flex justify-center items-end">
               <div className="relative">
-                <div className="w-52 h-52 rounded-[3.5rem] overflow-hidden shadow-2xl shadow-[#F34707]/30 border-4 border-white/10">
-                  <Image src="/images/school/app-icon.png" alt="i-Handler School" width={208} height={208} className="w-full h-full object-cover" />
+                {/* Phone shell */}
+                <div className="relative w-56 rounded-[3rem] overflow-hidden border-[6px] border-white/20 shadow-2xl shadow-black/60 bg-black">
+                  {/* Notch */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-b-2xl z-10" />
+                  <Image
+                    src="/images/school/screenshots/iphone_01.png"
+                    alt="i-Handler School app"
+                    width={224}
+                    height={484}
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-44 h-6 bg-[#F34707]/40 blur-xl rounded-full" />
-                {/* Language badges */}
-                <div className="absolute -top-3 -right-3 flex gap-1">
-                  {['ES','EN','PT'].map((l) => (
-                    <span key={l} className="px-2 py-0.5 rounded-full bg-[#F34707] text-white text-[10px] font-bold shadow">{l}</span>
-                  ))}
-                </div>
+                {/* Glow under phone */}
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#F34707]/30 blur-2xl rounded-full" />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CERTIFICATIONS (right after hero) ─────────────────────────────── */}
+        <section className="py-14 px-4 bg-white border-b border-gray-100">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{txt.certsTitle}</h2>
+            <p className="text-gray-500 text-sm mb-10">{txt.certsSub}</p>
+            <div className="grid grid-cols-4 sm:grid-cols-7 gap-4 justify-items-center">
+              {certs.map((c) => (
+                <div key={c.label} className="flex flex-col items-center gap-2 group">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-md border border-gray-200 group-hover:border-[#F34707]/50 transition-all">
+                    <Image src={c.icon} alt={c.label} width={56} height={56} className="w-full h-full object-contain" />
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xs font-bold text-[#F34707]">{c.label}</div>
+                    <div className="text-[10px] text-gray-400 leading-tight">{c.name}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -344,28 +440,33 @@ export default function SchoolPage() {
         <section className="py-20 px-4 bg-white">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-14">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                {txt.featTitle.split('aprobar').length > 1 ? (
-                  <>{txt.featTitle.split('aprobar')[0]}<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F34707] to-[#FC8C00]">
-                    {lang === 'ES' ? 'aprobar' : lang === 'EN' ? 'pass' : 'passar'}
-                  </span>{txt.featTitle.split(lang === 'ES' ? 'aprobar' : lang === 'EN' ? 'pass' : 'passar')[1]}</>
-                ) : txt.featTitle}
-              </h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">{txt.featTitle}</h2>
               <p className="text-gray-500 max-w-xl mx-auto text-sm">{txt.featSub}</p>
             </div>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {txt.features.map((f, i) => (
-                <div key={i} className={`rounded-2xl p-6 border flex gap-4 ${i === 0 ? 'bg-gradient-to-br from-[#F34707] to-[#FC8C00] border-transparent' : 'bg-gray-50 border-gray-200'}`}>
-                  <div className="flex-shrink-0 w-14 h-14 rounded-2xl overflow-hidden bg-white/20 flex items-center justify-center shadow">
-                    <Image src={f.icon} alt={f.title} width={48} height={48} className="w-full h-full object-contain" />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {txt.features.map((f, i) => {
+                const iconDef = featureIcons[i];
+                const isHero = i === 0;
+                return (
+                  <div
+                    key={i}
+                    className={`rounded-2xl p-6 border flex gap-4 ${isHero ? 'bg-gradient-to-br from-[#F34707] to-[#FC8C00] border-transparent sm:col-span-2 lg:col-span-1' : 'bg-gray-50 border-gray-200'}`}
+                  >
+                    <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center shadow ${isHero ? 'bg-white/20 text-white' : 'bg-white border border-gray-200 text-gray-900'}`}>
+                      {iconDef.type === 'img' ? (
+                        <Image src={iconDef.src} alt={f.title} width={36} height={36} className="w-9 h-9 object-contain" />
+                      ) : (
+                        <iconDef.Cmp />
+                      )}
+                    </div>
+                    <div>
+                      <div className={`text-xs font-semibold uppercase tracking-wider mb-1 ${isHero ? 'text-white/70' : 'text-[#F34707]'}`}>{f.tag}</div>
+                      <h3 className={`text-base font-bold mb-1 ${isHero ? 'text-white' : 'text-gray-900'}`}>{f.title}</h3>
+                      <p className={`text-sm leading-relaxed ${isHero ? 'text-white/85' : 'text-gray-500'}`}>{f.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <div className={`text-xs font-semibold uppercase tracking-wider mb-1 ${i === 0 ? 'text-white/70' : 'text-[#F34707]'}`}>{f.tag}</div>
-                    <h3 className={`text-lg font-bold mb-1 ${i === 0 ? 'text-white' : 'text-gray-900'}`}>{f.title}</h3>
-                    <p className={`text-sm leading-relaxed ${i === 0 ? 'text-white/85' : 'text-gray-500'}`}>{f.desc}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -383,9 +484,12 @@ export default function SchoolPage() {
             <div className="flex gap-5 overflow-x-auto px-8 pb-4 scrollbar-hide snap-x snap-mandatory">
               {iphoneScreenshots.map((s, i) => (
                 <div key={i} className="flex-shrink-0 snap-center flex flex-col items-center gap-2">
-                  <div className="w-36 rounded-[2rem] overflow-hidden border-2 border-white/10 shadow-2xl">
+                  <button
+                    onClick={() => setLightbox(s.src)}
+                    className="w-36 rounded-[2rem] overflow-hidden border-2 border-white/10 shadow-2xl hover:border-[#F34707]/60 hover:scale-105 transition-all cursor-zoom-in"
+                  >
                     <Image src={s.src} alt={s.label} width={144} height={310} className="w-full h-auto object-cover" />
-                  </div>
+                  </button>
                   <span className="text-gray-500 text-xs">{s.label}</span>
                 </div>
               ))}
@@ -398,15 +502,44 @@ export default function SchoolPage() {
             <div className="flex gap-6 overflow-x-auto px-8 pb-4 scrollbar-hide snap-x snap-mandatory">
               {ipadScreenshots.map((s, i) => (
                 <div key={i} className="flex-shrink-0 snap-center flex flex-col items-center gap-2">
-                  <div className="w-56 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl">
+                  <button
+                    onClick={() => setLightbox(s.src)}
+                    className="w-56 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl hover:border-[#F34707]/60 hover:scale-105 transition-all cursor-zoom-in"
+                  >
                     <Image src={s.src} alt={s.label} width={224} height={300} className="w-full h-auto object-cover" />
-                  </div>
+                  </button>
                   <span className="text-gray-500 text-xs">{s.label}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
+
+        {/* ── LIGHTBOX ──────────────────────────────────────────────────────── */}
+        {lightbox && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+            onClick={() => setLightbox(null)}
+          >
+            <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+              <Image
+                src={lightbox}
+                alt="Screenshot"
+                width={800}
+                height={1600}
+                className="max-h-[85vh] w-auto h-auto object-contain rounded-3xl shadow-2xl"
+              />
+              <button
+                onClick={() => setLightbox(null)}
+                className="absolute -top-4 -right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
         <section className="py-20 px-4 bg-white">
@@ -432,34 +565,12 @@ export default function SchoolPage() {
           </div>
         </section>
 
-        {/* ── CERTIFICATIONS ────────────────────────────────────────────────── */}
-        <section className="py-20 px-4 bg-gray-50">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">{txt.certsTitle}</h2>
-            <p className="text-gray-500 text-sm mb-12">{txt.certsSub}</p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-4">
-              {certs.map((c) => (
-                <div key={c.label} className="flex flex-col items-center gap-2 group">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-md border border-gray-200 group-hover:shadow-lg group-hover:border-[#F34707]/30 transition-all">
-                    <Image src={c.icon} alt={c.label} width={56} height={56} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xs font-bold text-[#F34707]">{c.label}</div>
-                    <div className="text-[10px] text-gray-400 leading-tight">{c.name}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ── PRICING ───────────────────────────────────────────────────────── */}
-        <section className="py-20 px-4 bg-white">
+        <section className="py-20 px-4 bg-gray-50">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">{txt.pricingTitle}</h2>
               <p className="text-gray-500 text-sm mb-8">{txt.pricingSub}</p>
-              {/* Tabs */}
               <div className="inline-flex bg-gray-100 rounded-2xl p-1.5 gap-1">
                 <button onClick={() => setPricingTab('monthly')}
                   className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all ${pricingTab === 'monthly' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
@@ -475,7 +586,7 @@ export default function SchoolPage() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {plans.map((plan) => (
-                <div key={plan.name} className={`rounded-2xl border p-5 relative transition-all ${plan.tag === 'mostPop' ? 'border-[#F34707] shadow-lg shadow-[#F34707]/10 bg-orange-50/40' : plan.tag === 'bestVal' ? 'border-green-400 shadow-lg shadow-green-500/10 bg-green-50/40' : 'border-gray-200 bg-white'}`}>
+                <div key={plan.name} className={`rounded-2xl border p-5 relative transition-all bg-white ${plan.tag === 'mostPop' ? 'border-[#F34707] shadow-lg shadow-[#F34707]/10' : plan.tag === 'bestVal' ? 'border-green-400 shadow-lg shadow-green-500/10' : 'border-gray-200'}`}>
                   {plan.tag === 'mostPop' && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#F34707] text-white text-xs font-bold rounded-full whitespace-nowrap">{txt.mostPop}</div>
                   )}
@@ -493,7 +604,7 @@ export default function SchoolPage() {
                         <span className="text-gray-400 text-xs">{pricingTab === 'monthly' ? txt.perMonth : txt.perYear}</span>
                       </div>
                       {'equiv' in plan && (
-                        <div className="text-xs text-gray-400">{txt.equivMonth} {(plan as {equiv: string}).equiv}{txt.perMonth}</div>
+                        <div className="text-xs text-gray-400">{txt.equivMonth} {(plan as { equiv: string }).equiv}{txt.perMonth}</div>
                       )}
                     </div>
                   </div>
@@ -506,7 +617,7 @@ export default function SchoolPage() {
                   </ul>
                   {'lifetime' in plan && pricingTab === 'annual' && (
                     <div className="mb-3 px-3 py-2 rounded-xl bg-gray-100 text-xs text-gray-500 text-center">
-                      {txt.lifetime}: <span className="font-bold text-gray-800">{(plan as {lifetime: string}).lifetime}</span>
+                      {txt.lifetime}: <span className="font-bold text-gray-800">{(plan as { lifetime: string }).lifetime}</span>
                     </div>
                   )}
                   <a href="#" className={`block text-center py-2.5 rounded-xl font-semibold text-sm transition-colors ${plan.tag === 'mostPop' ? 'bg-[#F34707] text-white hover:bg-[#d93d06]' : plan.tag === 'bestVal' ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-900 text-white hover:bg-gray-700'}`}>
@@ -515,30 +626,11 @@ export default function SchoolPage() {
                 </div>
               ))}
             </div>
-
-            {/* Paywall preview */}
-            <div className="mt-16 text-center">
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-6">Precios en la app</p>
-              <div className="flex justify-center gap-6 flex-wrap">
-                <div className="text-center">
-                  <div className="w-48 rounded-[2rem] overflow-hidden border-2 border-gray-200 shadow-xl mx-auto">
-                    <Image src="/images/school/paywall/mensual.png" alt="Mensual" width={192} height={400} className="w-full h-auto" />
-                  </div>
-                  <p className="text-xs text-gray-400 mt-2">{txt.monthly}</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-48 rounded-[2rem] overflow-hidden border-2 border-gray-200 shadow-xl mx-auto">
-                    <Image src="/images/school/paywall/anual.png" alt="Anual" width={192} height={400} className="w-full h-auto" />
-                  </div>
-                  <p className="text-xs text-gray-400 mt-2">{txt.annual}</p>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
         {/* ── FAQ ───────────────────────────────────────────────────────────── */}
-        <section className="py-20 px-4 bg-gray-50">
+        <section className="py-20 px-4 bg-white">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-3">{txt.faqTitle}</h2>
@@ -546,7 +638,7 @@ export default function SchoolPage() {
             </div>
             <div className="space-y-3">
               {txt.faqs.map((faq, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div key={i} className="bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     className="w-full flex items-center justify-between px-6 py-4 text-left">
                     <span className="font-semibold text-gray-900 text-sm pr-4">{faq.q}</span>
