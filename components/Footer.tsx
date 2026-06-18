@@ -39,6 +39,7 @@ export default function Footer() {
               <h4 className="text-sm font-semibold text-white mb-4">Product</h4>
               <ul className="space-y-2">
                 <li><a href="https://i-handler.app" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler App</a></li>
+                <li><Link href="/school" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler School</Link></li>
                 <li><Link href="/flight-support" className="text-sm text-gray-400 hover:text-white transition-colors">Documentation</Link></li>
               </ul>
             </div>
