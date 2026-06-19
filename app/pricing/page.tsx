@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const FREE_FEATURES = [
   'Search all airports worldwide',
@@ -29,39 +31,31 @@ const PRO_FEATURES = [
 ];
 
 export default function PricingPage() {
-  const [showForm, setShowForm]   = useState(false);
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState('');
+  const router = useRouter();
+  const [showForm, setShowForm]     = useState(false);
+  const [showPayPal, setShowPayPal] = useState(false);
+  const [payError, setPayError]     = useState('');
   const [form, setForm] = useState({ name: '', email: '', company: '', country: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubscribe = async (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setPayError('');
     if (!form.name || !form.email || !form.company || !form.country) {
-      setError('Please fill in all fields.');
+      setPayError('Please fill in all fields.');
       return;
     }
-    setLoading(true);
-    try {
-      const res = await fetch('/api/stripe/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout failed');
-      window.location.href = data.url;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.');
-      setLoading(false);
-    }
+    setShowPayPal(true);
   };
 
   return (
-    <>
+    <PayPalScriptProvider options={{
+      clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+      currency: 'USD',
+      intent: 'capture',
+    }}>
       <Navbar />
       <main className="min-h-screen pt-24 pb-20 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
@@ -140,14 +134,23 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              {!showForm ? (
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="block w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-center text-white font-bold text-sm transition-colors shadow-md">
-                  Get Pro Access · $290/year
-                </button>
-              ) : (
-                <form onSubmit={handleSubscribe} className="space-y-3 mt-2">
+              {/* Step 1 — CTA button */}
+              {!showForm && (
+                <>
+                  <button
+                    onClick={() => setShowForm(true)}
+                    className="block w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-center text-white font-bold text-sm transition-colors shadow-md">
+                    Get Pro Access · $290/year
+                  </button>
+                  <p className="text-center text-gray-400 text-xs mt-3">
+                    Secure payment via PayPal · Cancel anytime
+                  </p>
+                </>
+              )}
+
+              {/* Step 2 — Contact form */}
+              {showForm && !showPayPal && (
+                <form onSubmit={handleFormSubmit} className="space-y-3 mt-2">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Your details</p>
                   {[
                     { name: 'name',    placeholder: 'Full name',     type: 'text'  },
@@ -166,26 +169,11 @@ export default function PricingPage() {
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors"
                     />
                   ))}
-
-                  {error && (
-                    <p className="text-red-500 text-xs font-medium">{error}</p>
-                  )}
-
+                  {payError && <p className="text-red-500 text-xs font-medium">{payError}</p>}
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-bold text-sm transition-colors shadow-md disabled:opacity-60 flex items-center justify-center gap-2">
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                        </svg>
-                        Redirecting to Stripe…
-                      </>
-                    ) : (
-                      'Continue to Payment →'
-                    )}
+                    className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-bold text-sm transition-colors shadow-md">
+                    Continue to Payment →
                   </button>
                   <button
                     type="button"
@@ -196,10 +184,54 @@ export default function PricingPage() {
                 </form>
               )}
 
-              {!showForm && (
-                <p className="text-center text-gray-400 text-xs mt-3">
-                  Secure payment via Stripe · Cancel anytime
-                </p>
+              {/* Step 3 — PayPal buttons */}
+              {showPayPal && (
+                <div className="mt-2">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 text-center">
+                    Complete payment with PayPal
+                  </p>
+                  {payError && <p className="text-red-500 text-xs font-medium mb-2 text-center">{payError}</p>}
+                  <PayPalButtons
+                    style={{ layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' }}
+                    createOrder={async () => {
+                      setPayError('');
+                      const res = await fetch('/api/paypal/create-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(form),
+                      });
+                      const data = await res.json();
+                      if (!res.ok || !data.orderID) throw new Error(data.error || 'Order creation failed');
+                      return data.orderID;
+                    }}
+                    onApprove={async (data) => {
+                      const res = await fetch('/api/paypal/capture-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderID: data.orderID }),
+                      });
+                      const result = await res.json();
+                      if (!res.ok || !result.success) {
+                        setPayError(result.error || 'Payment capture failed. Contact support.');
+                        return;
+                      }
+                      router.push('/pricing/success');
+                    }}
+                    onError={(err) => {
+                      console.error('PayPal error:', err);
+                      setPayError('Payment failed. Please try again or contact support.');
+                    }}
+                    onCancel={() => {
+                      setPayError('Payment cancelled. You can try again when ready.');
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => { setShowPayPal(false); setPayError(''); }}
+                    className="w-full py-2 text-gray-400 text-xs hover:text-gray-600 transition-colors mt-2">
+                    ← Back
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -224,11 +256,12 @@ export default function PricingPage() {
 
           {/* Already subscribed? Manage */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 mb-10 text-center">
-            <p className="text-sm text-gray-500 mb-3">Already a subscriber? Manage your plan or billing.</p>
-            <Link href="/subscription/manage"
+            <p className="text-sm text-gray-500 mb-3">Already a subscriber? Contact us to manage your plan.</p>
+            <a
+              href="mailto:operations@i-handler.app?subject=Manage%20Subscription"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold text-sm transition-colors">
-              Manage Subscription
-            </Link>
+              Contact Support
+            </a>
           </div>
 
           {/* FAQ */}
@@ -237,15 +270,15 @@ export default function PricingPage() {
             {[
               {
                 q: 'How do I get access after paying?',
-                a: 'After checkout you\'ll be redirected to a success page and receive a confirmation email. Your Pro access is activated immediately.',
+                a: 'After checkout you\'ll be redirected to a success page and receive a PayPal receipt. Your Pro access is activated immediately.',
               },
               {
                 q: 'Can I pay by card?',
-                a: 'Yes — Stripe accepts Visa, Mastercard, Amex, and most major credit/debit cards. You can also contact us for invoice/wire.',
+                a: 'Yes — PayPal accepts Visa, Mastercard, Amex, and most major credit/debit cards. You can also pay directly from your PayPal balance.',
               },
               {
                 q: 'Is it a recurring subscription?',
-                a: 'Yes, billed annually at $290/year. Stripe will email you before renewal. You can cancel anytime from the Manage Subscription page.',
+                a: 'It\'s billed annually at $290/year. You\'ll receive a reminder before renewal and can contact us to cancel at any time.',
               },
               {
                 q: 'What if the data I need is missing?',
@@ -262,6 +295,6 @@ export default function PricingPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </PayPalScriptProvider>
   );
 }
