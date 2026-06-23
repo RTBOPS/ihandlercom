@@ -169,8 +169,8 @@ export default function BHSPage() {
             <div>
               {/* BHS Logo */}
               <div className="mb-5">
-                <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shadow-xl border-2 border-white/10 bg-white flex items-center justify-center">
-                  <Image src="/images/bhs/bhs-logo.png" alt="i-Handler BHS" width={72} height={72} className="w-full h-full object-contain p-1" />
+                <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shadow-xl border-2 border-white/10">
+                  <Image src="/images/bhs/bhs-logo.png" alt="i-Handler BHS" width={80} height={80} className="w-full h-full object-cover" />
                 </div>
               </div>
 
@@ -195,7 +195,6 @@ export default function BHSPage() {
             <div className="flex justify-center items-end pb-0">
               <div className="relative">
                 <div className="relative w-56 md:w-64 rounded-[3rem] overflow-hidden border-[6px] border-white/20 shadow-2xl shadow-black/60 bg-black">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-b-2xl z-10" />
                   <Image src="/images/bhs/screenshots/05-checkin.png" alt="BHS Check-in" width={256} height={554} className="w-full h-auto object-cover" />
                 </div>
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#F34707]/30 blur-2xl rounded-full" />
@@ -334,8 +333,8 @@ export default function BHSPage() {
         {/* ── CONTACT CTA ─────────────────────────────────────────────────── */}
         <section className="py-24 px-4 bg-white text-center">
           <div className="max-w-2xl mx-auto">
-            <div className="w-16 h-16 rounded-2xl bg-[#F34707]/10 flex items-center justify-center mx-auto mb-6">
-              <Image src="/images/bhs/bhs-logo.png" alt="BHS" width={40} height={40} className="w-10 h-10 object-contain" />
+            <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-6 shadow-md">
+              <Image src="/images/bhs/bhs-logo.png" alt="BHS" width={64} height={64} className="w-full h-full object-cover" />
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{txt.contactTitle}</h2>
             <p className="text-gray-500 mb-8 text-lg">{txt.contactSub}</p>
