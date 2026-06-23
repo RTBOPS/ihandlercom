@@ -135,7 +135,7 @@ const screenshots = [
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function BHSPage() {
-  const [lang, setLang] = useState<Lang>('ES');
+  const [lang, setLang] = useState<Lang>('EN');
   const [lightbox, setLightbox] = useState<string | null>(null);
   const txt = t[lang];
 
@@ -170,7 +170,7 @@ export default function BHSPage() {
               {/* BHS Logo */}
               <div className="mb-5">
                 <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shadow-xl border-2 border-white/10">
-                  <Image src="/images/bhs/bhs-logo.png" alt="i-Handler BHS" width={80} height={80} className="w-full h-full object-cover" />
+                  <Image src="/images/bhs/bhs-logo.jpg" alt="i-Handler BHS" width={80} height={80} className="w-full h-full object-cover" />
                 </div>
               </div>
 
@@ -334,7 +334,7 @@ export default function BHSPage() {
         <section className="py-24 px-4 bg-white text-center">
           <div className="max-w-2xl mx-auto">
             <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-6 shadow-md">
-              <Image src="/images/bhs/bhs-logo.png" alt="BHS" width={64} height={64} className="w-full h-full object-cover" />
+              <Image src="/images/bhs/bhs-logo.jpg" alt="BHS" width={64} height={64} className="w-full h-full object-cover" />
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{txt.contactTitle}</h2>
             <p className="text-gray-500 mb-8 text-lg">{txt.contactSub}</p>

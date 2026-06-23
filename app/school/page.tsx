@@ -95,6 +95,14 @@ const t = {
       { q: '¿El modo de voz funciona en español y portugués?', a: 'Sí, en los tres idiomas. Puedes cambiar el idioma en cualquier momento sin perder tu progreso.' },
       { q: '¿Qué pasa si repruebo el examen?', a: 'Reprobar cuesta $175+ y semanas de espera. Por eso nos enfocamos en tus áreas débiles antes de que vayas al centro de examen.' },
     ],
+    planData: [
+      { name: 'Curso Individual',      includes: ['1 curso a elección'] },
+      { name: 'Pilotos de Avión',      includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'] },
+      { name: 'Operaciones Aéreas',    includes: ['ATC · Despachador', 'Navegante'] },
+      { name: 'Técnicos Aeronáuticos', includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'] },
+      { name: 'Helicóptero',           includes: ['Piloto Privado Helicóptero'] },
+      { name: 'Todo Acceso',           includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'] },
+    ],
     ctaH1: 'Tu licencia está',
     ctaH2: 'más cerca de lo que crees',
     ctaSub: 'Empieza gratis hoy. Sin tarjeta de crédito.',
@@ -153,6 +161,14 @@ const t = {
       { q: 'Can I switch courses or certifications?', a: 'Yes. You can have multiple active courses at the same time and your stats are saved separately for each.' },
       { q: 'Does voice mode work in Spanish and Portuguese?', a: 'Yes, in all three languages. You can switch languages at any time without losing your progress.' },
       { q: 'What if I fail the exam?', a: 'Failing costs $175+ and weeks of waiting. That\'s why we focus on your weak areas before you go to the testing center.' },
+    ],
+    planData: [
+      { name: 'Individual Course',        includes: ['1 course of choice'] },
+      { name: 'Airplane Pilots',          includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'] },
+      { name: 'Aerial Operations',        includes: ['ATC · Dispatcher', 'Navigator'] },
+      { name: 'Aeronautical Technicians', includes: ['Aeronautical Maintenance', 'Cabin Technician TC'] },
+      { name: 'Helicopter',               includes: ['Private Helicopter Pilot'] },
+      { name: 'Full Access',              includes: ['All 13 courses included', 'Future updates at no cost'] },
     ],
     ctaH1: 'Your license is',
     ctaH2: 'closer than you think',
@@ -213,6 +229,14 @@ const t = {
       { q: 'O modo de voz funciona em português e espanhol?', a: 'Sim, nos três idiomas. Você pode trocar o idioma a qualquer momento sem perder seu progresso.' },
       { q: 'E se eu reprovar no exame?', a: 'Reprovar custa $175+ e semanas de espera. Por isso focamos nas suas áreas fracas antes de você ir ao centro de exame.' },
     ],
+    planData: [
+      { name: 'Curso Individual',      includes: ['1 curso à sua escolha'] },
+      { name: 'Pilotos de Avião',      includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'] },
+      { name: 'Operações Aéreas',      includes: ['ATC · Despachante', 'Navegador'] },
+      { name: 'Técnicos Aeronáuticos', includes: ['Manutenção Aeronáutica', 'Técnico de Cabine TC'] },
+      { name: 'Helicóptero',           includes: ['Piloto Privado de Helicóptero'] },
+      { name: 'Acesso Total',          includes: ['Todos os 13 cursos incluídos', 'Atualizações futuras sem custo'] },
+    ],
     ctaH1: 'Sua licença está',
     ctaH2: 'mais perto do que você pensa',
     ctaSub: 'Comece grátis hoje. Sem cartão de crédito.',
@@ -241,23 +265,14 @@ const certs = [
   { icon: '/images/school/icons/single.png', label: 'GND',     name: 'Ground School' },
 ];
 
-// ── Pricing ───────────────────────────────────────────────────────────────────
-const plansMonthly = [
-  { icon: '/images/school/icons/single.png',     name: 'Curso Individual',      price: '$4.99',  includes: ['1 curso a elección'],                                              tag: '' },
-  { icon: '/images/school/icons/pilots.png',     name: 'Pilotos de Avión',      price: '$9.99',  includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'],                          tag: 'mostPop' },
-  { icon: '/images/school/icons/ops.png',        name: 'Operaciones Aéreas',    price: '$5.99',  includes: ['ATC · Despachador', 'Navegante'],                                  tag: '' },
-  { icon: '/images/school/icons/tec.png',        name: 'Técnicos Aeronáuticos', price: '$5.99',  includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'],                tag: '' },
-  { icon: '/images/school/icons/heli_group.png', name: 'Helicóptero',           price: '$4.99',  includes: ['Piloto Privado Helicóptero'],                                      tag: '' },
-  { icon: '/images/school/icons/combo.png',      name: 'Todo Acceso',           price: '$14.99', includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'], tag: 'bestVal' },
-];
-
-const plansAnnual = [
-  { icon: '/images/school/icons/single.png',     name: 'Curso Individual',      price: '$39.99',  equiv: '$3.33', includes: ['1 curso a elección'],                                                 tag: '' },
-  { icon: '/images/school/icons/pilots.png',     name: 'Pilotos de Avión',      price: '$79.99',  equiv: '$6.67', includes: ['PPL · IFR · COM', 'CFI · ATP · ATP-RTC'],                             tag: 'mostPop' },
-  { icon: '/images/school/icons/ops.png',        name: 'Operaciones Aéreas',    price: '$44.99',  equiv: '$3.75', includes: ['ATC · Despachador', 'Navegante'],                                     tag: '' },
-  { icon: '/images/school/icons/tec.png',        name: 'Técnicos Aeronáuticos', price: '$44.99',  equiv: '$3.75', includes: ['Mantenimiento Aeronáutico', 'Técnico de Cabina TC'],                   tag: '' },
-  { icon: '/images/school/icons/heli_group.png', name: 'Helicóptero',           price: '$34.99',  equiv: '$2.92', includes: ['Piloto Privado Helicóptero'],                                         tag: '' },
-  { icon: '/images/school/icons/combo.png',      name: 'Todo Acceso',           price: '$109.99', equiv: '$9.17', includes: ['Todos los 13 cursos incluidos', 'Futuras actualizaciones sin costo'],  tag: 'bestVal', lifetime: '$249.99' },
+// ── Pricing — static (prices, icons, tags stay language-neutral) ─────────────
+const plansMeta = [
+  { icon: '/images/school/icons/single.png',     priceM: '$4.99',   priceA: '$39.99',  equivA: '$3.33', tag: '' },
+  { icon: '/images/school/icons/pilots.png',     priceM: '$9.99',   priceA: '$79.99',  equivA: '$6.67', tag: 'mostPop' },
+  { icon: '/images/school/icons/ops.png',        priceM: '$5.99',   priceA: '$44.99',  equivA: '$3.75', tag: '' },
+  { icon: '/images/school/icons/tec.png',        priceM: '$5.99',   priceA: '$44.99',  equivA: '$3.75', tag: '' },
+  { icon: '/images/school/icons/heli_group.png', priceM: '$4.99',   priceA: '$34.99',  equivA: '$2.92', tag: '' },
+  { icon: '/images/school/icons/combo.png',      priceM: '$14.99',  priceA: '$109.99', equivA: '$9.17', tag: 'bestVal', lifetime: '$249.99' },
 ];
 
 const iphoneScreenshots = [
@@ -293,13 +308,19 @@ const PlayIcon = () => (
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function SchoolPage() {
-  const [lang, setLang] = useState<Lang>('ES');
+  const [lang, setLang] = useState<Lang>('EN');
   const [pricingTab, setPricingTab] = useState<'monthly' | 'annual'>('annual');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const txt = t[lang];
 
-  const plans = pricingTab === 'monthly' ? plansMonthly : plansAnnual;
+  const plans = plansMeta.map((m, i) => ({
+    ...m,
+    price: pricingTab === 'monthly' ? m.priceM : m.priceA,
+    equiv: pricingTab === 'annual' ? m.equivA : undefined,
+    name: txt.planData[i].name,
+    includes: txt.planData[i].includes,
+  }));
 
   const langFlags: Record<Lang, string> = { ES: '🇪🇸', EN: '🇺🇸', PT: '🇧🇷' };
 
@@ -363,7 +384,7 @@ export default function SchoolPage() {
               <p className="text-lg text-gray-300 mb-8 max-w-lg">{txt.heroSub}</p>
 
               <div className="flex flex-wrap gap-4 mb-6">
-                <a href="#" className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                <a href="https://apps.apple.com/us/app/i-handler-school/id6780695634" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors shadow-lg">
                   <AppleIcon /> {txt.appStore}
                 </a>
                 <a href="#" className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl border border-white/20 text-white font-semibold hover:bg-white/10 transition-colors">
@@ -665,7 +686,7 @@ export default function SchoolPage() {
             </h2>
             <p className="text-gray-300 mb-10 text-lg">{txt.ctaSub}</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a href="#" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-gray-900 font-bold text-base hover:bg-gray-100 transition-colors shadow-lg">
+              <a href="https://apps.apple.com/us/app/i-handler-school/id6780695634" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-gray-900 font-bold text-base hover:bg-gray-100 transition-colors shadow-lg">
                 <AppleIcon /> {txt.appStore}
               </a>
               <a href="#" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-[#F34707] hover:bg-[#d93d06] text-white font-bold text-base transition-colors shadow-lg">
