@@ -189,6 +189,24 @@ export default function BHSPage() {
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-[#F34707] hover:bg-[#d93d06] text-white font-bold text-base transition-colors shadow-lg">
                 {txt.cta} →
               </a>
+
+              {/* App Store buttons */}
+              <div className="flex flex-wrap gap-3 mt-5">
+                <a href="#" className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  <div className="text-left">
+                    <div className="text-[10px] text-white/60 leading-none">Download on the</div>
+                    <div className="text-sm font-semibold leading-tight">App Store</div>
+                  </div>
+                </a>
+                <a href="#" className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.65.19.98.06l13.07-7.53-2.75-2.75-11.3 10.22zM.44 1.06C.17 1.4 0 1.88 0 2.53v18.94c0 .65.17 1.12.44 1.47l.08.07 10.6-10.6v-.25L.52.99l-.08.07zM20.13 10.3l-2.85-1.64-3.08 3.08 3.08 3.08 2.87-1.66c.82-.47.82-1.24-.02-1.86zM3.18.24L16.25 7.77l-2.75 2.75L2.2.3c.32-.14.68-.12.98-.06z"/></svg>
+                  <div className="text-left">
+                    <div className="text-[10px] text-white/60 leading-none">Get it on</div>
+                    <div className="text-sm font-semibold leading-tight">Google Play</div>
+                  </div>
+                </a>
+              </div>
             </div>
 
             {/* Right — iPhone mockup with 05-checkin */}
@@ -283,12 +301,7 @@ export default function BHSPage() {
             </div>
             {/* IATA Seal */}
             <div className="flex justify-center">
-              <div className="relative">
-                <div className="w-64 h-64 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center p-8 shadow-2xl">
-                  <Image src="/images/bhs/iata-seal.png" alt="IATA Certified" width={200} height={200} className="w-full h-full object-contain" />
-                </div>
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-48 h-8 bg-[#F34707]/20 blur-2xl rounded-full" />
-              </div>
+              <Image src="/images/bhs/iata-seal.png" alt="IATA Certified" width={420} height={420} className="w-full max-w-sm h-auto object-contain drop-shadow-2xl" />
             </div>
           </div>
         </section>
@@ -307,6 +320,29 @@ export default function BHSPage() {
                   className="w-36 rounded-[2rem] overflow-hidden border-2 border-white/10 shadow-2xl hover:border-[#F34707]/60 hover:scale-105 transition-all cursor-zoom-in"
                 >
                   <Image src={`/images/bhs/screenshots/${s}.png`} alt={txt.screensLabels[i]} width={144} height={310} className="w-full h-auto object-cover" />
+                </button>
+                <span className="text-gray-500 text-xs">{txt.screensLabels[i]}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── IPAD SCREENSHOTS ────────────────────────────────────────────── */}
+        <section className="py-20 bg-gray-950 overflow-hidden">
+          <div className="max-w-5xl mx-auto px-4 mb-10 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F34707]/20 border border-[#F34707]/30 text-[#FC8C00] text-xs font-semibold mb-4 uppercase tracking-wider">
+              iPad
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">{txt.screensTitle}</h2>
+          </div>
+          <div className="flex gap-6 overflow-x-auto px-8 pb-4 scrollbar-hide snap-x snap-mandatory">
+            {screenshots.map((s, i) => (
+              <div key={i} className="flex-shrink-0 snap-center flex flex-col items-center gap-2">
+                <button
+                  onClick={() => setLightbox(`/images/bhs/screenshots-ipad/${s}.png`)}
+                  className="w-64 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl hover:border-[#F34707]/60 hover:scale-105 transition-all cursor-zoom-in"
+                >
+                  <Image src={`/images/bhs/screenshots-ipad/${s}.png`} alt={txt.screensLabels[i]} width={256} height={192} className="w-full h-auto object-cover" />
                 </button>
                 <span className="text-gray-500 text-xs">{txt.screensLabels[i]}</span>
               </div>
