@@ -181,14 +181,11 @@ export default function GTPSPage() {
 
         {/* ── HERO ────────────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden pt-24 pb-0 min-h-[85vh] flex items-center">
-          {/* Gradient background — dark navy/slate aviation feel */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1e] via-[#0d1a2e] to-[#111827]" />
-          {/* Subtle grid pattern overlay */}
-          <div className="absolute inset-0 opacity-10"
-            style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
-          {/* Accent glow */}
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-[#F34707]/15 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+          {/* Background photo */}
+          <div className="absolute inset-0">
+            <Image src="/images/gtps/hero-bg.jpg" alt="Ground crew operations" fill className="object-cover object-center" priority />
+            <div className="absolute inset-0 bg-black/65" />
+          </div>
 
           {/* Language switcher */}
           <div className="absolute top-20 right-4 md:right-8 z-20 flex gap-1 bg-black/40 backdrop-blur-sm rounded-xl p-1">
@@ -246,7 +243,7 @@ export default function GTPSPage() {
             <div className="flex justify-center items-end pb-0">
               <div className="relative">
                 <div className="relative w-56 md:w-64 rounded-[3rem] overflow-hidden border-[6px] border-white/20 shadow-2xl shadow-black/60 bg-black">
-                  <Image src="/images/gtps/screenshots/05-turnaround.png" alt="GTPS Turnaround" width={256} height={554} className="w-full h-auto object-cover" />
+                  <Image src="/images/gtps/screenshots/04-live-board.png" alt="GTPS Live Board" width={256} height={554} className="w-full h-auto object-cover" />
                 </div>
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#F34707]/30 blur-2xl rounded-full" />
               </div>
@@ -302,8 +299,12 @@ export default function GTPSPage() {
         </section>
 
         {/* ── IATA / IGOM TRUST SECTION ───────────────────────────────────── */}
-        <section className="py-20 px-4 bg-[#0a0f1e]">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <section className="relative py-20 px-4 overflow-hidden">
+          <div className="absolute inset-0">
+            <Image src="/images/gtps/iata-bg.jpg" alt="Airport worker with tablet" fill className="object-cover object-center" />
+            <div className="absolute inset-0 bg-black/75" />
+          </div>
+          <div className="relative z-10 max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F34707]/20 border border-[#F34707]/30 text-[#FC8C00] text-xs font-semibold mb-5 uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FC8C00]" />
@@ -384,8 +385,11 @@ export default function GTPSPage() {
         </section>
 
         {/* ── WHO IS IT FOR ────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden py-24 px-4 bg-gradient-to-br from-[#111827] to-[#1f2937]">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#F34707]/10 rounded-full blur-3xl" />
+        <section className="relative overflow-hidden py-24 px-4">
+          <div className="absolute inset-0">
+            <Image src="/images/gtps/handlers-bg.jpg" alt="Ground crew directing aircraft" fill className="object-cover object-center" />
+            <div className="absolute inset-0 bg-black/70" />
+          </div>
           <div className="relative z-10 max-w-3xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">{txt.bagTitle}</h2>
             <p className="text-gray-300 text-lg">{txt.bagSub}</p>
