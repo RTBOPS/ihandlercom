@@ -14,6 +14,7 @@ const navLinks = [
   { label: 'Airport Search', href: '/airports' },
   { label: 'School', href: '/school' },
   { label: 'BHS', href: '/bhs' },
+  { label: 'GTPS', href: '/gtps' },
   { label: 'Customers', href: '/customers' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Contact', href: '/contact' },

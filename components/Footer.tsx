@@ -41,6 +41,7 @@ export default function Footer() {
                 <li><a href="https://i-handler.app" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler App</a></li>
                 <li><Link href="/school" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler School</Link></li>
                 <li><Link href="/bhs" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler BHS</Link></li>
+                <li><Link href="/gtps" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler GTPS</Link></li>
                 <li><Link href="/flight-support" className="text-sm text-gray-400 hover:text-white transition-colors">Documentation</Link></li>
               </ul>
             </div>
