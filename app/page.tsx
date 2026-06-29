@@ -158,8 +158,10 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* i-Handler App */}
               <a href="/app" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-gradient-to-br from-[#0a0f1e] to-[#1a2540] p-8 flex flex-col gap-4 md:col-span-2 lg:col-span-1">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg border border-white/10 flex-shrink-0">
-                  <Image src="/images/ihandler-app/app-logo.jpg" alt="i-Handler App" width={64} height={64} className="w-full h-full object-cover" />
+                <div className="flex justify-center">
+                  <div className="w-24 h-24 rounded-3xl overflow-hidden shadow-xl border border-white/10">
+                    <Image src="/images/ihandler-app/app-logo.jpg" alt="i-Handler App" width={96} height={96} className="w-full h-full object-cover" />
+                  </div>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-[#FC8C00] uppercase tracking-wider mb-1">Flight Ops · Trip Planning</div>
@@ -178,8 +180,10 @@ export default function HomePage() {
 
               {/* School */}
               <a href="/school" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                <div className="flex justify-center">
+                  <div className="w-24 h-24 rounded-3xl overflow-hidden shadow-md border border-gray-100">
+                    <Image src="/images/school/school_store_logo.png" alt="i-Handler School" width={96} height={96} className="w-full h-full object-cover" />
+                  </div>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-1">Aviation Training · LMS</div>
@@ -198,8 +202,10 @@ export default function HomePage() {
 
               {/* BHS */}
               <a href="/bhs" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-8 h-8 text-[#F34707]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <div className="flex justify-center">
+                  <div className="w-24 h-24 rounded-3xl overflow-hidden shadow-md border border-gray-100">
+                    <Image src="/images/bhs/bhs-logo.jpg" alt="i-Handler BHS" width={96} height={96} className="w-full h-full object-cover" />
+                  </div>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-[#F34707] uppercase tracking-wider mb-1">Baggage Handling · IATA 753</div>
@@ -218,8 +224,10 @@ export default function HomePage() {
 
               {/* GTPS */}
               <a href="/gtps" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="10"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2"/></svg>
+                <div className="flex justify-center">
+                  <div className="w-24 h-24 rounded-3xl overflow-hidden shadow-md border border-gray-100">
+                    <Image src="/images/gtps/gtps-logo.jpg" alt="i-Handler GTPS" width={96} height={96} className="w-full h-full object-cover" />
+                  </div>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-green-600 uppercase tracking-wider mb-1">Ground Times · IATA IGOM/AHM</div>
@@ -238,8 +246,10 @@ export default function HomePage() {
 
               {/* HRS */}
               <a href="/hrs" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path strokeLinecap="round" strokeLinejoin="round" d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                <div className="flex justify-center">
+                  <div className="w-24 h-24 rounded-3xl overflow-hidden shadow-md border border-gray-100">
+                    <Image src="/images/hrs/hrs-logo.jpg" alt="i-Handler HRS" width={96} height={96} className="w-full h-full object-cover" />
+                  </div>
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-purple-500 uppercase tracking-wider mb-1">HR · Training · ISAGO/IATA</div>
