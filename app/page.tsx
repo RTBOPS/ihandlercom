@@ -140,6 +140,125 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── Aviation Apps suite ───────────────────────────────────────────── */}
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-14">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F34707]/10 text-[#F34707] text-xs font-semibold mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F34707]" />
+                Our Products
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                A complete ecosystem for aviation operations
+              </h2>
+              <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+                Five specialized apps — each solving a specific challenge in aviation — all built on the same platform and designed to work together.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* i-Handler App */}
+              <a href="/app" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-gradient-to-br from-[#0a0f1e] to-[#1a2540] p-8 flex flex-col gap-4 md:col-span-2 lg:col-span-1">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg border border-white/10 flex-shrink-0">
+                  <Image src="/images/ihandler-app/app-logo.jpg" alt="i-Handler App" width={64} height={64} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#FC8C00] uppercase tracking-wider mb-1">Flight Ops · Trip Planning</div>
+                  <h3 className="text-xl font-bold text-white mb-2">i-Handler App</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">The all-in-one app for pilots and operators. Plan trips, access 8,000+ airports worldwide, manage passengers &amp; crew, get overflight permits, and coordinate with handlers — all from your phone.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {['Trip sheets','Overflight permits','Airport directory','APIS','Multi-aircraft'].map(t => (
+                    <span key={t} className="px-2 py-1 rounded-full bg-white/10 text-white/70 text-xs">{t}</span>
+                  ))}
+                </div>
+                <div className="absolute top-6 right-6 text-white/20 group-hover:text-[#F34707]/60 transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </a>
+
+              {/* School */}
+              <a href="/school" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-1">Aviation Training · LMS</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">i-Handler School</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Online learning management system built for aviation schools and training centers. Manage courses, students, instructors, exams and certifications — with multi-campus support and IOSA/ISAGO-aligned content.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {['Courses & exams','Certifications','Instructors','Multi-campus','iOS & Android'].map(t => (
+                    <span key={t} className="px-2 py-1 rounded-full bg-gray-100 text-gray-500 text-xs">{t}</span>
+                  ))}
+                </div>
+                <div className="absolute top-6 right-6 text-gray-300 group-hover:text-[#F34707] transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </a>
+
+              {/* BHS */}
+              <a href="/bhs" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-8 h-8 text-[#F34707]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#F34707] uppercase tracking-wider mb-1">Baggage Handling · IATA 753</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">i-Handler BHS</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Baggage tracking and control system compliant with IATA Resolution 753. Scan, count and reconcile bags at check-in, loading and delivery. Bingo charts, PDF reports and real-time discrepancy alerts.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {['IATA 753','Barcode scanning','Bingo charts','XML export','iPad optimized'].map(t => (
+                    <span key={t} className="px-2 py-1 rounded-full bg-gray-100 text-gray-500 text-xs">{t}</span>
+                  ))}
+                </div>
+                <div className="absolute top-6 right-6 text-gray-300 group-hover:text-[#F34707] transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </a>
+
+              {/* GTPS */}
+              <a href="/gtps" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><circle cx="12" cy="12" r="10"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2"/></svg>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-green-600 uppercase tracking-wider mb-1">Ground Times · IATA IGOM/AHM</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">i-Handler GTPS</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Ground Turnaround Performance System — measures and analyzes turnaround times per flight, airline and activity against IATA IGOM/AHM benchmarks. Automated PDF reports and email delivery for management.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {['Turnaround KPIs','IGOM benchmarks','Live board','PDF reports','Per-airline stats'].map(t => (
+                    <span key={t} className="px-2 py-1 rounded-full bg-gray-100 text-gray-500 text-xs">{t}</span>
+                  ))}
+                </div>
+                <div className="absolute top-6 right-6 text-gray-300 group-hover:text-[#F34707] transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </a>
+
+              {/* HRS */}
+              <a href="/hrs" className="group relative rounded-3xl overflow-hidden border border-gray-200 hover:border-[#F34707]/40 hover:shadow-xl transition-all bg-white p-8 flex flex-col gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path strokeLinecap="round" strokeLinejoin="round" d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-purple-500 uppercase tracking-wider mb-1">HR · Training · ISAGO/IATA</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">i-Handler HRS</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Human Resources System for aviation ground handlers — manage training plans, recertification deadlines, competency matrices and compliance with ISAGO/IATA standards. Diplomas, QR cards and audit-ready reports.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {['Training plans','Recertification','ISAGO compliance','QR diplomas','Semaphore alerts'].map(t => (
+                    <span key={t} className="px-2 py-1 rounded-full bg-gray-100 text-gray-500 text-xs">{t}</span>
+                  ))}
+                </div>
+                <div className="absolute top-6 right-6 text-gray-300 group-hover:text-[#F34707] transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* ── Directory showcase ────────────────────────────────────────────── */}
         <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
