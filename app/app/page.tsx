@@ -178,7 +178,7 @@ export default function IHandlerAppPage() {
             <div className="flex justify-center items-end">
               <div className="relative">
                 <div className="relative w-56 md:w-64 rounded-[3rem] overflow-hidden border-[6px] border-white/20 shadow-2xl shadow-black/60 bg-black">
-                  <Image src="/images/ihandler-app/screenshots/01.png" alt="i-Handler App" width={256} height={554} className="w-full h-auto object-cover" />
+                  <Image src="/images/ihandler-app/screenshots/27.png" alt="i-Handler App" width={256} height={554} className="w-full h-auto object-cover" />
                 </div>
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#F34707]/30 blur-2xl rounded-full" />
               </div>
