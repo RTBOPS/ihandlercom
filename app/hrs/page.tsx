@@ -200,9 +200,23 @@ const t = {
 
 type Lang = keyof typeof t;
 
-const screenshots = [
-  'IMG_0198', 'IMG_0199', 'IMG_0200', 'IMG_0201', 'IMG_0202',
-  'IMG_0203', 'IMG_0204', 'IMG_0205', 'IMG_0206', 'IMG_0207',
+const screenshots: { file: string; label: Record<string, string> }[] = [
+  { file: 'intro',          label: { ES: 'Inicio',          EN: 'Home',           PT: 'Início' } },
+  { file: 'academia',       label: { ES: 'Academia',        EN: 'Academy',        PT: 'Academia' } },
+  { file: 'malla',          label: { ES: 'Malla curricular',EN: 'Curriculum',     PT: 'Grade curricular' } },
+  { file: 'asignacion',     label: { ES: 'Asignación',      EN: 'Assignment',     PT: 'Atribuição' } },
+  { file: 'calendario',     label: { ES: 'Calendario',      EN: 'Calendar',       PT: 'Calendário' } },
+  { file: 'certificados',   label: { ES: 'Certificados',    EN: 'Certificates',   PT: 'Certificados' } },
+  { file: 'auditoria',      label: { ES: 'Auto-auditoría',  EN: 'Self-audit',     PT: 'Autoauditoria' } },
+  { file: 'competencias',   label: { ES: 'Competencias',    EN: 'Competencies',   PT: 'Competências' } },
+  { file: 'equipos',        label: { ES: 'Equipos GSE',     EN: 'GSE Equipment',  PT: 'Equipamentos GSE' } },
+  { file: 'empleados',      label: { ES: 'Empleados',       EN: 'Employees',      PT: 'Funcionários' } },
+  { file: 'roles',          label: { ES: 'Roles',           EN: 'Roles',          PT: 'Funções' } },
+  { file: 'notificaciones', label: { ES: 'Notificaciones',  EN: 'Notifications',  PT: 'Notificações' } },
+  { file: 'reportes',       label: { ES: 'Reportes',        EN: 'Reports',        PT: 'Relatórios' } },
+  { file: 'portal',         label: { ES: 'Portal empleado', EN: 'Employee portal',PT: 'Portal funcionário' } },
+  { file: 'renovacion',     label: { ES: 'Renovación',      EN: 'Renewal',        PT: 'Renovação' } },
+  { file: 'empresa',        label: { ES: 'Empresa',         EN: 'Company',        PT: 'Empresa' } },
 ];
 
 // ── Feature icons ─────────────────────────────────────────────────────────────
@@ -300,7 +314,7 @@ export default function HRSPage() {
             <div className="flex justify-center items-end pb-0">
               <div className="relative">
                 <div className="relative w-56 md:w-64 rounded-[3rem] overflow-hidden border-[6px] border-white/20 shadow-2xl shadow-black/60 bg-black">
-                  <Image src={`/images/hrs/screenshots/${screenshots[0]}.PNG`} alt="HRS App" width={256} height={554} className="w-full h-auto object-cover" />
+                  <Image src={`/images/hrs/screenshots/${screenshots[0].file}.png`} alt="HRS App" width={256} height={554} className="w-full h-auto object-cover" />
                 </div>
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-40 h-8 bg-[#F34707]/30 blur-2xl rounded-full" />
               </div>
@@ -381,11 +395,12 @@ export default function HRSPage() {
             {screenshots.map((s, i) => (
               <div key={i} className="flex-shrink-0 snap-center flex flex-col items-center gap-2">
                 <button
-                  onClick={() => setLightbox(`/images/hrs/screenshots/${s}.PNG`)}
+                  onClick={() => setLightbox(`/images/hrs/screenshots/${s.file}.png`)}
                   className="w-36 rounded-[2rem] overflow-hidden border-2 border-white/10 shadow-2xl hover:border-[#F34707]/60 hover:scale-105 transition-all cursor-zoom-in"
                 >
-                  <Image src={`/images/hrs/screenshots/${s}.PNG`} alt={`HRS screen ${i + 1}`} width={144} height={310} className="w-full h-auto object-cover" />
+                  <Image src={`/images/hrs/screenshots/${s.file}.png`} alt={s.label[lang]} width={144} height={310} className="w-full h-auto object-cover" />
                 </button>
+                <span className="text-gray-500 text-xs">{s.label[lang]}</span>
               </div>
             ))}
           </div>
@@ -399,13 +414,14 @@ export default function HRSPage() {
           </div>
           <div className="flex gap-6 overflow-x-auto px-8 pb-4 scrollbar-hide snap-x snap-mandatory">
             {screenshots.map((s, i) => (
-              <div key={i} className="flex-shrink-0 snap-center">
+              <div key={i} className="flex-shrink-0 snap-center flex flex-col items-center gap-2">
                 <button
-                  onClick={() => setLightbox(`/images/hrs/screenshots-ipad/${s}.PNG`)}
+                  onClick={() => setLightbox(`/images/hrs/screenshots-ipad/${s.file}.png`)}
                   className="w-64 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl hover:border-[#F34707]/60 hover:scale-105 transition-all cursor-zoom-in block"
                 >
-                  <Image src={`/images/hrs/screenshots-ipad/${s}.PNG`} alt={`HRS iPad screen ${i + 1}`} width={256} height={192} className="w-full h-auto object-cover" />
+                  <Image src={`/images/hrs/screenshots-ipad/${s.file}.png`} alt={s.label[lang]} width={256} height={192} className="w-full h-auto object-cover" />
                 </button>
+                <span className="text-gray-500 text-xs">{s.label[lang]}</span>
               </div>
             ))}
           </div>
