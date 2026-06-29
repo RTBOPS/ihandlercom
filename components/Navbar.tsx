@@ -15,6 +15,7 @@ const navLinks = [
   { label: 'School', href: '/school' },
   { label: 'BHS', href: '/bhs' },
   { label: 'GTPS', href: '/gtps' },
+  { label: 'HRS', href: '/hrs' },
   { label: 'Customers', href: '/customers' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Contact', href: '/contact' },

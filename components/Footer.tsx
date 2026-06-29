@@ -42,6 +42,7 @@ export default function Footer() {
                 <li><Link href="/school" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler School</Link></li>
                 <li><Link href="/bhs" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler BHS</Link></li>
                 <li><Link href="/gtps" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler GTPS</Link></li>
+                <li><Link href="/hrs" className="text-sm text-gray-400 hover:text-white transition-colors">i-Handler HRS</Link></li>
                 <li><Link href="/flight-support" className="text-sm text-gray-400 hover:text-white transition-colors">Documentation</Link></li>
               </ul>
             </div>
