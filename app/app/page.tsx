@@ -97,8 +97,8 @@ const t = {
 
 type Lang = keyof typeof t;
 
-const iPhoneScreenshots = ['01','02','03','04','05'];
-const iPadScreenshots   = ['01','02','03','04','05','06','07','08','09','10'];
+const iPhoneScreenshots = Array.from({ length: 36 }, (_, i) => String(i + 1).padStart(2, '0'));
+const iPadScreenshots   = Array.from({ length: 24 }, (_, i) => String(i + 1).padStart(2, '0'));
 
 const FeatureIcons: JSX.Element[] = [
   <svg key="0" className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>,
