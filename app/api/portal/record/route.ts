@@ -21,16 +21,28 @@ export async function GET(req: NextRequest) {
     const icaoField = profile.companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
     const nameField = profile.companyType === 'fbo' ? 'fboName'  : 'handlerName';
 
-    const snap = await adminDb.collection(colName)
-      .where(icaoField, '==', profile.icao)
-      .where(nameField, '==', profile.companyName)
-      .limit(1)
-      .get();
+    // Use stored docId if available (most reliable)
+    const storedId = profile.handlerDocId || profile.fboDocId;
+    let docSnap;
+    if (storedId) {
+      docSnap = await adminDb.collection(colName).doc(storedId).get();
+      if (!docSnap.exists) docSnap = undefined;
+    }
 
-    if (snap.empty) return NextResponse.json({ error: 'Record not found' }, { status: 404 });
+    if (!docSnap) {
+      // Fallback: query by icao only (take first match)
+      const snap = await adminDb.collection(colName)
+        .where(icaoField, '==', profile.icao)
+        .limit(1)
+        .get();
+      if (snap.empty) return NextResponse.json({ error: 'Record not found' }, { status: 404 });
+      docSnap = snap.docs[0];
+      // Save docId so future lookups are direct
+      const idKey = profile.companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
+      await adminDb.collection('users').doc(uid).update({ [idKey]: docSnap.id });
+    }
 
-    const doc = snap.docs[0];
-    return NextResponse.json({ id: doc.id, ...doc.data() });
+    return NextResponse.json({ id: docSnap.id, ...docSnap.data() });
   } catch (err) {
     console.error('portal/record error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
