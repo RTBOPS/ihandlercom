@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     const { recordId, fields } = await req.json() as { recordId: string | null; fields: Record<string, unknown> };
 
-    const BLOCKED = ['accountUid', 'ownerUid', 'createdBy', '_createdBy', 'uid', '_new'];
+    const BLOCKED = ['accountUid', 'ownerUid', 'createdBy', '_createdBy', '_updatedBy', 'uid', '_new'];
     const safe = Object.fromEntries(
       Object.entries(fields).filter(([k]) => !BLOCKED.includes(k))
     );
