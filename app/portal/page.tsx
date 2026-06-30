@@ -2,11 +2,6 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  doc, getDoc, collection, query, where, getDocs,
-  updateDoc, addDoc, serverTimestamp,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { useAuth } from '@/components/AuthProvider';
 import { HandlerRecord, FboRecord, CarRentalRecord, CateringRecord, HotelRecord } from '@/lib/types';
 import {
@@ -200,7 +195,7 @@ function ServiceCard({ title, titleIcon, children, editing, onEdit, onSave, onCa
 }
 
 // ─── Car Rental Tab ───────────────────────────────────────────────────────────
-function CarRentalTab({ icao, uid }: { icao: string; uid: string }) {
+function CarRentalTab({ icao, getToken }: { icao: string; getToken: () => Promise<string> }) {
   const [records, setRecords] = useState<CarRentalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -212,10 +207,12 @@ function CarRentalTab({ icao, uid }: { icao: string; uid: string }) {
   const [msg, setMsg] = useState('');
 
   const load = useCallback(async () => {
-    const snap = await getDocs(query(collection(db, 'carRental'), where('icao', '==', icao)));
-    setRecords(snap.docs.map((d) => ({ id: d.id, ...d.data() } as CarRentalRecord)));
+    const token = await getToken();
+    const res = await fetch('/api/portal/services?col=carRental', { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    setRecords((data.docs || []) as CarRentalRecord[]);
     setLoading(false);
-  }, [icao]);
+  }, [icao, getToken]);
   useEffect(() => { load(); }, [load]);
 
   const fields = [
@@ -229,12 +226,14 @@ function CarRentalTab({ icao, uid }: { icao: string; uid: string }) {
 
   const saveEdit = async () => {
     if (!editingId) return; setSaving(true);
-    await updateDoc(doc(db, 'carRental', editingId), { ...editData, updatedBy: uid, updatedAt: serverTimestamp() });
+    const token = await getToken();
+    await fetch('/api/portal/services', { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ col: 'carRental', docId: editingId, fields: editData }) });
     setEditingId(null); await load(); flash('Saved!'); setSaving(false);
   };
   const saveNew = async () => {
     if (!newData.companyName.trim()) return; setSaving(true);
-    await addDoc(collection(db, 'carRental'), { ...newData, icao, updatedBy: uid, updatedAt: serverTimestamp() });
+    const token = await getToken();
+    await fetch('/api/portal/services', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ col: 'carRental', fields: newData }) });
     setAdding(false); setNewData(blank); await load(); flash('Added!'); setSaving(false);
   };
 
@@ -292,7 +291,7 @@ function CarRentalTab({ icao, uid }: { icao: string; uid: string }) {
 }
 
 // ─── Catering Tab ─────────────────────────────────────────────────────────────
-function CateringTab({ icao, uid }: { icao: string; uid: string }) {
+function CateringTab({ icao, getToken }: { icao: string; getToken: () => Promise<string> }) {
   const [records, setRecords] = useState<CateringRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -304,10 +303,12 @@ function CateringTab({ icao, uid }: { icao: string; uid: string }) {
   const [msg, setMsg] = useState('');
 
   const load = useCallback(async () => {
-    const snap = await getDocs(query(collection(db, 'catering'), where('icao', '==', icao)));
-    setRecords(snap.docs.map((d) => ({ id: d.id, ...d.data() } as CateringRecord)));
+    const token = await getToken();
+    const res = await fetch('/api/portal/services?col=catering', { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    setRecords((data.docs || []) as CateringRecord[]);
     setLoading(false);
-  }, [icao]);
+  }, [icao, getToken]);
   useEffect(() => { load(); }, [load]);
 
   const fields = [
@@ -321,12 +322,14 @@ function CateringTab({ icao, uid }: { icao: string; uid: string }) {
 
   const saveEdit = async () => {
     if (!editingId) return; setSaving(true);
-    await updateDoc(doc(db, 'catering', editingId), { ...editData, updatedBy: uid, updatedAt: serverTimestamp() });
+    const token = await getToken();
+    await fetch('/api/portal/services', { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ col: 'catering', docId: editingId, fields: editData }) });
     setEditingId(null); await load(); flash('Saved!'); setSaving(false);
   };
   const saveNew = async () => {
     if (!newData.companyName.trim()) return; setSaving(true);
-    await addDoc(collection(db, 'catering'), { ...newData, icao, updatedBy: uid, updatedAt: serverTimestamp() });
+    const token = await getToken();
+    await fetch('/api/portal/services', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ col: 'catering', fields: newData }) });
     setAdding(false); setNewData(blank); await load(); flash('Added!'); setSaving(false);
   };
 
@@ -383,7 +386,7 @@ function CateringTab({ icao, uid }: { icao: string; uid: string }) {
 }
 
 // ─── Hotel Tab ────────────────────────────────────────────────────────────────
-function HotelTab({ icao, uid }: { icao: string; uid: string }) {
+function HotelTab({ icao, getToken }: { icao: string; getToken: () => Promise<string> }) {
   const [records, setRecords] = useState<HotelRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -395,10 +398,12 @@ function HotelTab({ icao, uid }: { icao: string; uid: string }) {
   const [msg, setMsg] = useState('');
 
   const load = useCallback(async () => {
-    const snap = await getDocs(query(collection(db, 'hotel'), where('icao', '==', icao)));
-    setRecords(snap.docs.map((d) => ({ id: d.id, ...d.data() } as HotelRecord)));
+    const token = await getToken();
+    const res = await fetch('/api/portal/services?col=hotel', { headers: { Authorization: `Bearer ${token}` } });
+    const data = await res.json();
+    setRecords((data.docs || []) as HotelRecord[]);
     setLoading(false);
-  }, [icao]);
+  }, [icao, getToken]);
   useEffect(() => { load(); }, [load]);
 
   const fields = [
@@ -414,12 +419,14 @@ function HotelTab({ icao, uid }: { icao: string; uid: string }) {
 
   const saveEdit = async () => {
     if (!editingId) return; setSaving(true);
-    await updateDoc(doc(db, 'hotel', editingId), { ...editData, updatedBy: uid, updatedAt: serverTimestamp() });
+    const token = await getToken();
+    await fetch('/api/portal/services', { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ col: 'hotel', docId: editingId, fields: editData }) });
     setEditingId(null); await load(); flash('Saved!'); setSaving(false);
   };
   const saveNew = async () => {
     if (!newData.name.trim()) return; setSaving(true);
-    await addDoc(collection(db, 'hotel'), { ...newData, icao, updatedBy: uid, updatedAt: serverTimestamp() });
+    const token = await getToken();
+    await fetch('/api/portal/services', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ col: 'hotel', fields: newData }) });
     setAdding(false); setNewData(blank); await load(); flash('Added!'); setSaving(false);
   };
 
@@ -811,9 +818,9 @@ export default function PortalPage() {
             </form>
           )}
 
-          {activeTab === 'carRental' && <CarRentalTab icao={profile.icao} uid={user.uid} />}
-          {activeTab === 'catering'  && <CateringTab  icao={profile.icao} uid={user.uid} />}
-          {activeTab === 'hotel'     && <HotelTab     icao={profile.icao} uid={user.uid} />}
+          {activeTab === 'carRental' && <CarRentalTab icao={profile.icao} getToken={() => user.getIdToken()} />}
+          {activeTab === 'catering'  && <CateringTab  icao={profile.icao} getToken={() => user.getIdToken()} />}
+          {activeTab === 'hotel'     && <HotelTab     icao={profile.icao} getToken={() => user.getIdToken()} />}
 
         </div>
       </main>
