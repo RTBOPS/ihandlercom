@@ -6,8 +6,7 @@ import {
   doc, getDoc, collection, query, where, getDocs,
   updateDoc, addDoc, serverTimestamp,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { useAuth } from '@/components/AuthProvider';
 import { HandlerRecord, FboRecord, CarRentalRecord, CateringRecord, HotelRecord } from '@/lib/types';
 import {
@@ -116,9 +115,10 @@ function CardSelect({ label, cards, selected, onChange }: {
 }
 
 // ─── Logo Upload ──────────────────────────────────────────────────────────────
-function LogoUpload({ currentUrl, uid, companyType, onUploaded }: {
-  currentUrl?: string; uid: string; companyType: 'fbo' | 'handler';
+function LogoUpload({ currentUrl, onUploaded, getToken }: {
+  currentUrl?: string;
   onUploaded: (url: string) => void;
+  getToken: () => Promise<string>;
 }) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(currentUrl || '');
@@ -130,10 +130,16 @@ function LogoUpload({ currentUrl, uid, companyType, onUploaded }: {
     if (file.size > 2 * 1024 * 1024) { alert('Logo must be under 2 MB.'); return; }
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop();
-      const storageRef = ref(storage, `logos/${uid}/logo.${ext}`);
-      await uploadBytes(storageRef, file, { contentType: file.type });
-      const url = await getDownloadURL(storageRef);
+      const token = await getToken();
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/portal/upload-logo', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      if (!res.ok) throw new Error('Upload failed');
+      const { url } = await res.json();
       setPreview(url);
       onUploaded(url);
     } catch (err) { console.error(err); alert('Upload failed. Try again.'); }
@@ -692,8 +698,7 @@ export default function PortalPage() {
                   {/* Logo */}
                   <LogoUpload
                     currentUrl={formData[logoKey]}
-                    uid={user.uid}
-                    companyType={profile.companyType}
+                    getToken={() => user.getIdToken()}
                     onUploaded={(url) => setFormData((p) => ({ ...p, [logoKey]: url }))}
                   />
 
