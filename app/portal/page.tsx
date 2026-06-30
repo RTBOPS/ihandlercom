@@ -581,16 +581,21 @@ export default function PortalPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!record || !user) return;
+    if (!user) return;
     setSaving(true); setSaveMsg('');
     try {
       const token = await user.getIdToken();
       const res = await fetch('/api/portal/record', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', authorization: `Bearer ${token}` },
-        body: JSON.stringify({ recordId: record.id, fields: { ...formData, ...arrayData } }),
+        body: JSON.stringify({ recordId: record?.id ?? null, fields: { ...formData, ...arrayData } }),
       });
       if (res.ok) {
+        const data = await res.json();
+        // If a new record was created, store its id so next save is an update
+        if (data.id && (!record || !record.id)) {
+          setRecord(prev => ({ ...(prev as object), id: data.id } as typeof record));
+        }
         setSaveMsg('Changes saved!');
         setTimeout(() => setSaveMsg(''), 3000);
       } else {
