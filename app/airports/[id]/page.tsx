@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { AirportRecord, HandlerRecord, FboRecord } from '@/lib/types';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -181,18 +179,12 @@ export default function AirportDetailPage() {
   useEffect(() => {
     async function load() {
       try {
-        const snap = await getDoc(doc(db, 'airports', id));
-        if (!snap.exists()) return;
-        const airport = { id: snap.id, ...snap.data() } as AirportRecord;
-        setAirport(airport);
-        if (airport.icao) {
-          const [hSnap, fSnap] = await Promise.all([
-            getDocs(query(collection(db, 'handler'), where('handlerIcao', '==', airport.icao))),
-            getDocs(query(collection(db, 'fbo'), where('fboIcao', '==', airport.icao))),
-          ]);
-          setHandlers(hSnap.docs.map((d) => ({ id: d.id, ...d.data() } as HandlerRecord)));
-          setFbos(fSnap.docs.map((d) => ({ id: d.id, ...d.data() } as FboRecord)));
-        }
+        const res = await fetch(`/api/airports/${id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setAirport(data.airport as AirportRecord);
+        setHandlers(data.handlers as HandlerRecord[]);
+        setFbos(data.fbos as FboRecord[]);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     }
