@@ -13,7 +13,7 @@ function generatePassword(length = 12): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { adminSecret, email, companyName, companyType, icao, emailType, contactName } =
+    const { adminSecret, email, companyName, companyType, icao, emailType, contactName, existingDocId } =
       await req.json();
 
     // Verify admin secret (server-side env var — never exposed to browser)
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       uid = newUser.uid;
 
       // Create users/{uid} doc (approved immediately — admin invited them)
-      await adminDb.collection('users').doc(uid).set({
+      const usersDoc: Record<string, unknown> = {
         email,
         companyName,
         companyType,
@@ -52,7 +52,22 @@ export async function POST(req: NextRequest) {
         role: 'owner',
         status: 'approved',
         createdAt: FieldValue.serverTimestamp(),
-      });
+      };
+      // Link to existing handler/fbo record so portal edits the right doc
+      if (existingDocId) {
+        const docIdKey = companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
+        usersDoc[docIdKey] = existingDocId;
+      }
+      await adminDb.collection('users').doc(uid).set(usersDoc);
+    }
+
+    // For existing Firebase Auth users, update the docId link if provided
+    if (isExisting && existingDocId) {
+      const docIdKey = companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
+      await adminDb.collection('users').doc(uid).set(
+        { [docIdKey]: existingDocId },
+        { merge: true }
+      );
     }
 
     // Store/update invitation record

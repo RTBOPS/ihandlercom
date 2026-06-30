@@ -35,7 +35,16 @@ export async function GET(req: NextRequest) {
       if (d.exists) docSnap = d;
     }
 
-    // 2. Fallback: query by icao + name
+    // 2. Fallback: query by email (most reliable for existing records)
+    if (!docSnap) {
+      const emailField = profile.companyType === 'fbo' ? 'fboEmail' : 'handlerEmail';
+      const byEmail = await adminDb.collection(colName)
+        .where(emailField, '==', profile.email)
+        .limit(1).get();
+      if (!byEmail.empty) docSnap = byEmail.docs[0];
+    }
+
+    // 3. Fallback: query by icao + name
     if (!docSnap) {
       const byName = await adminDb.collection(colName)
         .where(icaoField, '==', profile.icao)
@@ -44,7 +53,7 @@ export async function GET(req: NextRequest) {
       if (!byName.empty) docSnap = byName.docs[0];
     }
 
-    // 3. Fallback: query by icao only (picks first match)
+    // 4. Fallback: query by icao only (picks first match)
     if (!docSnap) {
       const byIcao = await adminDb.collection(colName)
         .where(icaoField, '==', profile.icao)

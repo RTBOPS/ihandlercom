@@ -9,6 +9,16 @@ import Footer from '@/components/Footer';
 type CompanyType = 'fbo' | 'handler' | '';
 type EmailType = 'new' | 'annual' | '';
 
+type DBCompany = {
+  id: string;
+  name: string;
+  email: string;
+  poc: string;
+  alreadyInvited: boolean;
+};
+
+type InviteMode = 'manual' | 'search';
+
 type InviteResult = {
   success: boolean;
   isExisting: boolean;
@@ -19,6 +29,7 @@ type InviteResult = {
   email: string;
   emailType: EmailType;
   contactName: string;
+  existingDocId?: string;
 };
 
 function buildEmailBody(result: InviteResult): string {
@@ -104,18 +115,51 @@ function InviteForm() {
   const [adminSecret, setAdminSecret] = useState('');
   const [authed, setAuthed] = useState(false);
 
+  const [mode, setMode] = useState<InviteMode>('search');
   const [emailType, setEmailType] = useState<EmailType>((searchParams.get('type') as EmailType) || '');
   const [companyType, setCompanyType] = useState<CompanyType>('');
   const [companyName, setCompanyName] = useState('');
   const [icao, setIcao] = useState('');
   const [email, setEmail] = useState(searchParams.get('resend') || '');
   const [contactName, setContactName] = useState('');
+  const [existingDocId, setExistingDocId] = useState('');
+
+  // Search state
+  const [searchIcao, setSearchIcao] = useState('');
+  const [searchType, setSearchType] = useState<CompanyType>('handler');
+  const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<DBCompany[] | null>(null);
+  const [searchError, setSearchError] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<InviteResult | null>(null);
   const [copied, setCopied] = useState(false);
   const emailBodyRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleSearch = async () => {
+    if (!searchIcao.trim() || !searchType) { setSearchError('Enter ICAO and select type.'); return; }
+    setSearchError(''); setSearching(true); setSearchResults(null);
+    try {
+      const res = await fetch(`/api/admin/search-companies?icao=${searchIcao.trim().toUpperCase()}&type=${searchType}`, {
+        headers: { 'x-admin-secret': adminSecret },
+      });
+      const data = await res.json();
+      if (!res.ok) { setSearchError(data.error || 'Search failed'); return; }
+      setSearchResults(data.companies);
+    } catch { setSearchError('Network error.'); }
+    finally { setSearching(false); }
+  };
+
+  const selectCompany = (c: DBCompany) => {
+    setCompanyName(c.name);
+    setEmail(c.email);
+    setContactName(c.poc);
+    setIcao(searchIcao.trim().toUpperCase());
+    setCompanyType(searchType);
+    setExistingDocId(c.id);
+    setEmailType('annual');
+  };
 
   useEffect(() => {
     const stored = sessionStorage.getItem('ih_admin_secret');
@@ -131,7 +175,7 @@ function InviteForm() {
       const res = await fetch('/api/admin/create-invitation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminSecret, email, companyName, companyType, icao, emailType, contactName }),
+        body: JSON.stringify({ adminSecret, email, companyName, companyType, icao, emailType, contactName, existingDocId: existingDocId || undefined }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Request failed.'); return; }
@@ -141,6 +185,7 @@ function InviteForm() {
         isExisting: data.isExisting,
         tempPassword: data.tempPassword,
         companyName, companyType, icao, email, emailType, contactName,
+        existingDocId: existingDocId || undefined,
       });
     } catch {
       setError('Network error. Please try again.');
@@ -342,7 +387,7 @@ function InviteForm() {
 
         {/* Actions */}
         <div className="flex gap-3">
-          <button onClick={() => { setResult(null); setCompanyName(''); setIcao(''); setEmail(''); setContactName(''); setEmailType(''); setCompanyType(''); }}
+          <button onClick={() => { setResult(null); setCompanyName(''); setIcao(''); setEmail(''); setContactName(''); setEmailType(''); setCompanyType(''); setExistingDocId(''); setSearchResults(null); setSearchIcao(''); }}
             className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold transition-colors">
             Send Another Invitation
           </button>
@@ -359,6 +404,75 @@ function InviteForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>
+      )}
+
+      {/* Mode toggle */}
+      <div className="flex rounded-xl border border-gray-200 overflow-hidden">
+        {([['search', '🔍 Search Database', 'Find existing company'], ['manual', '✏️ Manual Entry', 'Enter details manually']] as [InviteMode, string, string][]).map(([m, label, sub]) => (
+          <button key={m} type="button" onClick={() => setMode(m)}
+            className={`flex-1 py-3 px-4 text-sm font-semibold transition-colors ${mode === m ? 'bg-[#F34707] text-white' : 'bg-white text-gray-500 hover:bg-gray-50'}`}>
+            {label}<br /><span className={`text-xs font-normal ${mode === m ? 'text-orange-100' : 'text-gray-400'}`}>{sub}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Search mode */}
+      {mode === 'search' && (
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-4">
+          <div className="flex gap-3 items-end">
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Airport ICAO</label>
+              <input value={searchIcao} onChange={e => setSearchIcao(e.target.value.toUpperCase())} maxLength={4}
+                placeholder="e.g. KJFK" onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleSearch())}
+                className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] text-sm font-mono uppercase" />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Type</label>
+              <div className="flex rounded-xl border border-gray-300 overflow-hidden bg-white">
+                {(['handler', 'fbo'] as CompanyType[]).map(t => (
+                  <button key={t} type="button" onClick={() => setSearchType(t)}
+                    className={`flex-1 py-3 text-sm font-semibold transition-colors ${searchType === t ? 'bg-[#F34707] text-white' : 'text-gray-500 hover:bg-gray-50'}`}>
+                    {t === 'handler' ? '✈️ Handler' : '🏢 FBO'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button type="button" onClick={handleSearch} disabled={searching}
+              className="px-5 py-3 rounded-xl bg-gray-900 text-white text-sm font-semibold disabled:opacity-50 whitespace-nowrap">
+              {searching ? 'Searching…' : 'Search'}
+            </button>
+          </div>
+          {searchError && <p className="text-red-500 text-sm">{searchError}</p>}
+          {searchResults !== null && (
+            searchResults.length === 0
+              ? <p className="text-gray-400 text-sm text-center py-4">No {searchType}s found at {searchIcao}.</p>
+              : <div className="space-y-2 max-h-72 overflow-y-auto">
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">{searchResults.length} found — click to pre-fill the invite form</p>
+                  {searchResults.map(c => (
+                    <button key={c.id} type="button" onClick={() => { selectCompany(c); setMode('manual'); }}
+                      className={`w-full text-left rounded-xl border px-4 py-3 transition-all hover:border-[#F34707] hover:bg-[#F34707]/5 ${c.alreadyInvited ? 'border-yellow-200 bg-yellow-50' : 'border-gray-200 bg-white'}`}>
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{c.name || '(no name)'}</p>
+                          <p className="text-xs text-gray-400">{c.email || 'no email on file'}{c.poc ? ` · ${c.poc}` : ''}</p>
+                        </div>
+                        {c.alreadyInvited && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-semibold flex-shrink-0">Already invited</span>}
+                        {!c.email && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold flex-shrink-0">No email</span>}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+          )}
+        </div>
+      )}
+
+      {/* Show pre-filled banner when company selected from DB */}
+      {existingDocId && mode === 'manual' && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-green-50 border border-green-200">
+          <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+          <p className="text-sm text-green-700"><strong>{companyName}</strong> found in the database — this invite will link to their existing listing.</p>
+          <button type="button" onClick={() => { setExistingDocId(''); setCompanyName(''); setEmail(''); setContactName(''); setIcao(''); }} className="ml-auto text-xs text-green-500 hover:text-green-700 font-semibold">Clear</button>
+        </div>
       )}
 
       {/* Email Type */}
