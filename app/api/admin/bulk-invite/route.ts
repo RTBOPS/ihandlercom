@@ -67,17 +67,18 @@ export async function POST(req: NextRequest) {
             displayName: company.companyName,
           });
           uid = newUser.uid;
-
-          await adminDb.collection('users').doc(uid).set({
-            email: company.email,
-            companyName: company.companyName,
-            companyType: company.companyType,
-            icao: company.icao.toUpperCase(),
-            role: 'owner',
-            status: 'approved',
-            createdAt: FieldValue.serverTimestamp(),
-          });
         }
+
+        // Always upsert the users doc (whether new or existing Auth account)
+        await adminDb.collection('users').doc(uid).set({
+          email: company.email,
+          companyName: company.companyName,
+          companyType: company.companyType,
+          icao: company.icao.toUpperCase(),
+          role: 'owner',
+          status: 'approved',
+          createdAt: FieldValue.serverTimestamp(),
+        }, { merge: true });
 
         await adminDb.collection('invitations').doc(company.email).set({
           email: company.email,
