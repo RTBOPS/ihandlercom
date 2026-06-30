@@ -68,13 +68,26 @@ export async function POST(req: NextRequest) {
       });
       finalId = ref.id;
     } else {
-      await db.collection(
-        // Determine collection from existing doc
-        (await findCompanyDoc(uid))?.colName ?? 'handler'
-      ).doc(recordId).update({
-        ...safe,
-        updatedAt: FieldValue.serverTimestamp(),
-      });
+      const found = await findCompanyDoc(uid);
+      const colName = found?.colName ?? 'handler';
+
+      // Read existing doc to preserve original field types (e.g. string vs array)
+      const existing = await db.collection(colName).doc(recordId).get();
+      const existingData = existing.data() || {};
+
+      // Only send fields that exist in safe; coerce type to match original if it's a string field
+      const merged: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(safe)) {
+        const orig = existingData[k];
+        if (typeof orig === 'string' && Array.isArray(v)) {
+          // Original schema uses string — keep as string (join array or empty string)
+          merged[k] = (v as string[]).join(', ');
+        } else {
+          merged[k] = v;
+        }
+      }
+
+      await db.collection(colName).doc(recordId).update(merged);
     }
 
     return NextResponse.json({ ok: true, id: finalId });
