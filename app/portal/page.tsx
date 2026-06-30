@@ -494,16 +494,18 @@ export default function PortalPage() {
     if (!user) return;
     async function load() {
       try {
-        const userSnap = await getDoc(doc(db, 'users', user!.uid));
-        if (!userSnap.exists()) return;
-        const p = userSnap.data() as UserProfile;
+        const token = await user!.getIdToken();
+        const res = await fetch('/api/portal/profile', {
+          headers: { authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const p = (await res.json()) as UserProfile;
         setProfile(p);
-        const colName = p.companyType === 'fbo' ? 'fbo' : 'handler';
-        const icaoField = p.companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
-        const nameField = p.companyType === 'fbo' ? 'fboName' : 'handlerName';
-        const snap = await getDocs(query(collection(db, colName), where(icaoField, '==', p.icao), where(nameField, '==', p.companyName)));
-        if (!snap.empty) {
-          const r = { id: snap.docs[0].id, ...snap.docs[0].data() } as HandlerRecord | FboRecord;
+        const recRes = await fetch('/api/portal/record', {
+          headers: { authorization: `Bearer ${token}` },
+        });
+        if (recRes.ok) {
+          const r = (await recRes.json()) as HandlerRecord | FboRecord;
           setRecord(r);
           if (p.companyType === 'fbo') {
             const f = r as FboRecord;
@@ -566,13 +568,21 @@ export default function PortalPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!record) return;
+    if (!record || !user) return;
     setSaving(true); setSaveMsg('');
     try {
-      const colName = profile?.companyType === 'fbo' ? 'fbo' : 'handler';
-      await updateDoc(doc(db, colName, record.id), { ...formData, ...arrayData });
-      setSaveMsg('Changes saved!');
-      setTimeout(() => setSaveMsg(''), 3000);
+      const token = await user.getIdToken();
+      const res = await fetch('/api/portal/record', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', authorization: `Bearer ${token}` },
+        body: JSON.stringify({ recordId: record.id, fields: { ...formData, ...arrayData } }),
+      });
+      if (res.ok) {
+        setSaveMsg('Changes saved!');
+        setTimeout(() => setSaveMsg(''), 3000);
+      } else {
+        setSaveMsg('Error saving. Try again.');
+      }
     } catch { setSaveMsg('Error saving. Try again.'); }
     finally { setSaving(false); }
   };
