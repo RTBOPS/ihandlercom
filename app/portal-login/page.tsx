@@ -1,18 +1,38 @@
 'use client';
 
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
+type View = 'login' | 'reset' | 'reset-sent';
+
 export default function PortalLoginPage() {
+  const [view, setView]         = useState<View>('login');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
   const router = useRouter();
+
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) { setError('Enter your email address first.'); return; }
+    setError(''); setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      setView('reset-sent');
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code === 'auth/user-not-found') {
+        setError('No account found with that email. Contact operations@i-handler.app.');
+      } else {
+        setError('Could not send reset email. Try again.');
+      }
+    } finally { setLoading(false); }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,61 +78,105 @@ export default function PortalLoginPage() {
           <p className="text-white/60 text-sm">Sign in to manage your company listing</p>
         </div>
 
-        {/* Form */}
+        {/* Form area */}
         <div className="px-8 py-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
-                {error}
+
+          {/* ── LOGIN VIEW ── */}
+          {view === 'login' && (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
+                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm" />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <button type="button" onClick={() => { setError(''); setView('reset'); }}
+                      className="text-xs text-[#F34707] hover:underline">
+                      Forgot password?
+                    </button>
+                  </div>
+                  <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm" />
+                </div>
+                <button type="submit" disabled={loading}
+                  className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors disabled:opacity-50">
+                  {loading ? 'Signing in…' : 'Sign in to my portal'}
+                </button>
+              </form>
+              <div className="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-100">
+                <p className="text-xs text-blue-700 font-semibold mb-1">This portal is for FBOs and Ground Handlers only.</p>
+                <p className="text-xs text-blue-600">
+                  Your credentials were sent by email when your company was added to the i-Handler directory.
+                </p>
               </div>
-            )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Signing in…' : 'Sign in to my portal'}
-            </button>
-          </form>
+              <p className="mt-6 text-center text-xs text-gray-400">
+                Are you a pilot or operator?{' '}
+                <a href="https://i-handler.app" target="_blank" rel="noopener noreferrer" className="text-[#F34707] hover:underline">
+                  Download the i-Handler App
+                </a>
+              </p>
+            </>
+          )}
 
-          {/* Info box */}
-          <div className="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-100">
-            <p className="text-xs text-blue-700 font-semibold mb-1">This portal is for FBOs and Ground Handlers only.</p>
-            <p className="text-xs text-blue-600">
-              Your credentials were sent by email when your company was added to the i-Handler directory.
-              If you did not receive them or need a new password, contact us at{' '}
-              <a href="mailto:operations@i-handler.app" className="underline">operations@i-handler.app</a>.
-            </p>
-          </div>
+          {/* ── RESET VIEW ── */}
+          {view === 'reset' && (
+            <>
+              <p className="text-sm text-gray-600 mb-5">
+                Enter your email address and we will send you a link to reset your password.
+              </p>
+              <form onSubmit={handleReset} className="space-y-5">
+                {error && (
+                  <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
+                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors text-sm" />
+                </div>
+                <button type="submit" disabled={loading}
+                  className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors disabled:opacity-50">
+                  {loading ? 'Sending…' : 'Send reset link'}
+                </button>
+              </form>
+              <button onClick={() => { setError(''); setView('login'); }}
+                className="mt-4 w-full text-center text-sm text-gray-400 hover:text-gray-700 transition-colors">
+                ← Back to sign in
+              </button>
+            </>
+          )}
 
-          <p className="mt-6 text-center text-xs text-gray-400">
-            Are you a pilot or operator?{' '}
-            <a href="https://i-handler.app" target="_blank" rel="noopener noreferrer" className="text-[#F34707] hover:underline">
-              Download the i-Handler App
-            </a>
-          </p>
+          {/* ── RESET SENT VIEW ── */}
+          {view === 'reset-sent' && (
+            <div className="text-center py-4">
+              <div className="w-16 h-16 rounded-full bg-green-50 border border-green-100 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 mb-2">Check your email</h2>
+              <p className="text-sm text-gray-500 mb-1">
+                We sent a password reset link to
+              </p>
+              <p className="text-sm font-semibold text-gray-800 mb-6">{email}</p>
+              <p className="text-xs text-gray-400 mb-6">
+                Click the link in the email to set a new password. If you don&apos;t see it, check your spam folder.
+              </p>
+              <button onClick={() => { setView('login'); setError(''); }}
+                className="w-full py-3 rounded-xl bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold text-sm transition-colors">
+                Back to sign in
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
 
