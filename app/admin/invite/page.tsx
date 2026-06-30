@@ -24,7 +24,7 @@ type InviteResult = {
 function buildEmailBody(result: InviteResult): string {
   const { companyName, icao, email, tempPassword, isExisting, emailType, contactName } = result;
   const greeting = contactName ? `Dear ${contactName},` : `Dear ${companyName} Team,`;
-  const loginUrl = 'https://ihandler-landing.vercel.app/login';
+  const loginUrl = 'https://www.i-handler.com/portal-login';
 
   if (emailType === 'new') {
     return `${greeting}
@@ -180,7 +180,7 @@ function InviteForm() {
     const subject = result.emailType === 'new'
       ? `i-Handler – Invitation to manage your listing at ${result.icao}`
       : `i-Handler – Annual Directory Update Request for ${result.companyName}`;
-    const loginUrl = 'https://ihandler-landing.vercel.app/login';
+    const loginUrl = 'https://www.i-handler.com/portal-login';
 
     return (
       <div className="space-y-6">
