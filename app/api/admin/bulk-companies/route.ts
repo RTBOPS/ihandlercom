@@ -22,9 +22,69 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ countries });
     }
 
+    // ── ICAO or name search ───────────────────────────────────────────────────
+    const icaoParam = url.searchParams.get('icao')?.trim().toUpperCase() ?? '';
+    const nameParam = url.searchParams.get('name')?.trim() ?? '';
+    const typeParam = url.searchParams.get('type') ?? 'all';
+
+    if (icaoParam || nameParam) {
+      const invitationSnap = await db.collection('invitations').select('email').get();
+      const invitedEmails = new Set(invitationSnap.docs.map(d => (d.data().email as string | undefined)?.toLowerCase()).filter(Boolean));
+
+      const handlerDocs: { id: string; data: Record<string, unknown> }[] = [];
+      const fboDocs: { id: string; data: Record<string, unknown> }[] = [];
+
+      if (typeParam !== 'fbo') {
+        const q = icaoParam
+          ? db.collection('handler').where('handlerIcao', '==', icaoParam)
+          : db.collection('handler').where('handlerName', '>=', nameParam).where('handlerName', '<=', nameParam + '');
+        const snap = await q.select('handlerName', 'handlerEmail', 'handlerIcao', 'handlerPocName', 'handlerCountry').get();
+        snap.docs.forEach(d => handlerDocs.push({ id: d.id, data: d.data() as Record<string, unknown> }));
+      }
+
+      if (typeParam !== 'handler') {
+        const q = icaoParam
+          ? db.collection('fbo').where('fboIcao', '==', icaoParam)
+          : db.collection('fbo').where('fboName', '>=', nameParam).where('fboName', '<=', nameParam + '');
+        const snap = await q.select('fboName', 'fboEmail', 'fboIcao', 'fboPocName', 'fboCountry').get();
+        snap.docs.forEach(d => fboDocs.push({ id: d.id, data: d.data() as Record<string, unknown> }));
+      }
+
+      const companies: {
+        id: string; companyName: string; companyType: 'fbo' | 'handler';
+        icao: string; email: string; pocName: string; country: string; alreadyInvited: boolean;
+      }[] = [];
+
+      handlerDocs.forEach(({ id, data }) => {
+        const email = (data.handlerEmail as string | undefined)?.trim();
+        const name = (data.handlerName as string | undefined)?.trim();
+        const icao = (data.handlerIcao as string | undefined)?.trim();
+        if (!email || !name || !icao) return;
+        companies.push({ id, companyName: name, companyType: 'handler', icao: icao.toUpperCase(), email,
+          pocName: (data.handlerPocName as string | undefined)?.trim() ?? '',
+          country: (data.handlerCountry as string | undefined)?.trim() ?? '',
+          alreadyInvited: invitedEmails.has(email.toLowerCase()) });
+      });
+
+      fboDocs.forEach(({ id, data }) => {
+        const email = (data.fboEmail as string | undefined)?.trim();
+        const name = (data.fboName as string | undefined)?.trim();
+        const icao = (data.fboIcao as string | undefined)?.trim();
+        if (!email || !name || !icao) return;
+        companies.push({ id, companyName: name, companyType: 'fbo', icao: icao.toUpperCase(), email,
+          pocName: (data.fboPocName as string | undefined)?.trim() ?? '',
+          country: (data.fboCountry as string | undefined)?.trim() ?? '',
+          alreadyInvited: invitedEmails.has(email.toLowerCase()) });
+      });
+
+      const seen = new Set<string>();
+      const unique = companies.filter(c => { const k = c.email.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+      unique.sort((a, b) => a.icao.localeCompare(b.icao) || a.companyName.localeCompare(b.companyName));
+      return NextResponse.json({ companies: unique });
+    }
+
     // ── List companies filtered by countries ──────────────────────────────────
     const countriesParam = url.searchParams.get('countries') ?? '';
-    const typeParam = url.searchParams.get('type') ?? 'all'; // all | fbo | handler
 
     if (!countriesParam) {
       return NextResponse.json({ companies: [] });
