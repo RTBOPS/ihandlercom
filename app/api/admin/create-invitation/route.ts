@@ -36,10 +36,15 @@ export async function POST(req: NextRequest) {
       // Note: Firebase trigger may auto-create a user doc — we don't use that collection for portal
     }
 
-    // Link accountUid to the handler/fbo doc
+    // Save link in portalLinks — never touches handler/fbo doc
     if (existingDocId) {
       const colName = companyType === 'fbo' ? 'fbo' : 'handler';
-      await adminDb.collection(colName).doc(existingDocId).update({ accountUid: uid });
+      const docIdKey = companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
+      await adminDb.collection('portalLinks').doc(uid).set({
+        companyType,
+        [docIdKey]: existingDocId,
+        icao: icao.toUpperCase(),
+      }, { merge: true });
     }
 
     // Store invitation record for audit trail

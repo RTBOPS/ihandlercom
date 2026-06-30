@@ -4,13 +4,16 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 async function findCompanyDoc(uid: string) {
   const db = getAdminDb();
-  for (const [colName, companyType] of [['handler', 'handler'], ['fbo', 'fbo']] as const) {
-    const snap = await db.collection(colName).where('accountUid', '==', uid).limit(1).get();
-    if (!snap.empty) {
-      return { db, colName, companyType, docId: snap.docs[0].id, doc: snap.docs[0] };
-    }
-  }
-  return null;
+  const linkSnap = await db.collection('portalLinks').doc(uid).get();
+  if (!linkSnap.exists) return null;
+
+  const link = linkSnap.data()!;
+  const colName = link.companyType === 'fbo' ? 'fbo' : 'handler';
+  const docId = link.handlerDocId || link.fboDocId;
+  const doc = await db.collection(colName).doc(docId).get();
+  if (!doc.exists) return null;
+
+  return { db, colName, companyType: link.companyType as string, docId, doc };
 }
 
 export async function GET(req: NextRequest) {
@@ -21,10 +24,7 @@ export async function GET(req: NextRequest) {
     const decoded = await getAdminAuth().verifyIdToken(token);
     const found = await findCompanyDoc(decoded.uid);
 
-    if (!found) {
-      // No linked doc yet — return empty so portal shows blank form
-      return NextResponse.json({ id: null, _new: true });
-    }
+    if (!found) return NextResponse.json({ id: null, _new: true });
 
     return NextResponse.json({ id: found.docId, ...found.doc.data() });
   } catch (err) {
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     const { recordId, fields } = await req.json() as { recordId: string | null; fields: Record<string, unknown> };
 
-    const BLOCKED = ['accountUid', 'ownerUid', 'createdBy', '_createdBy', '_updatedBy', 'uid', '_new'];
+    const BLOCKED = ['accountUid', 'ownerUid', 'createdBy', '_createdBy', '_updatedBy', 'uid', '_new', '_companyType'];
     const safe = Object.fromEntries(
       Object.entries(fields).filter(([k]) => !BLOCKED.includes(k))
     );
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     let finalId = recordId;
 
     if (!recordId) {
-      // New company — need companyType from fields to know which collection
+      // Brand new company — create doc and save link in portalLinks
       const companyType = fields._companyType as string;
       const colName = companyType === 'fbo' ? 'fbo' : 'handler';
       const icaoField = companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
@@ -62,25 +62,29 @@ export async function POST(req: NextRequest) {
         ...safe,
         [icaoField]: fields[icaoField] || '',
         [nameField]: fields[nameField] || '',
-        accountUid: uid,
-        createdAt: FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp(),
+        _createdBy: { uid, timestamp: new Date().toISOString() },
+        _updatedBy: { uid, timestamp: new Date().toISOString() },
       });
       finalId = ref.id;
+
+      // Save link in portalLinks — never touches handler/fbo doc
+      await db.collection('portalLinks').doc(uid).set({
+        companyType,
+        [colName === 'fbo' ? 'fboDocId' : 'handlerDocId']: finalId,
+        icao: (fields[icaoField] as string || '').toUpperCase(),
+      });
     } else {
       const found = await findCompanyDoc(uid);
       const colName = found?.colName ?? 'handler';
 
-      // Read existing doc to preserve original field types (e.g. string vs array)
+      // Read existing doc to preserve original field types (string vs array)
       const existing = await db.collection(colName).doc(recordId).get();
       const existingData = existing.data() || {};
 
-      // Only send fields that exist in safe; coerce type to match original if it's a string field
       const merged: Record<string, unknown> = {};
       for (const [k, v] of Object.entries(safe)) {
         const orig = existingData[k];
         if (typeof orig === 'string' && Array.isArray(v)) {
-          // Original schema uses string — keep as string (join array or empty string)
           merged[k] = (v as string[]).join(', ');
         } else {
           merged[k] = v;

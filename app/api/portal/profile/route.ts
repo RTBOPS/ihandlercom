@@ -10,24 +10,25 @@ export async function GET(req: NextRequest) {
     const uid = decoded.uid;
     const db = getAdminDb();
 
-    // Find linked handler or fbo doc by accountUid
-    for (const [colName, companyType] of [['handler', 'handler'], ['fbo', 'fbo']] as const) {
-      const snap = await db.collection(colName).where('accountUid', '==', uid).limit(1).get();
-      if (!snap.empty) {
-        const d = snap.docs[0].data();
-        const isFbo = companyType === 'fbo';
-        return NextResponse.json({
-          uid,
-          companyType,
-          docId:       snap.docs[0].id,
-          companyName: isFbo ? d.fboName    : d.handlerName,
-          email:       isFbo ? d.fboEmail   : d.handlerEmail,
-          icao:        isFbo ? d.fboIcao    : d.handlerIcao,
-        });
-      }
-    }
+    // Look up portal link (separate collection — never touched by the app)
+    const linkSnap = await db.collection('portalLinks').doc(uid).get();
+    if (!linkSnap.exists) return NextResponse.json({ error: 'No portal access linked to this account' }, { status: 403 });
 
-    return NextResponse.json({ error: 'No handler or FBO linked to this account' }, { status: 403 });
+    const link = linkSnap.data()!;
+    const colName = link.companyType === 'fbo' ? 'fbo' : 'handler';
+    const docSnap = await db.collection(colName).doc(link.handlerDocId || link.fboDocId).get();
+    if (!docSnap.exists) return NextResponse.json({ error: 'Company record not found' }, { status: 404 });
+
+    const d = docSnap.data()!;
+    const isFbo = link.companyType === 'fbo';
+    return NextResponse.json({
+      uid,
+      companyType: link.companyType,
+      docId: docSnap.id,
+      companyName: isFbo ? d.fboName    : d.handlerName,
+      email:       isFbo ? d.fboEmail   : d.handlerEmail,
+      icao:        isFbo ? d.fboIcao    : d.handlerIcao,
+    });
   } catch (err) {
     console.error('portal/profile error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

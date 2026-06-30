@@ -43,11 +43,9 @@ function denormalizeFields(tab: Tab, fields: Record<string, unknown>) {
 
 async function getPortalIcao(uid: string): Promise<string | null> {
   const db = getAdminDb();
-  for (const [colName, icaoField] of [['handler', 'handlerIcao'], ['fbo', 'fboIcao']]) {
-    const snap = await db.collection(colName).where('accountUid', '==', uid).limit(1).get();
-    if (!snap.empty) return snap.docs[0].data()[icaoField] as string;
-  }
-  return null;
+  const linkSnap = await db.collection('portalLinks').doc(uid).get();
+  if (!linkSnap.exists) return null;
+  return linkSnap.data()!.icao as string ?? null;
 }
 
 export async function GET(req: NextRequest) {
