@@ -34,7 +34,7 @@ type BulkResult = {
 const LOGIN_URL = 'https://www.i-handler.com/portal-login';
 const BASE_URL = 'https://www.i-handler.com';
 const LOGO_URL = `${BASE_URL}/images/IHANDLER_LOGO.png`;
-const IHANDLER_APP_LOGO = `${BASE_URL}/images/I-HANDLER_APP_LOGO.png`;
+const APP_LOGO_URL = `${BASE_URL}/images/ihandler-app/app-logo.jpg`;
 const BHS_LOGO = `${BASE_URL}/images/bhs/bhs-logo.png`;
 const HRS_LOGO = `${BASE_URL}/images/hrs/hrs-logo.jpg`;
 const GTPS_LOGO = `${BASE_URL}/images/gtps/gtps-logo.jpg`;
@@ -75,7 +75,7 @@ function buildHtmlEmail(r: {
           <tr>
             <td width="25%" style="text-align:center;padding:8px 6px;vertical-align:top;">
               <a href="${BASE_URL}" style="text-decoration:none;">
-                <img src="${IHANDLER_APP_LOGO}" width="48" height="48" alt="i-Handler App" style="border-radius:12px;display:block;margin:0 auto 6px;" />
+                <img src="${APP_LOGO_URL}" width="48" height="48" alt="i-Handler App" style="border-radius:12px;display:block;margin:0 auto 6px;object-fit:cover;" />
                 <p style="margin:0;font-size:11px;font-weight:700;color:#111827;">i-Handler App</p>
                 <p style="margin:2px 0 0;font-size:10px;color:#6b7280;">Flight ops platform</p>
               </a>
@@ -112,16 +112,16 @@ function buildHtmlEmail(r: {
         <p style="margin:0 0 10px 0;font-size:13px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:1px;">Why Being Listed in i-Handler Matters</p>
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
-            <td style="padding:4px 0;font-size:13px;color:#166534;">✈️&nbsp;&nbsp;<strong>Pilots request your services directly</strong> from the i-Handler mobile app, available on iOS and Android.</td>
+          <tr><td style="padding:5px 0;font-size:13px;color:#166534;line-height:1.5;"><strong>Direct access from flight crews and operators.</strong> Pilots and dispatchers search for handlers and FBOs by ICAO directly from the i-Handler mobile app and request your services in real time.</td></tr>
           </tr>
           <tr>
-            <td style="padding:4px 0;font-size:13px;color:#166534;">🌍&nbsp;&nbsp;<strong>Global reach</strong> — operators, dispatchers, and pilots from over 100 countries use i-Handler daily.</td>
+          <tr><td style="padding:5px 0;font-size:13px;color:#166534;line-height:1.5;"><strong>Exclusive aviation ecosystem.</strong> i-Handler connects crews, passengers, ground handlers, FBOs, and service providers on a single platform built exclusively for aviation.</td></tr>
           </tr>
           <tr>
-            <td style="padding:4px 0;font-size:13px;color:#166534;">📋&nbsp;&nbsp;<strong>Complete service profile</strong> — handling, catering, hotels, car rentals, permits, and more.</td>
+          <tr><td style="padding:5px 0;font-size:13px;color:#166534;line-height:1.5;"><strong>Global reach, local impact.</strong> Aviation professionals from over 100 countries use i-Handler daily to plan operations, find ground support, and manage their flights.</td></tr>
           </tr>
           <tr>
-            <td style="padding:4px 0;font-size:13px;color:#166534;">🔒&nbsp;&nbsp;<strong>You control your data</strong> — update your information anytime via your private portal.</td>
+          <tr><td style="padding:5px 0;font-size:13px;color:#166534;line-height:1.5;"><strong>Your data, your control.</strong> Update your profile, services, and contact information at any time through your private portal.</td></tr>
           </tr>
         </table>
       </td></tr>
@@ -129,7 +129,7 @@ function buildHtmlEmail(r: {
 
   const newBody = `
     <p style="margin:0 0 16px 0;">${greeting}</p>
-    <p style="margin:0 0 16px 0;">My name is <strong>Felipe Aguilar</strong> from <strong>i-Handler</strong>, the leading digital platform for international private aviation ground operations. We are pleased to inform you that <strong>${companyName}</strong> has been included in our global aviation directory — the reference used by operators, pilots, and flight dispatchers worldwide to find FBOs and ground handlers at airports across the globe.</p>
+    <p style="margin:0 0 16px 0;">My name is <strong>Felipe Aguilar</strong> from <strong>i-Handler</strong> — the exclusive digital ecosystem for international private aviation ground operations. We are pleased to inform you that <strong>${companyName}</strong> has been included in our global aviation directory, the reference used by operators, pilots, and flight dispatchers worldwide to find FBOs and ground handlers at airports across the globe.</p>
     <p style="margin:0 0 16px 0;">Your company is listed under ICAO <strong style="color:#f34707;font-size:16px;">${icao}</strong>.</p>
 
     ${benefitsSection}
@@ -149,7 +149,6 @@ function buildHtmlEmail(r: {
 
     ${appsSection}
 
-    <p style="margin:0 0 16px 0;">We would love to schedule a brief call to walk you through your portal and discuss how i-Handler can help you reach more operators. Please reply to this email to arrange a convenient time.</p>
     <p style="margin:0 0 16px 0;">Thank you for being part of the i-Handler community.</p>`;
 
   const annualBody = `
@@ -186,9 +185,9 @@ function buildHtmlEmail(r: {
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:32px 16px;">
   <tr><td align="center">
     <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.10);max-width:600px;">
-      <tr><td style="background:#111827;padding:26px 32px;text-align:center;">
+      <tr><td style="background:#ffffff;padding:28px 32px 20px;text-align:center;border-bottom:4px solid #f34707;">
         <img src="${LOGO_URL}" alt="i-Handler" width="190" style="display:block;margin:0 auto;" />
-        <p style="margin:10px 0 0;font-size:12px;color:#9ca3af;letter-spacing:1px;text-transform:uppercase;">Global Aviation Ground Operations Platform</p>
+        <p style="margin:10px 0 0;font-size:11px;color:#9ca3af;letter-spacing:1.5px;text-transform:uppercase;">Global Aviation Ground Operations Platform</p>
       </td></tr>
       <tr><td style="background:#f34707;height:4px;"></td></tr>
       <tr><td style="padding:32px;font-size:14px;line-height:1.7;color:#374151;">
