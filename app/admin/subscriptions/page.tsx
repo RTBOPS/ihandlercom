@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { verifyAdminSecret } from '@/lib/adminAuth';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -72,6 +73,7 @@ export default function AdminSubscriptionsPage() {
   const router = useRouter();
   const [authed, setAuthed]     = useState(false);
   const [secretInput, setSecretInput] = useState('');
+  const [authError, setAuthError] = useState('');
   const [subs, setSubs]         = useState<Sub[]>([]);
   const [stats, setStats]       = useState<Stats | null>(null);
   const [loading, setLoading]   = useState(false);
@@ -85,7 +87,11 @@ export default function AdminSubscriptionsPage() {
   // Check session auth
   useEffect(() => {
     const s = sessionStorage.getItem('adminSecret');
-    if (s) { setAuthed(true); }
+    if (!s) return;
+    verifyAdminSecret(s).then((ok) => {
+      if (ok) setAuthed(true);
+      else sessionStorage.removeItem('adminSecret');
+    });
   }, []);
 
   const load = useCallback(async () => {
@@ -107,8 +113,11 @@ export default function AdminSubscriptionsPage() {
     if (authed) load();
   }, [authed, load]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError('');
+    const ok = await verifyAdminSecret(secretInput);
+    if (!ok) { setAuthError('Incorrect password'); return; }
     sessionStorage.setItem('adminSecret', secretInput);
     setAuthed(true);
   };
@@ -165,6 +174,9 @@ export default function AdminSubscriptionsPage() {
               <p className="text-gray-400 text-sm mt-1">i-Handler internal portal</p>
             </div>
             <form onSubmit={handleLogin} className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              {authError && (
+                <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{authError}</div>
+              )}
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">Admin Password</label>
                 <input type="password" required value={secretInput} onChange={(e) => setSecretInput(e.target.value)}

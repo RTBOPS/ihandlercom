@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { verifyAdminSecret } from '@/lib/adminAuth';
 
 type Invitation = {
   id: string;
@@ -28,7 +29,11 @@ export default function AdminPage() {
   // Check sessionStorage on mount
   useEffect(() => {
     const stored = sessionStorage.getItem('ih_admin_secret');
-    if (stored) { setAuthed(true); setSecret(stored); }
+    if (!stored) return;
+    verifyAdminSecret(stored).then((ok) => {
+      if (ok) { setSecret(stored); setAuthed(true); }
+      else sessionStorage.removeItem('ih_admin_secret');
+    });
   }, []);
 
   const loadInvitations = useCallback(async (s: string) => {
@@ -49,10 +54,11 @@ export default function AdminPage() {
     if (authed && secret) loadInvitations(secret);
   }, [authed, secret, loadInvitations]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
-    // We validate against the API — if invitations load, secret is correct
+    const ok = await verifyAdminSecret(secret);
+    if (!ok) { setAuthError('Incorrect password'); return; }
     sessionStorage.setItem('ih_admin_secret', secret);
     setAuthed(true);
   };

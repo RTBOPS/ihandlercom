@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { verifyAdminSecret } from '@/lib/adminAuth';
 
 type Owner = {
   uid: string;
@@ -66,6 +67,7 @@ function PasswordCell({ pw }: { pw: string | null }) {
 export default function AdminOwnersPage() {
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
+  const [authError, setAuthError] = useState('');
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -74,7 +76,11 @@ export default function AdminOwnersPage() {
 
   useEffect(() => {
     const stored = sessionStorage.getItem('ih_admin_secret');
-    if (stored) { setAuthed(true); setSecret(stored); }
+    if (!stored) return;
+    verifyAdminSecret(stored).then((ok) => {
+      if (ok) { setSecret(stored); setAuthed(true); }
+      else sessionStorage.removeItem('ih_admin_secret');
+    });
   }, []);
 
   const load = useCallback(async (s: string) => {
@@ -88,8 +94,11 @@ export default function AdminOwnersPage() {
 
   useEffect(() => { if (authed && secret) load(secret); }, [authed, secret, load]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError('');
+    const ok = await verifyAdminSecret(secret);
+    if (!ok) { setAuthError('Incorrect password'); return; }
     sessionStorage.setItem('ih_admin_secret', secret);
     setAuthed(true);
   };
@@ -110,6 +119,9 @@ export default function AdminOwnersPage() {
               <p className="text-gray-400 text-sm mt-1">i-Handler internal portal</p>
             </div>
             <form onSubmit={handleLogin} className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              {authError && (
+                <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{authError}</div>
+              )}
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">Admin Password</label>
                 <input type="password" required value={secret} onChange={(e) => setSecret(e.target.value)}

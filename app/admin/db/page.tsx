@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { verifyAdminSecret } from '@/lib/adminAuth';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -305,6 +306,7 @@ function DeleteConfirm({ doc, colKey, secret, onClose, onDone }: {
 export default function AdminDbPage() {
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
+  const [authError, setAuthError] = useState('');
   const [icaoInput, setIcaoInput] = useState('');
   const [searchedIcao, setSearchedIcao] = useState('');
   const [activeTab, setActiveTab] = useState<ColKey>('airports');
@@ -321,8 +323,21 @@ export default function AdminDbPage() {
 
   useEffect(() => {
     const stored = sessionStorage.getItem('ih_admin_secret');
-    if (stored) { setAuthed(true); setSecret(stored); }
+    if (!stored) return;
+    verifyAdminSecret(stored).then((ok) => {
+      if (ok) { setSecret(stored); setAuthed(true); }
+      else sessionStorage.removeItem('ih_admin_secret');
+    });
   }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    const ok = await verifyAdminSecret(secret);
+    if (!ok) { setAuthError('Incorrect password'); return; }
+    sessionStorage.setItem('ih_admin_secret', secret);
+    setAuthed(true);
+  };
 
   const fetchPermits = useCallback(async (country: string, s: string) => {
     if (!country.trim()) return;
@@ -392,8 +407,11 @@ export default function AdminDbPage() {
         <main className="min-h-screen pt-24 pb-20 px-4 bg-white flex items-center justify-center">
           <div className="w-full max-w-sm">
             <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">Admin Access</h1>
-            <form onSubmit={(e) => { e.preventDefault(); sessionStorage.setItem('ih_admin_secret', secret); setAuthed(true); }}
+            <form onSubmit={handleLogin}
               className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              {authError && (
+                <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{authError}</div>
+              )}
               <input type="password" required value={secret} onChange={(e) => setSecret(e.target.value)}
                 placeholder="Enter admin secret"
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 text-gray-900 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm" />

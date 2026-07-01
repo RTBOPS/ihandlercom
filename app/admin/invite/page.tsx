@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
+import { verifyAdminSecret } from '@/lib/adminAuth';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -166,7 +167,11 @@ function InviteForm() {
 
   useEffect(() => {
     const stored = sessionStorage.getItem('ih_admin_secret');
-    if (stored) { setAdminSecret(stored); setAuthed(true); }
+    if (!stored) return;
+    verifyAdminSecret(stored).then((ok) => {
+      if (ok) { setAdminSecret(stored); setAuthed(true); }
+      else sessionStorage.removeItem('ih_admin_secret');
+    });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
