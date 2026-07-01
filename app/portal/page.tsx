@@ -161,7 +161,7 @@ function LogoUpload({ currentUrl, onUploaded, getToken }: {
             className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium transition-colors disabled:opacity-50">
             {uploading ? 'Uploading…' : preview ? 'Change Logo' : 'Upload Logo'}
           </button>
-          <p className="text-xs text-gray-400 mt-1">PNG, JPG or SVG · Max 2 MB</p>
+          <p className="text-xs text-gray-400 mt-1">PNG or JPG · Max 2 MB · (SVG shows on the website but not in the mobile app)</p>
           <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
         </div>
       </div>
@@ -525,7 +525,9 @@ export default function PortalPage() {
             const f = r as FboRecord;
             setFormData({
               fboPhne: f.fboPhne || '', fboEmail: f.fboEmail || '', fboWebsite: f.fboWebsite || '',
-              fboAddress: f.fboAddress || '', fboPocName: f.fboPocName || '', fboPocTitle: f.fboPocTitle || '',
+              fboAddress: f.fboAddress || '', fboCity: f.fboCity || '', fboState: f.fboState || '',
+              fboZipcode: f.fboZipcode || '', fboCountry: f.fboCountry || '',
+              fboPocName: f.fboPocName || '', fboPocTitle: f.fboPocTitle || '',
               fboPocMobile: f.fboPocMobile || '', fboWhatsapp: f.fboWhatsapp || '', fboRemarks: f.fboRemarks || '',
               fboAfterHoursPhone: f.fboAfterHoursPhone || '', fboTollFreePhone: f.fboTollFreePhone || '',
               fboFax: f.fboFax || '', fboAftn: f.fboAftn || '', fboSita: f.fboSita || '',
@@ -551,6 +553,8 @@ export default function PortalPage() {
             setFormData({
               handlerPhone: h.handlerPhone || '', handlerEmail: h.handlerEmail || '',
               handlerWebsite: h.handlerWebsite || '', handlerAddress: h.handlerAddress || '',
+              handlerCity: h.handlerCity || '', handlerState: h.handlerState || '',
+              handlerZipcode: h.handlerZipcode || '', handlerCountry: h.handlerCountry || '',
               handlerPoc: h.handlerPoc || '', handlerPocTitle: h.handlerPocTitle || '',
               handlerPocMobile: h.handlerPocMobile || '', handlerWhatsapp: h.handlerWhatsapp || '',
               handlerRemarks: h.handlerRemarks || '', handlerAfterHoursPhone: h.handlerAfterHoursPhone || '',
@@ -726,6 +730,10 @@ export default function PortalPage() {
                       <Field label="Website" name="fboWebsite" value={formData.fboWebsite || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
                       <Field label="WhatsApp" name="fboWhatsapp" value={formData.fboWhatsapp || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
                       <div className="sm:col-span-2"><Field label="Address" name="fboAddress" value={formData.fboAddress || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} /></div>
+                      <Field label="City" name="fboCity" value={formData.fboCity || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
+                      <Field label="State / Province" name="fboState" value={formData.fboState || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
+                      <Field label="ZIP / Postal Code" name="fboZipcode" value={formData.fboZipcode || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
+                      <Field label="Country" name="fboCountry" value={formData.fboCountry || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
 
                       <SectionTitle>Point of Contact</SectionTitle>
                       <Field label="Name" name="fboPocName" value={formData.fboPocName || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
@@ -753,6 +761,10 @@ export default function PortalPage() {
                       <Field label="Website" name="handlerWebsite" value={formData.handlerWebsite || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
                       <Field label="WhatsApp" name="handlerWhatsapp" value={formData.handlerWhatsapp || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
                       <div className="sm:col-span-2"><Field label="Address" name="handlerAddress" value={formData.handlerAddress || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} /></div>
+                      <Field label="City" name="handlerCity" value={formData.handlerCity || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
+                      <Field label="State / Province" name="handlerState" value={formData.handlerState || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
+                      <Field label="ZIP / Postal Code" name="handlerZipcode" value={formData.handlerZipcode || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
+                      <Field label="Country" name="handlerCountry" value={formData.handlerCountry || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
 
                       <SectionTitle>Point of Contact</SectionTitle>
                       <Field label="Name" name="handlerPoc" value={formData.handlerPoc || ''} onChange={(k,v)=>setFormData(p=>({...p,[k]:v}))} />
