@@ -211,6 +211,7 @@ type CompanyEntry = {
   companyType: 'fbo' | 'handler';
   icao: string;
   pocName?: string;
+  tempPassword?: string | null;
 };
 
 export async function POST(req: NextRequest) {
@@ -249,14 +250,14 @@ export async function POST(req: NextRequest) {
       try {
         let uid: string;
         let isExisting = false;
-        let tempPassword: string | null = null;
+        let tempPassword: string | null = company.tempPassword ?? null;
 
         try {
           const existing = await adminAuth.getUserByEmail(company.email);
           uid = existing.uid;
-          isExisting = true;
+          isExisting = !tempPassword; // treat as new if we have a temp password to show
         } catch {
-          tempPassword = generatePassword();
+          if (!tempPassword) tempPassword = generatePassword();
           const newUser = await adminAuth.createUser({
             email: company.email,
             password: tempPassword,

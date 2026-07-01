@@ -233,6 +233,7 @@ function InviteForm() {
             companyType: result.companyType,
             icao: result.icao,
             pocName: result.contactName,
+            tempPassword: result.tempPassword,
           }],
         }),
       });
