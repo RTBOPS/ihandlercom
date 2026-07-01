@@ -534,17 +534,17 @@ export default function PortalPage() {
               fboLogo: f.fboLogo || '',
             });
             setArrayData({
-              fboServiceCategories: f.fboServiceCategories || [],
-              fboFuelServices: f.fboFuelServices || [],
-              fboRampServices: f.fboRampServices || [],
-              fboPassengerService: f.fboPassengerService || [],
-              fboCargoServices: f.fboCargoServices || [],
-              fboAdministrationOpsSvcs: f.fboAdministrationOpsSvcs || [],
-              fboOtherServices: f.fboOtherServices || [],
-              fboPaymentForms: f.fboPaymentForms || [],
-              fboFuelCards: f.fboFuelCards || [],
-              fboLanguageSpoken: f.fboLanguageSpoken || [],
-              fboAccreditations: f.fboAccreditations || [],
+              fboServiceCategories: asList(f.fboServiceCategories),
+              fboFuelServices: asList(f.fboFuelServices),
+              fboRampServices: asList(f.fboRampServices),
+              fboPassengerService: asList(f.fboPassengerService),
+              fboCargoServices: asList(f.fboCargoServices),
+              fboAdministrationOpsSvcs: asList(f.fboAdministrationOpsSvcs),
+              fboOtherServices: asList(f.fboOtherServices),
+              fboPaymentForms: asList(f.fboPaymentForms),
+              fboFuelCards: asList(f.fboFuelCards),
+              fboLanguageSpoken: asList(f.fboLanguageSpoken),
+              fboAccreditations: asList(f.fboAccreditations),
             });
           } else {
             const h = r as HandlerRecord;

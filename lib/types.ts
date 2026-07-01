@@ -292,22 +292,26 @@ export interface FboRecord {
   fboPocTitle?: string;
   fboPocMobile?: string;
   fboRemarks?: string;
-  fboAccreditations?: string[];
+  // Multi-select fields: string[] in the portal, comma-joined string in the app.
+  fboAccreditations?: string[] | string;
   fboWhatsapp?: string;
   fboLinkedin?: string;
   fboFacebook?: string;
-  fboFrecuency?: string;
+  fboFrecuency?: string;              // portal spelling (text input)
+  fboFrequency?: number | string;    // app schema (canonical) — numeric
   fboMembership?: string;
-  fboAdministrationOpsSvcs?: string[];
-  fboBusinessGenSvcs?: string[];
-  fboCargoServices?: string[];
-  fboFuelServices?: string[];
-  fboRampServices?: string[];
-  fboServiceCategories?: string[];
-  fboFuelCards?: string[];
-  fboPaymentForms?: string[];
-  fboLanguageSpoken?: string[];
-  fboPassengerService?: string[];
-  fboOtherServices?: string[];
+  fboAdministrationOpsSvcs?: string[] | string;
+  fboBusinessGenSvcs?: string[] | string;
+  fboCargoServices?: string[] | string;
+  fboFuelServices?: string[] | string;
+  fboRampServices?: string[] | string;
+  fboServiceCategories?: string[] | string;
+  fboFuelCards?: string[] | string;
+  fboPaymentForms?: string[] | string;
+  fboLanguageSpoken?: string[] | string;    // portal name
+  fboLenguageSpoken?: string[] | string;     // app schema (canonical) name
+  fboPassengerService?: string[] | string;   // portal name
+  fboPassengersServices?: string[] | string; // app schema (canonical) name
+  fboOtherServices?: string[] | string;
   uid?: string;
 }

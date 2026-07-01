@@ -453,6 +453,8 @@ function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
 }
 
 function FboCard({ fbo: f }: { fbo: FboRecord }) {
+  // Categories may be stored as a comma-string (app schema) or an array (legacy).
+  const categories = asList(f.fboServiceCategories);
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 hover:border-[#F34707]/40 hover:shadow-md transition-all shadow-sm">
       <div className="flex items-start gap-3 mb-4">
@@ -479,9 +481,9 @@ function FboCard({ fbo: f }: { fbo: FboRecord }) {
         {f.fboPocName          && <p className="text-gray-400 text-xs mt-2">Contact: {f.fboPocName}{f.fboPocTitle ? ` — ${f.fboPocTitle}` : ''}</p>}
         {f.fboWhatsapp         && <p className="text-gray-400 text-xs">WhatsApp: {f.fboWhatsapp}</p>}
       </div>
-      {f.fboServiceCategories && f.fboServiceCategories.length > 0 && (
+      {categories.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1">
-          {f.fboServiceCategories.map((s) => (
+          {categories.map((s) => (
             <span key={s} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">{s}</span>
           ))}
         </div>

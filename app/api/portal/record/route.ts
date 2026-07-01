@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import { toAppSchema, toPortalSchema } from '@/lib/handler-schema';
+import { toAppSchema, toPortalSchema, type CompanyKind } from '@/lib/handler-schema';
 
 async function findCompanyDoc(uid: string) {
   const db = getAdminDb();
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     if (!found) return NextResponse.json({ id: null, _new: true });
 
     const data = found.doc.data() || {};
-    const view = found.colName === 'handler' ? toPortalSchema(data) : data;
+    const view = toPortalSchema(data, found.colName as CompanyKind);
     return NextResponse.json({ id: found.docId, ...view });
   } catch (err) {
     console.error('portal/record GET error:', err);
@@ -61,8 +61,8 @@ export async function POST(req: NextRequest) {
       const icaoField = companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
       const nameField = companyType === 'fbo' ? 'fboName' : 'handlerName';
 
-      // Handlers: store in the app's canonical shape (strings + app field names).
-      const base = colName === 'handler' ? toAppSchema(safe) : safe;
+      // Store in the app's canonical shape (strings/numbers + app field names).
+      const base = toAppSchema(safe, colName as CompanyKind);
 
       // Pre-generate the doc ref so we can stamp `uid` = document id (the app
       // reads a `uid` field that must equal the document id).
@@ -87,21 +87,8 @@ export async function POST(req: NextRequest) {
       const found = await findCompanyDoc(uid);
       const colName = found?.colName ?? 'handler';
 
-      let merged: Record<string, unknown>;
-      if (colName === 'handler') {
-        // Convert to the app's canonical shape (strings + app field names).
-        merged = toAppSchema(safe);
-      } else {
-        // FBO: preserve original field types (string vs array) until we have an
-        // app reference doc to map its schema.
-        const existing = await db.collection(colName).doc(recordId).get();
-        const existingData = existing.data() || {};
-        merged = {};
-        for (const [k, v] of Object.entries(safe)) {
-          const orig = existingData[k];
-          merged[k] = typeof orig === 'string' && Array.isArray(v) ? (v as string[]).join(', ') : v;
-        }
-      }
+      // Convert to the app's canonical shape (strings/numbers + app field names).
+      const merged = toAppSchema(safe, colName as CompanyKind);
 
       merged.uid = recordId;
       merged._updatedBy = { uid, timestamp: new Date().toISOString() };
