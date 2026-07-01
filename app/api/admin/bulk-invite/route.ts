@@ -289,30 +289,38 @@ export async function POST(req: NextRequest) {
           ...(tempPassword ? { tempPassword } : {}),
         }, { merge: true });
 
-        // Send email via SendGrid if requested
+        // Send email via SendGrid if requested — separate try/catch so account creation
+        // is never rolled back just because the email fails
         let emailSent = false;
+        let emailError: string | undefined;
         if (sendEmails && process.env.SENDGRID_API_KEY) {
-          const subject = emailType === 'new'
-            ? `i-Handler – Invitation to manage your listing at ${company.icao}`
-            : `i-Handler – Annual Directory Update Request for ${company.companyName}`;
+          try {
+            const subject = emailType === 'new'
+              ? `i-Handler – Invitation to manage your listing at ${company.icao}`
+              : `i-Handler – Annual Directory Update Request for ${company.companyName}`;
 
-          const html = buildHtmlEmail({
-            companyName: company.companyName,
-            icao: company.icao,
-            email: company.email,
-            contactName: company.pocName || '',
-            tempPassword,
-            isExisting,
-            emailType,
-          });
+            const html = buildHtmlEmail({
+              companyName: company.companyName,
+              icao: company.icao,
+              email: company.email,
+              contactName: company.pocName || '',
+              tempPassword,
+              isExisting,
+              emailType,
+            });
 
-          await sgMail.send({
-            to: company.email,
-            from: { email: 'faguilar@i-handler.com', name: 'Felipe Aguilar – i-Handler' },
-            subject,
-            html,
-          });
-          emailSent = true;
+            await sgMail.send({
+              to: company.email,
+              from: { email: 'faguilar@i-handler.com', name: 'Felipe Aguilar – i-Handler' },
+              subject,
+              html,
+            });
+            emailSent = true;
+          } catch (sgErr: unknown) {
+            const msg = sgErr instanceof Error ? sgErr.message : String(sgErr);
+            emailError = `Email failed: ${msg}`;
+            console.error('SendGrid error for', company.email, sgErr);
+          }
         }
 
         results.push({
@@ -324,6 +332,7 @@ export async function POST(req: NextRequest) {
           tempPassword,
           isExisting,
           emailSent,
+          ...(emailError ? { error: emailError } : {}),
         });
       } catch (err) {
         results.push({
