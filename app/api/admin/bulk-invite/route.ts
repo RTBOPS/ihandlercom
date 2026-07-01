@@ -185,7 +185,7 @@ function buildHtmlEmail(params: {
             Best regards,<br/>
             <strong style="color:#111827;">Felipe Aguilar</strong><br/>
             i-Handler Operations Team<br/>
-            <a href="mailto:faguilar@i-handler.com" style="color:#f34707;">faguilar@i-handler.com</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${base}" style="color:#f34707;">www.i-handler.com</a>
+            <a href="mailto:cto@i-handler.app" style="color:#f34707;">cto@i-handler.app</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${base}" style="color:#f34707;">www.i-handler.com</a>
           </p>
         </td></tr>
         <!-- Footer -->
@@ -194,7 +194,7 @@ function buildHtmlEmail(params: {
           <p style="margin:0;font-size:11px;color:#9ca3af;">
             © ${new Date().getFullYear()} i-Handler &nbsp;·&nbsp; Global Aviation Ground Operations Platform<br/>
             You are receiving this email because your company is listed in the i-Handler aviation directory.<br/>
-            <a href="mailto:faguilar@i-handler.com?subject=Unsubscribe" style="color:#9ca3af;">Unsubscribe</a>
+            <a href="mailto:cto@i-handler.app?subject=Unsubscribe" style="color:#9ca3af;">Unsubscribe</a>
           </p>
         </td></tr>
       </table>
@@ -311,7 +311,7 @@ export async function POST(req: NextRequest) {
 
             await sgMail.send({
               to: company.email,
-              from: { email: 'faguilar@i-handler.com', name: 'Felipe Aguilar – i-Handler' },
+              from: { email: 'cto@i-handler.app', name: 'Felipe Aguilar – i-Handler' },
               subject,
               html,
             });

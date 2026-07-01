@@ -197,7 +197,7 @@ function buildHtmlEmail(r: {
           Best regards,<br/>
           <strong style="color:#111827;">Felipe Aguilar</strong><br/>
           i-Handler Operations Team<br/>
-          <a href="mailto:faguilar@i-handler.com" style="color:#f34707;">faguilar@i-handler.com</a> &nbsp;·&nbsp;
+          <a href="mailto:cto@i-handler.app" style="color:#f34707;">cto@i-handler.app</a> &nbsp;·&nbsp;
           <a href="${BASE_URL}" style="color:#f34707;">www.i-handler.com</a>
         </p>
       </td></tr>
@@ -206,7 +206,7 @@ function buildHtmlEmail(r: {
         <p style="margin:0;font-size:11px;color:#9ca3af;">
           © ${new Date().getFullYear()} i-Handler &nbsp;·&nbsp; Global Aviation Ground Operations Platform<br/>
           You are receiving this email because your company is listed in the i-Handler aviation directory.<br/>
-          <a href="mailto:faguilar@i-handler.com?subject=Unsubscribe" style="color:#9ca3af;">Unsubscribe</a>
+          <a href="mailto:cto@i-handler.app?subject=Unsubscribe" style="color:#9ca3af;">Unsubscribe</a>
         </p>
       </td></tr>
     </table>
