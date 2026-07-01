@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       ...(tempPassword ? { tempPassword } : {}),
     }, { merge: true });
 
-    return NextResponse.json({ success: true, uid, isExisting, tempPassword });
+    return NextResponse.json({ success: true, uid, isExisting, tempPassword, linkedDocId });
   } catch (err: unknown) {
     console.error('create-invitation error:', err);
     return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal server error' }, { status: 500 });

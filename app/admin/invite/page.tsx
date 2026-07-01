@@ -188,7 +188,7 @@ function InviteForm() {
         isExisting: data.isExisting,
         tempPassword: data.tempPassword,
         companyName, companyType, icao, email, emailType, contactName,
-        existingDocId: existingDocId || undefined,
+        existingDocId: data.linkedDocId || existingDocId || undefined,
       });
     } catch {
       setError('Network error. Please try again.');

@@ -266,13 +266,15 @@ export async function POST(req: NextRequest) {
           uid = newUser.uid;
         }
 
-        // Save link in portalLinks — never touches handler/fbo doc
-        const docIdKey = company.companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
-        await adminDb.collection('portalLinks').doc(uid).set({
-          companyType: company.companyType,
-          [docIdKey]: company.id,
-          icao: company.icao.toUpperCase(),
-        }, { merge: true });
+        // Save link in portalLinks — only if we have a valid docId
+        if (company.id) {
+          const docIdKey = company.companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
+          await adminDb.collection('portalLinks').doc(uid).set({
+            companyType: company.companyType,
+            [docIdKey]: company.id,
+            icao: company.icao.toUpperCase(),
+          }, { merge: true });
+        }
 
         // Store invitation record
         await adminDb.collection('invitations').doc(company.email).set({
