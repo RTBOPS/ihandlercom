@@ -36,23 +36,38 @@ export async function POST(req: NextRequest) {
       // Note: Firebase trigger may auto-create a user doc — we don't use that collection for portal
     }
 
-    // Save link in portalLinks — never touches handler/fbo doc
-    if (existingDocId) {
-      const colName = companyType === 'fbo' ? 'fbo' : 'handler';
-      const docIdKey = companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
-      await adminDb.collection('portalLinks').doc(uid).set({
-        companyType,
-        [docIdKey]: existingDocId,
-        icao: icao.toUpperCase(),
-      }, { merge: true });
+    // Save link in portalLinks — never touches existing handler/fbo doc schema
+    const colName = companyType === 'fbo' ? 'fbo' : 'handler';
+    const docIdKey = companyType === 'fbo' ? 'fboDocId' : 'handlerDocId';
+    let linkedDocId = existingDocId;
+
+    if (!linkedDocId) {
+      // No existing doc — create a minimal record so the portal has something to load
+      const nameKey = companyType === 'fbo' ? 'fboName' : 'handlerName';
+      const emailKey = companyType === 'fbo' ? 'fboEmail' : 'handlerEmail';
+      const icaoKey = companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
+      const newDoc = await adminDb.collection(colName).add({
+        [nameKey]: companyName,
+        [emailKey]: email,
+        [icaoKey]: icao.toUpperCase(),
+        createdAt: FieldValue.serverTimestamp(),
+        createdByPortalInvite: true,
+      });
+      linkedDocId = newDoc.id;
     }
+
+    await adminDb.collection('portalLinks').doc(uid).set({
+      companyType,
+      [docIdKey]: linkedDocId,
+      icao: icao.toUpperCase(),
+    }, { merge: true });
 
     // Store invitation record for audit trail
     await adminDb.collection('invitations').doc(email).set({
       email, companyName, companyType, icao: icao.toUpperCase(),
       emailType, contactName: contactName || '',
       status: 'sent', uid, isExisting,
-      existingDocId: existingDocId || null,
+      existingDocId: linkedDocId || null,
       sentAt: FieldValue.serverTimestamp(),
       ...(tempPassword ? { tempPassword } : {}),
     }, { merge: true });
