@@ -117,7 +117,7 @@ function InviteForm() {
 
   const [mode, setMode] = useState<InviteMode>('search');
   const [emailType, setEmailType] = useState<EmailType>((searchParams.get('type') as EmailType) || '');
-  const [companyType, setCompanyType] = useState<CompanyType>('');
+  const [companyType, setCompanyType] = useState<CompanyType>('handler');
   const [companyName, setCompanyName] = useState('');
   const [icao, setIcao] = useState('');
   const [email, setEmail] = useState(searchParams.get('resend') || '');
@@ -500,7 +500,7 @@ function InviteForm() {
               <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Type</label>
               <div className="flex rounded-xl border border-gray-300 overflow-hidden bg-white">
                 {(['handler', 'fbo'] as CompanyType[]).map(t => (
-                  <button key={t} type="button" onClick={() => setSearchType(t)}
+                  <button key={t} type="button" onClick={() => { setSearchType(t); setCompanyType(t); }}
                     className={`flex-1 py-3 text-sm font-semibold transition-colors ${searchType === t ? 'bg-[#F34707] text-white' : 'text-gray-500 hover:bg-gray-50'}`}>
                     {t === 'handler' ? '✈️ Handler' : '🏢 FBO'}
                   </button>
