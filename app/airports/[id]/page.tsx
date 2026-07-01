@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { AirportRecord, HandlerRecord, FboRecord } from '@/lib/types';
+import { asList } from '@/lib/handler-schema';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -411,6 +412,9 @@ export default function AirportDetailPage() {
 }
 
 function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
+  // Categories may be stored as a comma-string (app schema) or an array (legacy).
+  const categories = asList(h.handlerSvcsCategories);
+  const tollFree = h.handlerTollfreePhone || h.handlerTollFreePhone;
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 hover:border-[#F34707]/40 hover:shadow-md transition-all shadow-sm">
       <div className="flex items-start gap-3 mb-4">
@@ -431,15 +435,15 @@ function HandlerCard({ handler: h }: { handler: HandlerRecord }) {
       <div className="space-y-1.5 text-sm">
         {h.handlerPhone            && <p className="text-gray-600">📞 {h.handlerPhone}</p>}
         {h.handlerAfterHoursPhone  && <p className="text-gray-600">🌙 After hours: {h.handlerAfterHoursPhone}</p>}
-        {h.handlerTollFreePhone    && <p className="text-gray-600">📞 Toll-free: {h.handlerTollFreePhone}</p>}
+        {tollFree                  && <p className="text-gray-600">📞 Toll-free: {tollFree}</p>}
         {h.handlerEmail            && <LockedField type="email" />}
         {h.handlerWebsite          && <LockedField type="website" />}
         {h.handlerPoc              && <p className="text-gray-400 text-xs mt-2">Contact: {h.handlerPoc}{h.handlerPocTitle ? ` — ${h.handlerPocTitle}` : ''}</p>}
         {h.handlerWhatsapp         && <p className="text-gray-400 text-xs">WhatsApp: {h.handlerWhatsapp}</p>}
       </div>
-      {h.handlerSvcsCategories && h.handlerSvcsCategories.length > 0 && (
+      {categories.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1">
-          {h.handlerSvcsCategories.map((s) => (
+          {categories.map((s) => (
             <span key={s} className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">{s}</span>
           ))}
         </div>

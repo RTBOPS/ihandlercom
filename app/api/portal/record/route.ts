@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
+import { toAppSchema, toPortalSchema } from '@/lib/handler-schema';
 
 async function findCompanyDoc(uid: string) {
   const db = getAdminDb();
@@ -26,7 +27,9 @@ export async function GET(req: NextRequest) {
 
     if (!found) return NextResponse.json({ id: null, _new: true });
 
-    return NextResponse.json({ id: found.docId, ...found.doc.data() });
+    const data = found.doc.data() || {};
+    const view = found.colName === 'handler' ? toPortalSchema(data) : data;
+    return NextResponse.json({ id: found.docId, ...view });
   } catch (err) {
     console.error('portal/record GET error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -58,10 +61,17 @@ export async function POST(req: NextRequest) {
       const icaoField = companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
       const nameField = companyType === 'fbo' ? 'fboName' : 'handlerName';
 
-      const ref = await db.collection(colName).add({
-        ...safe,
+      // Handlers: store in the app's canonical shape (strings + app field names).
+      const base = colName === 'handler' ? toAppSchema(safe) : safe;
+
+      // Pre-generate the doc ref so we can stamp `uid` = document id (the app
+      // reads a `uid` field that must equal the document id).
+      const ref = db.collection(colName).doc();
+      await ref.set({
+        ...base,
         [icaoField]: fields[icaoField] || '',
         [nameField]: fields[nameField] || '',
+        uid: ref.id,
         _createdBy: { uid, timestamp: new Date().toISOString() },
         _updatedBy: { uid, timestamp: new Date().toISOString() },
       });
@@ -77,20 +87,24 @@ export async function POST(req: NextRequest) {
       const found = await findCompanyDoc(uid);
       const colName = found?.colName ?? 'handler';
 
-      // Read existing doc to preserve original field types (string vs array)
-      const existing = await db.collection(colName).doc(recordId).get();
-      const existingData = existing.data() || {};
-
-      const merged: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(safe)) {
-        const orig = existingData[k];
-        if (typeof orig === 'string' && Array.isArray(v)) {
-          merged[k] = (v as string[]).join(', ');
-        } else {
-          merged[k] = v;
+      let merged: Record<string, unknown>;
+      if (colName === 'handler') {
+        // Convert to the app's canonical shape (strings + app field names).
+        merged = toAppSchema(safe);
+      } else {
+        // FBO: preserve original field types (string vs array) until we have an
+        // app reference doc to map its schema.
+        const existing = await db.collection(colName).doc(recordId).get();
+        const existingData = existing.data() || {};
+        merged = {};
+        for (const [k, v] of Object.entries(safe)) {
+          const orig = existingData[k];
+          merged[k] = typeof orig === 'string' && Array.isArray(v) ? (v as string[]).join(', ') : v;
         }
       }
 
+      merged.uid = recordId;
+      merged._updatedBy = { uid, timestamp: new Date().toISOString() };
       await db.collection(colName).doc(recordId).update(merged);
     }
 

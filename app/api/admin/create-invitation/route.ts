@@ -46,14 +46,20 @@ export async function POST(req: NextRequest) {
       const nameKey = companyType === 'fbo' ? 'fboName' : 'handlerName';
       const emailKey = companyType === 'fbo' ? 'fboEmail' : 'handlerEmail';
       const icaoKey = companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
-      const newDoc = await adminDb.collection(colName).add({
+      // Pre-generate the ref so the minimal doc is born app-compatible:
+      // `uid` = document id, plus the _createdBy/_updatedBy maps the app expects.
+      const newRef = adminDb.collection(colName).doc();
+      await newRef.set({
         [nameKey]: companyName,
         [emailKey]: email,
         [icaoKey]: icao.toUpperCase(),
+        uid: newRef.id,
         createdAt: FieldValue.serverTimestamp(),
         createdByPortalInvite: true,
+        _createdBy: { uid, timestamp: new Date().toISOString() },
+        _updatedBy: { uid, timestamp: new Date().toISOString() },
       });
-      linkedDocId = newDoc.id;
+      linkedDocId = newRef.id;
     }
 
     await adminDb.collection('portalLinks').doc(uid).set({

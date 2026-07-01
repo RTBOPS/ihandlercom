@@ -171,7 +171,8 @@ export interface HandlerRecord {
   handlerAddress?: string;
   handlerPhone?: string;
   handlerAfterHoursPhone?: string;
-  handlerTollFreePhone?: string;
+  handlerTollFreePhone?: string;   // portal spelling
+  handlerTollfreePhone?: string;   // app schema (canonical) spelling
   handlerEmail?: string;
   handlerWebsite?: string;
   handlerFax?: string;
@@ -182,22 +183,26 @@ export interface HandlerRecord {
   handlerPocTitle?: string;
   handlerPocMobile?: string;
   handlerRemarks?: string;
-  handlerAccreditations?: string[];
+  // Multi-select fields: string[] in the portal, comma-joined string in the app.
+  handlerAccreditations?: string[] | string;
   handlerWhatsapp?: string;
   handlerLinkedin?: string;
   handlerFacebook?: string;
-  handlerFrecuency?: string;
-  handlerBusinessGenAviationScvs?: string[];
-  handlerCargoServices?: string[];
-  handlerFuelServices?: string[];
-  handlerAdminOpsSvcs?: string[];
-  handlerRampServices?: string[];
-  handlerSvcsCategories?: string[];
-  handlerFuelCards?: string[];
-  handlerPassengersService?: string[];
-  handlerPaymentForms?: string[];
-  handlerLanguageSpoken?: string[];
-  handlerOtherServices?: string[];
+  handlerFrecuency?: string;       // portal spelling
+  handlerFrequency?: string;       // app schema (canonical) spelling
+  handlerBusinessGenAviationScvs?: string[] | string;
+  handlerCargoServices?: string[] | string;
+  handlerFuelServices?: string[] | string;
+  handlerAdminOpsSvcs?: string[] | string;
+  handlerRampServices?: string[] | string;
+  handlerSvcsCategories?: string[] | string;
+  handlerFuelCards?: string[] | string;
+  handlerPassengersService?: string[] | string;   // portal name
+  handlerPassengersServices?: string[] | string;  // app schema (canonical) name
+  handlerPaymentForms?: string[] | string;
+  handlerLanguageSpoken?: string[] | string;       // portal name
+  handlerLenguageSpoken?: string[] | string;       // app schema (canonical) name
+  handlerOtherServices?: string[] | string;
   handlerQuoteService?: string;
   handlerQuotePrice?: number;
   uid?: string;

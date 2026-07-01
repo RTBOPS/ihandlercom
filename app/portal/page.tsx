@@ -13,6 +13,7 @@ import {
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import IhIcon from '@/components/IhIcon';
+import { asList } from '@/lib/handler-schema';
 
 type Tab = 'company' | 'services' | 'carRental' | 'catering' | 'hotel';
 
@@ -559,17 +560,17 @@ export default function PortalPage() {
               handlerFacebook: h.handlerFacebook || '', handlerLogoImage: h.handlerLogoImage || '',
             });
             setArrayData({
-              handlerSvcsCategories: h.handlerSvcsCategories || [],
-              handlerFuelServices: h.handlerFuelServices || [],
-              handlerRampServices: h.handlerRampServices || [],
-              handlerPassengersService: h.handlerPassengersService || [],
-              handlerCargoServices: h.handlerCargoServices || [],
-              handlerAdminOpsSvcs: h.handlerAdminOpsSvcs || [],
-              handlerOtherServices: h.handlerOtherServices || [],
-              handlerPaymentForms: h.handlerPaymentForms || [],
-              handlerFuelCards: h.handlerFuelCards || [],
-              handlerLanguageSpoken: h.handlerLanguageSpoken || [],
-              handlerAccreditations: h.handlerAccreditations || [],
+              handlerSvcsCategories: asList(h.handlerSvcsCategories),
+              handlerFuelServices: asList(h.handlerFuelServices),
+              handlerRampServices: asList(h.handlerRampServices),
+              handlerPassengersService: asList(h.handlerPassengersService),
+              handlerCargoServices: asList(h.handlerCargoServices),
+              handlerAdminOpsSvcs: asList(h.handlerAdminOpsSvcs),
+              handlerOtherServices: asList(h.handlerOtherServices),
+              handlerPaymentForms: asList(h.handlerPaymentForms),
+              handlerFuelCards: asList(h.handlerFuelCards),
+              handlerLanguageSpoken: asList(h.handlerLanguageSpoken),
+              handlerAccreditations: asList(h.handlerAccreditations),
             });
           }
         }
