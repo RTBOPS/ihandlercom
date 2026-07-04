@@ -14,10 +14,32 @@ type Invitation = {
   icao: string;
   emailType: 'new' | 'annual';
   contactName?: string;
+  pocName?: string;
   status: string;
   isExisting: boolean;
   sentAt: string | null;
 };
+
+type ResendState = { status: 'sending' | 'sent' | 'error'; msg?: string };
+
+function buildSupportReply(inv: Invitation): string {
+  const name = inv.contactName || inv.pocName;
+  const greeting = name ? `Dear ${name},` : `Dear ${inv.companyName} Team,`;
+  return `${greeting}
+
+Thank you for reaching out, and we apologize for the inconvenience.
+
+We have just re-sent your i-Handler portal access credentials to this email address (${inv.email}). Please check your inbox — and your spam/junk folder — for a message from cto@i-handler.app containing your new login details.
+
+Portal: https://www.i-handler.com/portal-login
+
+If you still cannot access your portal after that, simply reply to this email and we will assist you right away.
+
+Best regards,
+Felipe Aguilar
+i-Handler Operations Team
+cto@i-handler.app · www.i-handler.com`;
+}
 
 export default function AdminPage() {
   const [secret, setSecret] = useState('');
@@ -25,6 +47,8 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState('');
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(false);
+  const [resendState, setResendState] = useState<Record<string, ResendState>>({});
+  const [copiedReply, setCopiedReply] = useState<string | null>(null);
 
   // Check sessionStorage on mount
   useEffect(() => {
@@ -61,6 +85,39 @@ export default function AdminPage() {
     if (!ok) { setAuthError('Incorrect password'); return; }
     sessionStorage.setItem('ih_admin_secret', secret);
     setAuthed(true);
+  };
+
+  const handleResend = async (inv: Invitation) => {
+    setResendState((prev) => ({ ...prev, [inv.email]: { status: 'sending' } }));
+    try {
+      const res = await fetch('/api/admin/resend-invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminSecret: secret,
+          email: inv.email,
+          companyName: inv.companyName,
+          companyType: inv.companyType,
+          icao: inv.icao,
+          contactName: inv.contactName || inv.pocName || '',
+          emailType: inv.emailType,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.emailSent) {
+        setResendState((prev) => ({ ...prev, [inv.email]: { status: 'sent' } }));
+      } else {
+        setResendState((prev) => ({ ...prev, [inv.email]: { status: 'error', msg: data.error || 'Send failed' } }));
+      }
+    } catch {
+      setResendState((prev) => ({ ...prev, [inv.email]: { status: 'error', msg: 'Network error' } }));
+    }
+  };
+
+  const handleCopyReply = async (inv: Invitation) => {
+    await navigator.clipboard.writeText(buildSupportReply(inv));
+    setCopiedReply(inv.email);
+    setTimeout(() => setCopiedReply((cur) => (cur === inv.email ? null : cur)), 3000);
   };
 
   const handleLogout = () => {
@@ -259,11 +316,35 @@ export default function AdminPage() {
                         <td className="px-6 py-4 text-sm text-gray-400">
                           {inv.sentAt ? new Date(inv.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                         </td>
-                        <td className="px-6 py-4 text-right">
-                          <Link href={`/admin/invite?resend=${encodeURIComponent(inv.email)}&type=${inv.emailType}`}
-                            className="text-xs text-[#F34707] hover:text-[#d93d06] font-medium transition-colors">
-                            Resend
-                          </Link>
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                          {(() => {
+                            const rs = resendState[inv.email];
+                            if (rs?.status === 'sending') {
+                              return <span className="text-xs text-gray-400 font-medium">Sending…</span>;
+                            }
+                            if (rs?.status === 'sent') {
+                              return (
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="text-xs text-green-600 font-semibold">✓ Sent</span>
+                                  <button onClick={() => handleCopyReply(inv)}
+                                    className="text-xs px-2.5 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                                    {copiedReply === inv.email ? '✓ Copied' : 'Copy Reply'}
+                                  </button>
+                                </span>
+                              );
+                            }
+                            return (
+                              <span className="inline-flex items-center gap-2">
+                                {rs?.status === 'error' && (
+                                  <span className="text-xs text-red-500" title={rs.msg}>Failed</span>
+                                )}
+                                <button onClick={() => handleResend(inv)}
+                                  className="text-xs px-2.5 py-1 rounded-lg bg-[#F34707] hover:bg-[#d93d06] text-white font-semibold transition-colors">
+                                  {rs?.status === 'error' ? 'Retry' : 'Resend Credentials'}
+                                </button>
+                              </span>
+                            );
+                          })()}
                         </td>
                       </tr>
                     ))}
