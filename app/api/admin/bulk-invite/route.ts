@@ -255,6 +255,13 @@ export async function POST(req: NextRequest) {
         try {
           const existing = await adminAuth.getUserByEmail(company.email);
           uid = existing.uid;
+          // Account exists but the user never signed in → the original invite email
+          // likely never reached them. Reset a fresh temp password so this invite
+          // carries working credentials. Users who already signed in are untouched.
+          if (!tempPassword && !existing.metadata.lastSignInTime) {
+            tempPassword = generatePassword();
+            await adminAuth.updateUser(uid, { password: tempPassword });
+          }
           isExisting = !tempPassword; // treat as new if we have a temp password to show
         } catch {
           if (!tempPassword) tempPassword = generatePassword();
