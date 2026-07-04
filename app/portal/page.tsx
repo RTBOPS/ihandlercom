@@ -17,13 +17,23 @@ import { asList } from '@/lib/handler-schema';
 
 type Tab = 'company' | 'services' | 'carRental' | 'catering' | 'hotel';
 
+type StationEntry = {
+  docId: string;
+  companyName: string;
+  email: string;
+  icao: string;
+};
+
 type UserProfile = {
+  uid: string;
   email: string;
   companyName: string;
   companyType: 'fbo' | 'handler';
   icao: string;
+  docId: string;
   role: string;
   status: string;
+  stations?: StationEntry[];
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -489,8 +499,10 @@ export default function PortalPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [activeStation, setActiveStation] = useState<StationEntry | null>(null);
   const [record, setRecord] = useState<HandlerRecord | FboRecord | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [loadingRecord, setLoadingRecord] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [activeTab, setActiveTab] = useState<Tab>('company');
@@ -504,6 +516,86 @@ export default function PortalPage() {
     if (!authLoading && !user) router.push('/login');
   }, [user, authLoading, router]);
 
+  // Load record data and populate form state
+  const populateFormFromRecord = useCallback((r: HandlerRecord | FboRecord, companyType: string) => {
+    if (companyType === 'fbo') {
+      const f = r as FboRecord;
+      setFormData({
+        fboPhne: f.fboPhne || '', fboEmail: f.fboEmail || '', fboWebsite: f.fboWebsite || '',
+        fboAddress: f.fboAddress || '', fboCity: f.fboCity || '', fboState: f.fboState || '',
+        fboZipcode: f.fboZipcode || '', fboCountry: f.fboCountry || '',
+        fboPocName: f.fboPocName || '', fboPocTitle: f.fboPocTitle || '',
+        fboPocMobile: f.fboPocMobile || '', fboWhatsapp: f.fboWhatsapp || '', fboRemarks: f.fboRemarks || '',
+        fboAfterHoursPhone: f.fboAfterHoursPhone || '', fboTollFreePhone: f.fboTollFreePhone || '',
+        fboFax: f.fboFax || '', fboAftn: f.fboAftn || '', fboSita: f.fboSita || '',
+        fboFrecuency: f.fboFrecuency || '', fboMembership: f.fboMembership || '',
+        fboLinkedin: f.fboLinkedin || '', fboFacebook: f.fboFacebook || '',
+        fboLogo: f.fboLogo || '',
+      });
+      setArrayData({
+        fboServiceCategories: asList(f.fboServiceCategories),
+        fboFuelServices: asList(f.fboFuelServices),
+        fboRampServices: asList(f.fboRampServices),
+        fboPassengerService: asList(f.fboPassengerService),
+        fboCargoServices: asList(f.fboCargoServices),
+        fboAdministrationOpsSvcs: asList(f.fboAdministrationOpsSvcs),
+        fboOtherServices: asList(f.fboOtherServices),
+        fboPaymentForms: asList(f.fboPaymentForms),
+        fboFuelCards: asList(f.fboFuelCards),
+        fboLanguageSpoken: asList(f.fboLanguageSpoken),
+        fboAccreditations: asList(f.fboAccreditations),
+      });
+    } else {
+      const h = r as HandlerRecord;
+      setFormData({
+        handlerPhone: h.handlerPhone || '', handlerEmail: h.handlerEmail || '',
+        handlerWebsite: h.handlerWebsite || '', handlerAddress: h.handlerAddress || '',
+        handlerCity: h.handlerCity || '', handlerState: h.handlerState || '',
+        handlerZipcode: h.handlerZipcode || '', handlerCountry: h.handlerCountry || '',
+        handlerPoc: h.handlerPoc || '', handlerPocTitle: h.handlerPocTitle || '',
+        handlerPocMobile: h.handlerPocMobile || '', handlerWhatsapp: h.handlerWhatsapp || '',
+        handlerRemarks: h.handlerRemarks || '', handlerAfterHoursPhone: h.handlerAfterHoursPhone || '',
+        handlerTollFreePhone: h.handlerTollFreePhone || '', handlerFax: h.handlerFax || '',
+        handlerAftn: h.handlerAftn || '', handlerSita: h.handlerSita || '',
+        handlerFrecuency: h.handlerFrecuency || '', handlerLinkedin: h.handlerLinkedin || '',
+        handlerFacebook: h.handlerFacebook || '', handlerLogoImage: h.handlerLogoImage || '',
+      });
+      setArrayData({
+        handlerSvcsCategories: asList(h.handlerSvcsCategories),
+        handlerFuelServices: asList(h.handlerFuelServices),
+        handlerRampServices: asList(h.handlerRampServices),
+        handlerPassengersService: asList(h.handlerPassengersService),
+        handlerCargoServices: asList(h.handlerCargoServices),
+        handlerAdminOpsSvcs: asList(h.handlerAdminOpsSvcs),
+        handlerOtherServices: asList(h.handlerOtherServices),
+        handlerPaymentForms: asList(h.handlerPaymentForms),
+        handlerFuelCards: asList(h.handlerFuelCards),
+        handlerLanguageSpoken: asList(h.handlerLanguageSpoken),
+        handlerAccreditations: asList(h.handlerAccreditations),
+      });
+    }
+  }, []);
+
+  // Switch station: fetch the record for the selected docId
+  const switchStation = useCallback(async (station: StationEntry) => {
+    if (!user) return;
+    setActiveStation(station);
+    setLoadingRecord(true);
+    try {
+      const token = await user.getIdToken();
+      // Pass docId as query param so the server loads the right record
+      const recRes = await fetch(`/api/portal/record?docId=${station.docId}`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (recRes.ok) {
+        const r = (await recRes.json()) as HandlerRecord | FboRecord;
+        setRecord(r);
+        populateFormFromRecord(r, profile?.companyType ?? 'handler');
+      }
+    } catch (err) { console.error(err); }
+    finally { setLoadingRecord(false); }
+  }, [user, profile, populateFormFromRecord]);
+
   useEffect(() => {
     if (!user) return;
     async function load() {
@@ -515,74 +607,21 @@ export default function PortalPage() {
         if (!res.ok) return;
         const p = (await res.json()) as UserProfile;
         setProfile(p);
+        // Set active station from primary (first) station
+        setActiveStation({ docId: p.docId, companyName: p.companyName, email: p.email, icao: p.icao });
         const recRes = await fetch('/api/portal/record', {
           headers: { authorization: `Bearer ${token}` },
         });
         if (recRes.ok) {
           const r = (await recRes.json()) as HandlerRecord | FboRecord;
           setRecord(r);
-          if (p.companyType === 'fbo') {
-            const f = r as FboRecord;
-            setFormData({
-              fboPhne: f.fboPhne || '', fboEmail: f.fboEmail || '', fboWebsite: f.fboWebsite || '',
-              fboAddress: f.fboAddress || '', fboCity: f.fboCity || '', fboState: f.fboState || '',
-              fboZipcode: f.fboZipcode || '', fboCountry: f.fboCountry || '',
-              fboPocName: f.fboPocName || '', fboPocTitle: f.fboPocTitle || '',
-              fboPocMobile: f.fboPocMobile || '', fboWhatsapp: f.fboWhatsapp || '', fboRemarks: f.fboRemarks || '',
-              fboAfterHoursPhone: f.fboAfterHoursPhone || '', fboTollFreePhone: f.fboTollFreePhone || '',
-              fboFax: f.fboFax || '', fboAftn: f.fboAftn || '', fboSita: f.fboSita || '',
-              fboFrecuency: f.fboFrecuency || '', fboMembership: f.fboMembership || '',
-              fboLinkedin: f.fboLinkedin || '', fboFacebook: f.fboFacebook || '',
-              fboLogo: f.fboLogo || '',
-            });
-            setArrayData({
-              fboServiceCategories: asList(f.fboServiceCategories),
-              fboFuelServices: asList(f.fboFuelServices),
-              fboRampServices: asList(f.fboRampServices),
-              fboPassengerService: asList(f.fboPassengerService),
-              fboCargoServices: asList(f.fboCargoServices),
-              fboAdministrationOpsSvcs: asList(f.fboAdministrationOpsSvcs),
-              fboOtherServices: asList(f.fboOtherServices),
-              fboPaymentForms: asList(f.fboPaymentForms),
-              fboFuelCards: asList(f.fboFuelCards),
-              fboLanguageSpoken: asList(f.fboLanguageSpoken),
-              fboAccreditations: asList(f.fboAccreditations),
-            });
-          } else {
-            const h = r as HandlerRecord;
-            setFormData({
-              handlerPhone: h.handlerPhone || '', handlerEmail: h.handlerEmail || '',
-              handlerWebsite: h.handlerWebsite || '', handlerAddress: h.handlerAddress || '',
-              handlerCity: h.handlerCity || '', handlerState: h.handlerState || '',
-              handlerZipcode: h.handlerZipcode || '', handlerCountry: h.handlerCountry || '',
-              handlerPoc: h.handlerPoc || '', handlerPocTitle: h.handlerPocTitle || '',
-              handlerPocMobile: h.handlerPocMobile || '', handlerWhatsapp: h.handlerWhatsapp || '',
-              handlerRemarks: h.handlerRemarks || '', handlerAfterHoursPhone: h.handlerAfterHoursPhone || '',
-              handlerTollFreePhone: h.handlerTollFreePhone || '', handlerFax: h.handlerFax || '',
-              handlerAftn: h.handlerAftn || '', handlerSita: h.handlerSita || '',
-              handlerFrecuency: h.handlerFrecuency || '', handlerLinkedin: h.handlerLinkedin || '',
-              handlerFacebook: h.handlerFacebook || '', handlerLogoImage: h.handlerLogoImage || '',
-            });
-            setArrayData({
-              handlerSvcsCategories: asList(h.handlerSvcsCategories),
-              handlerFuelServices: asList(h.handlerFuelServices),
-              handlerRampServices: asList(h.handlerRampServices),
-              handlerPassengersService: asList(h.handlerPassengersService),
-              handlerCargoServices: asList(h.handlerCargoServices),
-              handlerAdminOpsSvcs: asList(h.handlerAdminOpsSvcs),
-              handlerOtherServices: asList(h.handlerOtherServices),
-              handlerPaymentForms: asList(h.handlerPaymentForms),
-              handlerFuelCards: asList(h.handlerFuelCards),
-              handlerLanguageSpoken: asList(h.handlerLanguageSpoken),
-              handlerAccreditations: asList(h.handlerAccreditations),
-            });
-          }
+          populateFormFromRecord(r, p.companyType);
         }
       } catch (err) { console.error(err); }
       finally { setLoadingData(false); }
     }
     load();
-  }, [user]);
+  }, [user, populateFormFromRecord]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -667,17 +706,50 @@ export default function PortalPage() {
               <IhIcon name={isFbo ? 'fbo' : 'handler'} className="w-3.5 h-3.5" />
               {isFbo ? 'FBO' : 'Handler'} Portal
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">{profile.companyName}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">{activeStation?.companyName ?? profile.companyName}</h1>
             <p className="text-gray-400 text-sm">
-              <span className="font-mono text-[#F34707] font-bold">{profile.icao}</span>
+              <span className="font-mono text-[#F34707] font-bold">{activeStation?.icao ?? profile.icao}</span>
               {' · '}{isFbo ? 'Fixed Base Operator' : 'Ground Handler'}
-              {' · '}{profile.email}
+              {' · '}{activeStation?.email ?? profile.email}
             </p>
           </div>
 
           {profile.status === 'pending' && (
             <div className="mb-6 px-4 py-3 rounded-xl bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm">
               ⚠️ Your account is pending review. Once approved, changes will be visible in the directory.
+            </div>
+          )}
+
+          {/* Multi-station selector */}
+          {profile.stations && profile.stations.length > 1 && (
+            <div className="mb-6 flex items-center gap-3 flex-wrap">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Station:</span>
+              {profile.stations.map((s) => {
+                const isActive = activeStation?.docId === s.docId;
+                return (
+                  <button
+                    key={s.docId}
+                    type="button"
+                    disabled={loadingRecord}
+                    onClick={() => switchStation(s)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                      isActive
+                        ? 'bg-[#F34707] border-[#F34707] text-white shadow-sm'
+                        : 'bg-white border-gray-300 text-gray-600 hover:border-[#F34707]/60 hover:text-[#F34707]'
+                    } disabled:opacity-50`}
+                  >
+                    <span className="font-mono">{s.icao}</span>
+                    <span className="hidden sm:inline opacity-75">·</span>
+                    <span className="hidden sm:inline truncate max-w-[120px]">{s.companyName}</span>
+                  </button>
+                );
+              })}
+              {loadingRecord && (
+                <svg className="w-4 h-4 animate-spin text-[#F34707]" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+              )}
             </div>
           )}
 
@@ -836,9 +908,9 @@ export default function PortalPage() {
             </form>
           )}
 
-          {activeTab === 'carRental' && <CarRentalTab icao={profile.icao} getToken={() => user.getIdToken()} />}
-          {activeTab === 'catering'  && <CateringTab  icao={profile.icao} getToken={() => user.getIdToken()} />}
-          {activeTab === 'hotel'     && <HotelTab     icao={profile.icao} getToken={() => user.getIdToken()} />}
+          {activeTab === 'carRental' && <CarRentalTab icao={activeStation?.icao ?? profile.icao} getToken={() => user.getIdToken()} />}
+          {activeTab === 'catering'  && <CateringTab  icao={activeStation?.icao ?? profile.icao} getToken={() => user.getIdToken()} />}
+          {activeTab === 'hotel'     && <HotelTab     icao={activeStation?.icao ?? profile.icao} getToken={() => user.getIdToken()} />}
 
         </div>
       </main>

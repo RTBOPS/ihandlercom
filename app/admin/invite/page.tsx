@@ -69,8 +69,6 @@ In your portal you will be able to update:
   • Catering services at your airport
   • Nearby hotel information
 
-We would also love to schedule a brief call to introduce you to all the features i-Handler offers to FBOs and ground handlers. Please reply to this email to arrange a convenient time.
-
 Thank you for being part of the i-Handler community.
 
 Best regards,
@@ -99,6 +97,29 @@ Fields to review:
   • Nearby accommodation
 
 This process takes only a few minutes, and we greatly appreciate your cooperation in keeping the i-Handler directory accurate and up-to-date.
+
+──────────────────────────────────────
+THE i-HANDLER ECOSYSTEM
+──────────────────────────────────────
+
+i-Handler connects crews, passengers, ground handlers, FBOs, and service
+providers on a single platform built exclusively for aviation.
+
+Our ecosystem includes:
+
+  ✈  i-Handler App — Flight ops & ground directory
+     Direct access from flight crews and operators worldwide
+
+  📦 BAGControl — Baggage handling & tracking
+     IATA Resolution 753 compliance, real-time baggage tracking
+
+  ⏱  GTPS — Ground Turnaround Performance System
+     Ground turnaround time analytics and IATA benchmarks
+
+  👥 HRS — Human Resources System
+     Staff training & compliance (ISAGO/IATA standards)
+
+──────────────────────────────────────
 
 If you have any questions, please do not hesitate to reach out.
 
@@ -430,6 +451,31 @@ function InviteForm() {
                     Access My Portal →
                   </a>
                 </div>
+
+                {/* Ecosystem section — annual only */}
+                {result.emailType === 'annual' && (
+                  <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '24px', marginBottom: '24px' }}>
+                    <p style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: '700', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px' }}>
+                      The i-Handler Ecosystem
+                    </p>
+                    <div style={{ display: 'grid', gap: '12px' }}>
+                      {[
+                        { icon: '✈', name: 'i-Handler App', desc: 'Flight ops & ground directory — direct access from flight crews worldwide' },
+                        { icon: '📦', name: 'BAGControl', desc: 'Baggage handling & tracking — IATA Resolution 753 compliance' },
+                        { icon: '⏱', name: 'GTPS', desc: 'Ground Turnaround Performance System — analytics and IATA benchmarks' },
+                        { icon: '👥', name: 'HRS', desc: 'Human Resources System — staff training & compliance (ISAGO/IATA)' },
+                      ].map((item) => (
+                        <div key={item.name} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', background: '#F9FAFB', borderRadius: '10px', padding: '12px 14px' }}>
+                          <span style={{ fontSize: '18px', lineHeight: 1, flexShrink: 0 }}>{item.icon}</span>
+                          <div>
+                            <p style={{ fontSize: '13px', fontWeight: '700', color: '#111827', margin: '0 0 2px' }}>{item.name}</p>
+                            <p style={{ fontSize: '12px', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>{item.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.6' }}>
                   If you have any questions, please reply to this email or contact us at{' '}

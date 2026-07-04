@@ -62,11 +62,24 @@ export async function POST(req: NextRequest) {
       linkedDocId = newRef.id;
     }
 
-    await adminDb.collection('portalLinks').doc(uid).set({
-      companyType,
+    const stationEntry = {
       [docIdKey]: linkedDocId,
       icao: icao.toUpperCase(),
-    }, { merge: true });
+    };
+
+    if (isExisting) {
+      // Add station to array if not already present (arrayUnion deduplicates by value)
+      await adminDb.collection('portalLinks').doc(uid).update({
+        companyType,
+        stations: FieldValue.arrayUnion(stationEntry),
+      });
+    } else {
+      // New user — write stations as array
+      await adminDb.collection('portalLinks').doc(uid).set({
+        companyType,
+        stations: [stationEntry],
+      }, { merge: true });
+    }
 
     // Store invitation record for audit trail
     await adminDb.collection('invitations').doc(email).set({
