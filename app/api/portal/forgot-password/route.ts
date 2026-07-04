@@ -84,9 +84,15 @@ export async function POST(req: NextRequest) {
       return genericOk;
     }
 
-    const resetLink = await auth.generatePasswordResetLink(normalized, {
+    // Extract the one-time code from Firebase's hosted link and point the
+    // email button at our branded /reset-password page instead
+    const firebaseLink = await auth.generatePasswordResetLink(normalized, {
       url: 'https://www.i-handler.com/portal-login',
     });
+    const oobCode = new URL(firebaseLink).searchParams.get('oobCode');
+    const resetLink = oobCode
+      ? `https://www.i-handler.com/reset-password?oobCode=${encodeURIComponent(oobCode)}`
+      : firebaseLink;
 
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     await sgMail.send({

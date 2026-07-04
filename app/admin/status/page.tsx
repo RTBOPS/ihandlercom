@@ -15,6 +15,28 @@ function fmtDate(iso: string | null): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+function DeliveryBadge({ status }: { status: StatusEntry['deliveryStatus'] }) {
+  if (status === 'bounced') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Bounced</span>;
+  if (status === 'spam') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Spam</span>;
+  if (status === 'clicked') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Clicked</span>;
+  if (status === 'opened') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-700">Opened</span>;
+  if (status === 'delivered') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Delivered</span>;
+  return <span className="text-xs text-gray-300">—</span>;
+}
+
+function CompletenessBar({ value }: { value: number | null }) {
+  if (value == null) return <span className="text-xs text-gray-300">—</span>;
+  const color = value >= 70 ? 'bg-green-500' : value >= 40 ? 'bg-amber-400' : 'bg-red-400';
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-16 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${value}%` }} />
+      </div>
+      <span className="text-xs text-gray-500 w-8">{value}%</span>
+    </div>
+  );
+}
+
 function StatusBadge({ status }: { status: StatusEntry['status'] }) {
   if (status === 'updated') {
     return (
@@ -51,6 +73,12 @@ export default function StatusPage() {
   const [repairResult, setRepairResult] = useState<{ repaired: number; ok: number; skipped: number } | null>(null);
   const [resendingEmail, setResendingEmail] = useState<string | null>(null);
   const [resendResults, setResendResults] = useState<Record<string, 'sent' | 'error'>>({});
+  const [remind, setRemind] = useState<{
+    phase: 'idle' | 'loading' | 'confirm' | 'sending' | 'done';
+    candidates: { email: string; companyName: string; icao: string }[];
+    sent: number;
+    failed: number;
+  }>({ phase: 'idle', candidates: [], sent: 0, failed: 0 });
 
   // Check sessionStorage on mount
   useEffect(() => {
@@ -119,6 +147,47 @@ export default function StatusPage() {
     } finally {
       setResendingEmail(null);
     }
+  };
+
+  const handleRemindPreview = async () => {
+    setRemind({ phase: 'loading', candidates: [], sent: 0, failed: 0 });
+    try {
+      const res = await fetch('/api/admin/remind', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminSecret: secret, dryRun: true }),
+      });
+      const data = await res.json();
+      setRemind({ phase: 'confirm', candidates: data.candidates || [], sent: 0, failed: 0 });
+    } catch {
+      setRemind({ phase: 'idle', candidates: [], sent: 0, failed: 0 });
+    }
+  };
+
+  const handleRemindSend = async () => {
+    const emails = remind.candidates.map((c) => c.email);
+    setRemind((r) => ({ ...r, phase: 'sending', sent: 0, failed: 0 }));
+    let sent = 0;
+    let failed = 0;
+    for (let i = 0; i < emails.length; i += 20) {
+      const chunk = emails.slice(i, i + 20);
+      try {
+        const res = await fetch('/api/admin/remind', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ adminSecret: secret, emails: chunk }),
+        });
+        const data = await res.json();
+        for (const r of data.results || []) {
+          if (r.sent) sent++; else failed++;
+        }
+      } catch {
+        failed += chunk.length;
+      }
+      setRemind((r) => ({ ...r, sent, failed }));
+    }
+    setRemind((r) => ({ ...r, phase: 'done', sent, failed }));
+    await loadEntries(secret);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -238,6 +307,14 @@ export default function StatusPage() {
                     ✓ {repairResult.repaired} repaired · {repairResult.ok} already ok · {repairResult.skipped} skipped
                   </span>
                 )}
+                <button onClick={handleRemindPreview} disabled={remind.phase === 'loading' || remind.phase === 'sending'}
+                  title="Send a one-time reminder with fresh credentials to everyone who never logged in (skips bounced emails and already-reminded companies)"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-sm transition-colors disabled:opacity-50">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                  {remind.phase === 'loading' ? 'Checking…' : 'Remind Never Logged In'}
+                </button>
                 <button onClick={handleLogout}
                   className="px-4 py-2 rounded-xl border border-gray-200 text-gray-500 text-sm hover:bg-gray-50 transition-colors">
                   Sign Out
@@ -245,6 +322,58 @@ export default function StatusPage() {
               </div>
             </div>
           </div>
+
+          {/* Reminder confirm / progress banner */}
+          {remind.phase === 'confirm' && (
+            <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-blue-800">
+                  {remind.candidates.length === 0
+                    ? 'No eligible companies — everyone was already reminded, logged in, or their email bounced.'
+                    : `Send a reminder with fresh credentials to ${remind.candidates.length} ${remind.candidates.length === 1 ? 'company' : 'companies'} that never logged in?`}
+                </p>
+                {remind.candidates.length > 0 && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    Skips bounced emails and companies already reminded. Each gets a new temporary password.
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                {remind.candidates.length > 0 && (
+                  <button onClick={handleRemindSend}
+                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors">
+                    Send {remind.candidates.length} Reminders
+                  </button>
+                )}
+                <button onClick={() => setRemind({ phase: 'idle', candidates: [], sent: 0, failed: 0 })}
+                  className="px-4 py-2 rounded-xl border border-blue-200 text-blue-600 font-semibold text-sm hover:bg-blue-100 transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+          {remind.phase === 'sending' && (
+            <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+              <p className="text-sm font-semibold text-blue-800">
+                Sending reminders… {remind.sent + remind.failed} of {remind.candidates.length}
+              </p>
+              <div className="mt-2 h-2 rounded-full bg-blue-100 overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full transition-all"
+                  style={{ width: `${remind.candidates.length ? Math.round(((remind.sent + remind.failed) / remind.candidates.length) * 100) : 0}%` }} />
+              </div>
+            </div>
+          )}
+          {remind.phase === 'done' && (
+            <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5 flex items-center justify-between gap-4">
+              <p className="text-sm font-semibold text-green-800">
+                ✓ Reminders sent: {remind.sent}{remind.failed > 0 ? ` · Failed: ${remind.failed}` : ''}
+              </p>
+              <button onClick={() => setRemind({ phase: 'idle', candidates: [], sent: 0, failed: 0 })}
+                className="px-3 py-1.5 rounded-lg border border-green-200 text-green-700 text-xs font-semibold hover:bg-green-100 transition-colors">
+                Dismiss
+              </button>
+            </div>
+          )}
 
           {/* Summary Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -318,8 +447,10 @@ export default function StatusPage() {
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Type</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Email</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Invited</th>
+                      <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Delivery</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Last Login</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Last Updated</th>
+                      <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Profile</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider text-right">Action</th>
                     </tr>
@@ -338,9 +469,16 @@ export default function StatusPage() {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">{entry.email}</td>
                         <td className="px-6 py-4 text-sm text-gray-400">{fmtDate(entry.sentAt)}</td>
+                        <td className="px-6 py-4"><DeliveryBadge status={entry.deliveryStatus} /></td>
                         <td className="px-6 py-4 text-sm text-gray-400">{entry.lastSignIn ? fmtDate(entry.lastSignIn) : <span className="text-red-400">Never</span>}</td>
                         <td className="px-6 py-4 text-sm text-gray-400">{fmtDate(entry.lastUpdated)}</td>
-                        <td className="px-6 py-4"><StatusBadge status={entry.status} /></td>
+                        <td className="px-6 py-4"><CompletenessBar value={entry.completeness} /></td>
+                        <td className="px-6 py-4">
+                          <StatusBadge status={entry.status} />
+                          {entry.remindedAt && (
+                            <div className="text-[10px] text-gray-400 mt-1">reminded {fmtDate(entry.remindedAt)}</div>
+                          )}
+                        </td>
                         <td className="px-6 py-4 text-right">
                           {resendResults[entry.email] === 'sent' ? (
                             <span className="text-xs text-green-600 font-medium">✓ Sent</span>

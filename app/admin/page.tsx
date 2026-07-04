@@ -20,7 +20,31 @@ type Invitation = {
   sentAt: string | null;
   accountExists?: boolean;
   lastSignIn?: string | null;
+  emailEvents?: Record<string, string>;
+  emailBounceReason?: string;
 };
+
+type DeliveryStatus = 'bounced' | 'spam' | 'clicked' | 'opened' | 'delivered' | null;
+
+function deliveryStatus(ev?: Record<string, string>): DeliveryStatus {
+  if (!ev) return null;
+  if (ev.bounce || ev.dropped) return 'bounced';
+  if (ev.spamreport) return 'spam';
+  if (ev.click) return 'clicked';
+  if (ev.open) return 'opened';
+  if (ev.delivered) return 'delivered';
+  return null;
+}
+
+function DeliveryBadge({ inv }: { inv: Invitation }) {
+  const st = deliveryStatus(inv.emailEvents);
+  if (st === 'bounced') return <span title={inv.emailBounceReason} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Bounced</span>;
+  if (st === 'spam') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Spam</span>;
+  if (st === 'clicked') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Clicked</span>;
+  if (st === 'opened') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-sky-100 text-sky-700">Opened</span>;
+  if (st === 'delivered') return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Delivered</span>;
+  return <span className="text-xs text-gray-300">—</span>;
+}
 
 type ResendState = { status: 'sending' | 'sent' | 'error'; msg?: string };
 
@@ -171,6 +195,7 @@ export default function AdminPage() {
   const newCount = invitations.filter((i) => i.emailType === 'new').length;
   const annualCount = invitations.filter((i) => i.emailType === 'annual').length;
   const neverSignedInCount = invitations.filter((i) => !i.lastSignIn).length;
+  const bouncedCount = invitations.filter((i) => deliveryStatus(i.emailEvents) === 'bounced' || deliveryStatus(i.emailEvents) === 'spam').length;
 
   const q = search.trim().toLowerCase();
   const filtered = invitations.filter((inv) => {
@@ -259,12 +284,13 @@ export default function AdminPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
             {[
               { label: 'Total Sent', value: invitations.length, color: 'bg-blue-50 text-blue-600 border-blue-100' },
               { label: 'New Companies', value: newCount, color: 'bg-green-50 text-green-600 border-green-100' },
               { label: 'Annual Updates', value: annualCount, color: 'bg-orange-50 text-[#F34707] border-orange-100' },
               { label: 'Never Signed In', value: neverSignedInCount, color: 'bg-amber-50 text-amber-600 border-amber-100' },
+              { label: 'Bounced / Spam', value: bouncedCount, color: 'bg-red-50 text-red-600 border-red-100' },
             ].map((s) => (
               <div key={s.label} className={`rounded-2xl border p-5 ${s.color}`}>
                 <div className="text-3xl font-bold mb-1">{s.value}</div>
@@ -327,6 +353,7 @@ export default function AdminPage() {
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Email</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Kind</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Access</th>
+                      <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Delivery</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Date</th>
                       <th className="px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider text-right">Action</th>
                     </tr>
@@ -363,6 +390,7 @@ export default function AdminPage() {
                             </span>
                           )}
                         </td>
+                        <td className="px-6 py-4"><DeliveryBadge inv={inv} /></td>
                         <td className="px-6 py-4 text-sm text-gray-400">
                           {inv.sentAt ? new Date(inv.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                         </td>
@@ -400,7 +428,7 @@ export default function AdminPage() {
                     ))}
                     {filtered.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="px-6 py-10 text-center text-sm text-gray-400">
+                        <td colSpan={9} className="px-6 py-10 text-center text-sm text-gray-400">
                           No invitations match your search.
                         </td>
                       </tr>
