@@ -71,19 +71,11 @@ export async function POST(req: NextRequest) {
       icao: icao.toUpperCase(),
     };
 
-    if (isExisting) {
-      // Add station to array if not already present (arrayUnion deduplicates by value)
-      await adminDb.collection('portalLinks').doc(uid).update({
-        companyType,
-        stations: FieldValue.arrayUnion(stationEntry),
-      });
-    } else {
-      // New user — write stations as array
-      await adminDb.collection('portalLinks').doc(uid).set({
-        companyType,
-        stations: [stationEntry],
-      }, { merge: true });
-    }
+    // set+merge works for both new and existing docs; arrayUnion adds without duplicating
+    await adminDb.collection('portalLinks').doc(uid).set({
+      companyType,
+      stations: FieldValue.arrayUnion(stationEntry),
+    }, { merge: true });
 
     // Add additional ICAO stations to the same account
     if (additionalIcaos && additionalIcaos.length > 0) {
