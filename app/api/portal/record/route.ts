@@ -2,6 +2,43 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { toAppSchema, toPortalSchema, type CompanyKind } from '@/lib/handler-schema';
+import sgMail from '@sendgrid/mail';
+
+async function sendProfileUpdateNotification(opts: {
+  companyName: string;
+  icao: string;
+  email: string;
+  companyType: string;
+}) {
+  try {
+    if (!process.env.SENDGRID_API_KEY) return;
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const now = new Date().toLocaleString('en-US', { timeZone: 'UTC', dateStyle: 'medium', timeStyle: 'short' });
+    await sgMail.send({
+      to: 'cto@i-handler.app',
+      from: 'cto@i-handler.app',
+      subject: `[i-Handler Portal] Profile updated — ${opts.companyName} (${opts.icao})`,
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+          <h2 style="color:#F34707;">Portal Profile Updated</h2>
+          <table style="border-collapse:collapse;width:100%;">
+            <tr><td style="padding:8px 12px;font-weight:bold;background:#f9f9f9;">Company</td><td style="padding:8px 12px;">${opts.companyName}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:bold;background:#f9f9f9;">ICAO</td><td style="padding:8px 12px;font-family:monospace;">${opts.icao}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:bold;background:#f9f9f9;">Email</td><td style="padding:8px 12px;">${opts.email}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:bold;background:#f9f9f9;">Type</td><td style="padding:8px 12px;">${opts.companyType}</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:bold;background:#f9f9f9;">Change</td><td style="padding:8px 12px;">Profile information was updated</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:bold;background:#f9f9f9;">Timestamp</td><td style="padding:8px 12px;">${now} UTC</td></tr>
+          </table>
+          <p style="margin-top:24px;">
+            <a href="https://www.i-handler.com/admin/status" style="display:inline-block;padding:10px 20px;background:#F34707;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">View Status Dashboard</a>
+          </p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    console.error('SendGrid notification error (non-fatal):', err);
+  }
+}
 
 async function findCompanyDoc(uid: string) {
   const db = getAdminDb();
@@ -74,6 +111,8 @@ export async function POST(req: NextRequest) {
         uid: ref.id,
         _createdBy: { uid, timestamp: new Date().toISOString() },
         _updatedBy: { uid, timestamp: new Date().toISOString() },
+        _lastUpdatedAt: FieldValue.serverTimestamp(),
+        _lastUpdatedBy: uid,
       });
       finalId = ref.id;
 
@@ -92,7 +131,19 @@ export async function POST(req: NextRequest) {
 
       merged.uid = recordId;
       merged._updatedBy = { uid, timestamp: new Date().toISOString() };
+      merged._lastUpdatedAt = FieldValue.serverTimestamp();
+      merged._lastUpdatedBy = uid;
       await db.collection(colName).doc(recordId).update(merged);
+    }
+
+    // Send admin notification (non-fatal)
+    {
+      const authUser = await getAdminAuth().getUser(uid).catch(() => null);
+      const email = authUser?.email ?? uid;
+      const companyName = (fields.handlerName ?? fields.fboName ?? fields.companyName ?? '') as string;
+      const icao = (fields.handlerIcao ?? fields.fboIcao ?? fields.icao ?? '') as string;
+      const companyType = (fields._companyType ?? fields.companyType ?? 'handler') as string;
+      await sendProfileUpdateNotification({ companyName, icao, email, companyType });
     }
 
     return NextResponse.json({ ok: true, id: finalId });
