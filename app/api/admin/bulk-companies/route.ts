@@ -1,5 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminDb } from '@/lib/firebase-admin';
+import { getAdminAuth, getAdminDb } from '@/lib/firebase-admin';
+
+// Marks companies whose email already has a Firebase Auth account
+// (credentials created), regardless of whether an invitation record exists.
+async function addAccountFlags<T extends { email: string }>(
+  companies: T[],
+): Promise<(T & { hasAccount: boolean })[]> {
+  const auth = getAdminAuth();
+  const emails = [...new Set(companies.map(c => c.email.toLowerCase()))];
+  const existing = new Set<string>();
+  for (let i = 0; i < emails.length; i += 100) {
+    const chunk = emails.slice(i, i + 100);
+    try {
+      const result = await auth.getUsers(chunk.map(email => ({ email })));
+      result.users.forEach(u => { if (u.email) existing.add(u.email.toLowerCase()); });
+    } catch (err) {
+      console.error('bulk-companies: getUsers chunk failed', err);
+    }
+  }
+  return companies.map(c => ({ ...c, hasAccount: existing.has(c.email.toLowerCase()) }));
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -80,7 +100,7 @@ export async function GET(req: NextRequest) {
       const seen = new Set<string>();
       const unique = companies.filter(c => { const k = c.email.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
       unique.sort((a, b) => a.icao.localeCompare(b.icao) || a.companyName.localeCompare(b.companyName));
-      return NextResponse.json({ companies: unique });
+      return NextResponse.json({ companies: await addAccountFlags(unique) });
     }
 
     // ── List companies filtered by countries ──────────────────────────────────
@@ -218,7 +238,7 @@ export async function GET(req: NextRequest) {
 
     unique.sort((a, b) => a.icao.localeCompare(b.icao) || a.companyName.localeCompare(b.companyName));
 
-    return NextResponse.json({ companies: unique, icaoCount: icaos.length });
+    return NextResponse.json({ companies: await addAccountFlags(unique), icaoCount: icaos.length });
   } catch (err) {
     console.error('bulk-companies error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

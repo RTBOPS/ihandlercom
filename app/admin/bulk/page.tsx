@@ -17,6 +17,7 @@ type CompanyRow = {
   pocName: string;
   country: string;
   alreadyInvited: boolean;
+  hasAccount: boolean;
   selected: boolean;
 };
 
@@ -244,7 +245,7 @@ export default function BulkInvitePage() {
   const [loadingCompanies, setLoadingCompanies] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'fbo' | 'handler'>('all');
   const [filterText, setFilterText] = useState('');
-  const [filterInvited, setFilterInvited] = useState<'all' | 'not-invited'>('not-invited');
+  const [filterInvited, setFilterInvited] = useState<'all' | 'not-invited' | 'never-contacted'>('never-contacted');
   const [emailType, setEmailType] = useState<EmailType>('new');
   const [sendEmails, setSendEmails] = useState(true);
 
@@ -340,6 +341,7 @@ export default function BulkInvitePage() {
 
   const visible = companies.filter(c => {
     if (filterInvited === 'not-invited' && c.alreadyInvited) return false;
+    if (filterInvited === 'never-contacted' && (c.alreadyInvited || c.hasAccount)) return false;
     if (filterText && !c.companyName.toLowerCase().includes(filterText.toLowerCase()) && !c.icao.toLowerCase().includes(filterText.toLowerCase())) return false;
     return true;
   });
@@ -710,9 +712,10 @@ export default function BulkInvitePage() {
                 )}
                 <div className="flex gap-1 p-1 bg-gray-100 rounded-xl">
                   {([
+                    { value: 'never-contacted', label: 'Never Contacted' },
                     { value: 'not-invited', label: 'Not Invited' },
                     { value: 'all', label: 'All' },
-                  ] as { value: 'all' | 'not-invited'; label: string }[]).map(t => (
+                  ] as { value: 'all' | 'not-invited' | 'never-contacted'; label: string }[]).map(t => (
                     <button key={t.value} onClick={() => setFilterInvited(t.value)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterInvited === t.value ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                       {t.label}
@@ -754,6 +757,7 @@ export default function BulkInvitePage() {
                           {c.companyType === 'fbo' ? 'FBO' : 'Handler'}
                         </span>
                         {c.alreadyInvited && <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-400 flex-shrink-0">invited</span>}
+                        {c.hasAccount && <span className="px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-600 flex-shrink-0">has credentials</span>}
                         {c.country && <span className="text-gray-400 text-xs flex-shrink-0 hidden sm:block max-w-28 truncate">{c.country}</span>}
                         <span className="text-gray-400 text-xs truncate max-w-40 flex-shrink-0">{c.email}</span>
                         <button onClick={() => { setPreviewCompany(c); setPreviewEmailType(emailType); }}
