@@ -49,6 +49,8 @@ export default function StatusPage() {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [repairing, setRepairing] = useState(false);
   const [repairResult, setRepairResult] = useState<{ repaired: number; ok: number; skipped: number } | null>(null);
+  const [resendingEmail, setResendingEmail] = useState<string | null>(null);
+  const [resendResults, setResendResults] = useState<Record<string, 'sent' | 'error'>>({});
 
   // Check sessionStorage on mount
   useEffect(() => {
@@ -92,6 +94,31 @@ export default function StatusPage() {
       await loadEntries(secret);
     } catch { /* ignore */ }
     finally { setRepairing(false); }
+  };
+
+  const handleResend = async (entry: StatusEntry) => {
+    setResendingEmail(entry.email);
+    try {
+      const res = await fetch('/api/admin/resend-invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminSecret: secret,
+          email: entry.email,
+          companyName: entry.companyName,
+          companyType: entry.companyType,
+          icao: entry.icao,
+          contactName: entry.contactName,
+          emailType: 'new',
+        }),
+      });
+      const data = await res.json();
+      setResendResults(prev => ({ ...prev, [entry.email]: data.emailSent ? 'sent' : 'error' }));
+    } catch {
+      setResendResults(prev => ({ ...prev, [entry.email]: 'error' }));
+    } finally {
+      setResendingEmail(null);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -315,10 +342,20 @@ export default function StatusPage() {
                         <td className="px-6 py-4 text-sm text-gray-400">{fmtDate(entry.lastUpdated)}</td>
                         <td className="px-6 py-4"><StatusBadge status={entry.status} /></td>
                         <td className="px-6 py-4 text-right">
-                          <Link href={`/admin/invite?resend=${encodeURIComponent(entry.email)}`}
-                            className="text-xs text-[#F34707] hover:text-[#d93d06] font-medium transition-colors">
-                            Resend Invite
-                          </Link>
+                          {resendResults[entry.email] === 'sent' ? (
+                            <span className="text-xs text-green-600 font-medium">✓ Sent</span>
+                          ) : resendResults[entry.email] === 'error' ? (
+                            <button onClick={() => handleResend(entry)} className="text-xs text-red-500 hover:text-red-700 font-medium">
+                              Failed — Retry
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleResend(entry)}
+                              disabled={resendingEmail === entry.email}
+                              className="text-xs text-[#F34707] hover:text-[#d93d06] font-medium transition-colors disabled:opacity-50">
+                              {resendingEmail === entry.email ? 'Sending…' : 'Resend'}
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
