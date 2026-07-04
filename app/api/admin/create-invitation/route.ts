@@ -11,8 +11,12 @@ function generatePassword(length = 12): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { adminSecret, email, companyName, companyType, icao, emailType, contactName, existingDocId } =
-      await req.json();
+    const { adminSecret, email, companyName, companyType, icao, emailType, contactName, existingDocId, additionalIcaos } =
+      await req.json() as {
+        adminSecret: string; email: string; companyName: string; companyType: 'fbo' | 'handler';
+        icao: string; emailType: string; contactName?: string; existingDocId?: string;
+        additionalIcaos?: string[];
+      };
 
     if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -79,6 +83,41 @@ export async function POST(req: NextRequest) {
         companyType,
         stations: [stationEntry],
       }, { merge: true });
+    }
+
+    // Add additional ICAO stations to the same account
+    if (additionalIcaos && additionalIcaos.length > 0) {
+      const nameKey = companyType === 'fbo' ? 'fboName' : 'handlerName';
+      const emailKey = companyType === 'fbo' ? 'fboEmail' : 'handlerEmail';
+      const icaoKey = companyType === 'fbo' ? 'fboIcao' : 'handlerIcao';
+
+      for (const extraIcao of additionalIcaos) {
+        // Try to find existing doc for this ICAO
+        const snap = await adminDb.collection(colName)
+          .where(icaoKey, '==', extraIcao.toUpperCase())
+          .where(emailKey, '==', email)
+          .limit(1).get();
+
+        let extraDocId: string;
+        if (!snap.empty) {
+          extraDocId = snap.docs[0].id;
+        } else {
+          // Create minimal doc for this station
+          const newRef = await adminDb.collection(colName).add({
+            [nameKey]: companyName,
+            [emailKey]: email,
+            [icaoKey]: extraIcao.toUpperCase(),
+            createdAt: FieldValue.serverTimestamp(),
+            createdByPortalInvite: true,
+          });
+          extraDocId = newRef.id;
+        }
+
+        const extraStation = { [docIdKey]: extraDocId, icao: extraIcao.toUpperCase() };
+        await adminDb.collection('portalLinks').doc(uid).update({
+          stations: FieldValue.arrayUnion(extraStation),
+        });
+      }
     }
 
     // Store invitation record for audit trail

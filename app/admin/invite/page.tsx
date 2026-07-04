@@ -153,6 +153,9 @@ function InviteForm() {
   const [searchResults, setSearchResults] = useState<DBCompany[] | null>(null);
   const [searchError, setSearchError] = useState('');
 
+  const [additionalIcaos, setAdditionalIcaos] = useState<string[]>([]);
+  const [icaoInput, setIcaoInput] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<InviteResult | null>(null);
@@ -195,6 +198,14 @@ function InviteForm() {
     });
   }, []);
 
+  const addIcaoChip = () => {
+    const v = icaoInput.trim().toUpperCase();
+    if (v.length >= 3 && !additionalIcaos.includes(v) && v !== icao.toUpperCase()) {
+      setAdditionalIcaos(prev => [...prev, v]);
+    }
+    setIcaoInput('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailType || !companyType) { setError('Please select both email type and company type.'); return; }
@@ -204,7 +215,11 @@ function InviteForm() {
       const res = await fetch('/api/admin/create-invitation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminSecret, email, companyName, companyType, icao, emailType, contactName, existingDocId: existingDocId || undefined }),
+        body: JSON.stringify({
+          adminSecret, email, companyName, companyType, icao, emailType, contactName,
+          existingDocId: existingDocId || undefined,
+          additionalIcaos: additionalIcaos.length > 0 ? additionalIcaos : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Request failed.'); return; }
@@ -652,6 +667,36 @@ function InviteForm() {
             placeholder="e.g. KJFK"
             className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm font-mono uppercase" />
         </div>
+        {/* Additional ICAOs */}
+        <div className="sm:col-span-2">
+          <label className="block text-sm text-gray-600 mb-1.5">Additional ICAO Stations <span className="text-gray-400 text-xs font-normal">(optional — if this company operates at multiple airports)</span></label>
+          <div className="flex gap-2">
+            <input
+              type="text" value={icaoInput}
+              onChange={(e) => setIcaoInput(e.target.value.toUpperCase())}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addIcaoChip(); } }}
+              maxLength={4} placeholder="e.g. MMUN"
+              className="flex-1 px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 text-sm font-mono uppercase"
+            />
+            <button type="button" onClick={addIcaoChip}
+              className="px-4 py-3 rounded-xl border border-gray-300 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors whitespace-nowrap">
+              + Add
+            </button>
+          </div>
+          {additionalIcaos.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {additionalIcaos.map(code => (
+                <span key={code} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F34707]/10 border border-[#F34707]/30 text-[#F34707] text-xs font-mono font-semibold">
+                  {code}
+                  <button type="button" onClick={() => setAdditionalIcaos(prev => prev.filter(x => x !== code))}
+                    className="text-[#F34707]/60 hover:text-[#F34707] leading-none">×</button>
+                </span>
+              ))}
+            </div>
+          )}
+          <p className="mt-1.5 text-xs text-gray-400">All stations are linked to the same account in one click.</p>
+        </div>
+
         <div>
           <label className="block text-sm text-gray-600 mb-1.5">Contact Person Name</label>
           <input type="text" value={contactName} onChange={(e) => setContactName(e.target.value)}
