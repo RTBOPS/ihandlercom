@@ -503,6 +503,7 @@ export default function PortalPage() {
   const [record, setRecord] = useState<HandlerRecord | FboRecord | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [loadingRecord, setLoadingRecord] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [activeTab, setActiveTab] = useState<Tab>('company');
@@ -604,7 +605,11 @@ export default function PortalPage() {
         const res = await fetch('/api/portal/profile', {
           headers: { authorization: `Bearer ${token}` },
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          setProfileError(errData.error || 'Unable to load your portal access. Please contact support at cto@i-handler.app');
+          return;
+        }
         const p = (await res.json()) as UserProfile;
         setProfile(p);
         // Set active station from primary (first) station
@@ -662,6 +667,38 @@ export default function PortalPage() {
             Loading your portal…
           </div>
         </main>
+      </>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen pt-24 flex items-center justify-center bg-white px-4">
+          <div className="max-w-md w-full text-center space-y-6">
+            <div className="w-16 h-16 rounded-full bg-orange-50 border-2 border-[#F34707]/20 flex items-center justify-center mx-auto">
+              <svg className="w-8 h-8 text-[#F34707]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Portal Access Not Found</h2>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                Your account exists but is not yet linked to a company listing. This is usually resolved quickly — please contact us and we will activate your access within 24 hours.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-left text-sm space-y-2">
+              <p className="text-gray-600"><span className="font-semibold">Email:</span> <a href="mailto:cto@i-handler.app" className="text-[#F34707] hover:underline">cto@i-handler.app</a></p>
+              <p className="text-gray-400 text-xs">Include your company name and airport ICAO code in the message.</p>
+            </div>
+            <button onClick={() => { import('firebase/auth').then(m => m.getAuth().signOut()); window.location.href = '/portal-login'; }}
+              className="text-sm text-gray-400 hover:text-gray-600 underline">
+              Sign out and try a different account
+            </button>
+          </div>
+        </main>
+        <Footer />
       </>
     );
   }
