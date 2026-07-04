@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -22,15 +22,19 @@ export default function PortalLoginPage() {
     if (!email.trim()) { setError('Enter your email address first.'); return; }
     setError(''); setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email.trim());
-      setView('reset-sent');
-    } catch (err: unknown) {
-      const code = (err as { code?: string }).code;
-      if (code === 'auth/user-not-found') {
-        setError('No account found with that email. Contact operations@i-handler.app.');
-      } else {
-        setError('Could not send reset email. Try again.');
+      const res = await fetch('/api/portal/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Could not send reset email. Try again.');
+        return;
       }
+      setView('reset-sent');
+    } catch {
+      setError('Could not send reset email. Try again.');
     } finally { setLoading(false); }
   };
 
@@ -164,7 +168,7 @@ export default function PortalLoginPage() {
               </div>
               <h2 className="text-lg font-bold text-gray-900 mb-2">Check your email</h2>
               <p className="text-sm text-gray-500 mb-1">
-                We sent a password reset link to
+                If an account exists for this email, we sent a password reset link to
               </p>
               <p className="text-sm font-semibold text-gray-800 mb-6">{email}</p>
               <p className="text-xs text-gray-400 mb-6">

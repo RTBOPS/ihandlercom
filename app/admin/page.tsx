@@ -18,6 +18,8 @@ type Invitation = {
   status: string;
   isExisting: boolean;
   sentAt: string | null;
+  accountExists?: boolean;
+  lastSignIn?: string | null;
 };
 
 type ResendState = { status: 'sending' | 'sent' | 'error'; msg?: string };
@@ -49,6 +51,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [resendState, setResendState] = useState<Record<string, ResendState>>({});
   const [copiedReply, setCopiedReply] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [onlyNeverSignedIn, setOnlyNeverSignedIn] = useState(false);
 
   // Check sessionStorage on mount
   useEffect(() => {
@@ -166,6 +170,18 @@ export default function AdminPage() {
 
   const newCount = invitations.filter((i) => i.emailType === 'new').length;
   const annualCount = invitations.filter((i) => i.emailType === 'annual').length;
+  const neverSignedInCount = invitations.filter((i) => !i.lastSignIn).length;
+
+  const q = search.trim().toLowerCase();
+  const filtered = invitations.filter((inv) => {
+    if (onlyNeverSignedIn && inv.lastSignIn) return false;
+    if (!q) return true;
+    return (
+      inv.companyName?.toLowerCase().includes(q) ||
+      inv.email?.toLowerCase().includes(q) ||
+      inv.icao?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <>
@@ -243,11 +259,12 @@ export default function AdminPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
               { label: 'Total Sent', value: invitations.length, color: 'bg-blue-50 text-blue-600 border-blue-100' },
               { label: 'New Companies', value: newCount, color: 'bg-green-50 text-green-600 border-green-100' },
               { label: 'Annual Updates', value: annualCount, color: 'bg-orange-50 text-[#F34707] border-orange-100' },
+              { label: 'Never Signed In', value: neverSignedInCount, color: 'bg-amber-50 text-amber-600 border-amber-100' },
             ].map((s) => (
               <div key={s.label} className={`rounded-2xl border p-5 ${s.color}`}>
                 <div className="text-3xl font-bold mb-1">{s.value}</div>
@@ -258,8 +275,24 @@ export default function AdminPage() {
 
           {/* Table */}
           <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-wrap items-center gap-3">
               <h2 className="text-sm font-semibold text-gray-700">Invitation History</h2>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search company, email or ICAO…"
+                className="flex-1 min-w-[220px] px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#F34707] focus:ring-2 focus:ring-[#F34707]/20 transition-colors"
+              />
+              <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer select-none whitespace-nowrap">
+                <input
+                  type="checkbox"
+                  checked={onlyNeverSignedIn}
+                  onChange={(e) => setOnlyNeverSignedIn(e.target.checked)}
+                  className="accent-[#F34707]"
+                />
+                Never signed in only
+              </label>
               <button onClick={() => loadInvitations(secret)}
                 className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -293,12 +326,13 @@ export default function AdminPage() {
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Type</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Email</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Kind</th>
+                      <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Access</th>
                       <th className="text-left px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">Date</th>
                       <th className="px-6 py-3 text-xs text-gray-400 font-semibold uppercase tracking-wider text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {invitations.map((inv, i) => (
+                    {filtered.map((inv, i) => (
                       <tr key={inv.id} className={`border-b border-gray-100 hover:bg-orange-50 transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{inv.companyName}</td>
                         <td className="px-6 py-4 text-sm font-mono text-[#F34707] font-bold">{inv.icao}</td>
@@ -312,6 +346,22 @@ export default function AdminPage() {
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${inv.emailType === 'new' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                             {inv.emailType === 'new' ? 'New Company' : 'Annual Update'}
                           </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          {inv.lastSignIn ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700"
+                              title={`Last sign-in: ${new Date(inv.lastSignIn).toLocaleString('en-US')}`}>
+                              Active
+                            </span>
+                          ) : inv.accountExists ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                              Never signed in
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                              No account
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-400">
                           {inv.sentAt ? new Date(inv.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
@@ -348,6 +398,13 @@ export default function AdminPage() {
                         </td>
                       </tr>
                     ))}
+                    {filtered.length === 0 && (
+                      <tr>
+                        <td colSpan={8} className="px-6 py-10 text-center text-sm text-gray-400">
+                          No invitations match your search.
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
