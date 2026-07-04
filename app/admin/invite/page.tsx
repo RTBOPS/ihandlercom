@@ -54,7 +54,7 @@ ${isExisting
   : `To access your portal, please use the following credentials:
 
 ──────────────────────────────────────
-  🔐 YOUR LOGIN CREDENTIALS
+  YOUR LOGIN CREDENTIALS
   Portal:   ${loginUrl}
   Email:    ${email}
   Password: ${tempPassword}
@@ -86,8 +86,8 @@ We hope the year has been going well for ${companyName}.
 As part of our annual directory maintenance, we kindly ask you to review and update your company's information in the i-Handler platform. Accurate, up-to-date information ensures that aviation operators worldwide can contact you reliably.
 
 ${isExisting
-  ? `Please log in to your portal using your existing credentials:\n\n──────────────────────────────────────\n  🔐 YOUR LOGIN CREDENTIALS\n  Portal:   ${loginUrl}\n  Email:    ${email}\n──────────────────────────────────────`
-  : `Please log in to your portal using the credentials below:\n\n──────────────────────────────────────\n  🔐 YOUR LOGIN CREDENTIALS\n  Portal:   ${loginUrl}\n  Email:    ${email}\n  Password: ${tempPassword}\n──────────────────────────────────────`}
+  ? `Please log in to your portal using your existing credentials:\n\n──────────────────────────────────────\n  YOUR LOGIN CREDENTIALS\n  Portal:   ${loginUrl}\n  Email:    ${email}\n──────────────────────────────────────`
+  : `Please log in to your portal using the credentials below:\n\n──────────────────────────────────────\n  YOUR LOGIN CREDENTIALS\n  Portal:   ${loginUrl}\n  Email:    ${email}\n  Password: ${tempPassword}\n──────────────────────────────────────`}
 
 Fields to review:
   • Contact information (phone, email, website)
@@ -107,17 +107,17 @@ providers on a single platform built exclusively for aviation.
 
 Our ecosystem includes:
 
-  ✈  i-Handler App — Flight ops & ground directory
-     Direct access from flight crews and operators worldwide
+  - i-Handler App — Flight ops & ground directory
+    Direct access from flight crews and operators worldwide
 
-  📦 BAGControl — Baggage handling & tracking
-     IATA Resolution 753 compliance, real-time baggage tracking
+  - BAGControl — Baggage handling & tracking
+    IATA Resolution 753 compliance, real-time baggage tracking
 
-  ⏱  GTPS — Ground Turnaround Performance System
-     Ground turnaround time analytics and IATA benchmarks
+  - GTPS — Ground Turnaround Performance System
+    Ground turnaround time analytics and IATA benchmarks
 
-  👥 HRS — Human Resources System
-     Staff training & compliance (ISAGO/IATA standards)
+  - HRS — Human Resources System
+    Staff training & compliance (ISAGO/IATA standards)
 
 ──────────────────────────────────────
 
@@ -443,7 +443,7 @@ function InviteForm() {
                 {/* Credentials box */}
                 <div style={{ background: '#1a1a1a', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px' }}>
                   <p style={{ color: '#F34707', fontSize: '11px', fontWeight: '700', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '12px' }}>
-                    🔐 Your Login Credentials
+                    Your Login Credentials
                   </p>
                   <div style={{ display: 'grid', gap: '6px' }}>
                     {[
@@ -475,13 +475,14 @@ function InviteForm() {
                     </p>
                     <div style={{ display: 'grid', gap: '12px' }}>
                       {[
-                        { icon: '✈', name: 'i-Handler App', desc: 'Flight ops & ground directory — direct access from flight crews worldwide' },
-                        { icon: '📦', name: 'BAGControl', desc: 'Baggage handling & tracking — IATA Resolution 753 compliance' },
-                        { icon: '⏱', name: 'GTPS', desc: 'Ground Turnaround Performance System — analytics and IATA benchmarks' },
-                        { icon: '👥', name: 'HRS', desc: 'Human Resources System — staff training & compliance (ISAGO/IATA)' },
+                        { logo: '/images/ihandler-app/app-logo.jpg', name: 'i-Handler App', desc: 'Flight ops & ground directory — direct access from flight crews worldwide' },
+                        { logo: '/images/bhs/bhs-logo.png', name: 'BAGControl', desc: 'Baggage handling & tracking — IATA Resolution 753 compliance' },
+                        { logo: '/images/gtps/gtps-logo.jpg', name: 'GTPS', desc: 'Ground Turnaround Performance System — analytics and IATA benchmarks' },
+                        { logo: '/images/hrs/hrs-logo.jpg', name: 'HRS', desc: 'Human Resources System — staff training & compliance (ISAGO/IATA)' },
                       ].map((item) => (
                         <div key={item.name} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', background: '#F9FAFB', borderRadius: '10px', padding: '12px 14px' }}>
-                          <span style={{ fontSize: '18px', lineHeight: 1, flexShrink: 0 }}>{item.icon}</span>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={item.logo} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
                           <div>
                             <p style={{ fontSize: '13px', fontWeight: '700', color: '#111827', margin: '0 0 2px' }}>{item.name}</p>
                             <p style={{ fontSize: '12px', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>{item.desc}</p>
