@@ -69,6 +69,29 @@ In your portal you will be able to update:
   • Catering services at your airport
   • Nearby hotel information
 
+──────────────────────────────────────
+THE i-HANDLER ECOSYSTEM
+──────────────────────────────────────
+
+i-Handler connects crews, passengers, ground handlers, FBOs, and service
+providers on a single platform built exclusively for aviation.
+
+Our ecosystem includes:
+
+  - i-Handler App — Flight ops & ground directory
+    Direct access from flight crews and operators worldwide
+
+  - BAGControl — Baggage handling & tracking
+    IATA Resolution 753 compliance, real-time baggage tracking
+
+  - GTPS — Ground Turnaround Performance System
+    Ground turnaround time analytics and IATA benchmarks
+
+  - HRS — Human Resources System
+    Staff training & compliance (ISAGO/IATA standards)
+
+──────────────────────────────────────
+
 Thank you for being part of the i-Handler community.
 
 Best regards,
@@ -467,9 +490,8 @@ function InviteForm() {
                   </a>
                 </div>
 
-                {/* Ecosystem section — annual only */}
-                {result.emailType === 'annual' && (
-                  <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '24px', marginBottom: '24px' }}>
+                {/* Ecosystem section — shown for both email types, matching the sent email */}
+                <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '24px', marginBottom: '24px' }}>
                     <p style={{ fontSize: '11px', color: '#9CA3AF', fontWeight: '700', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px' }}>
                       The i-Handler Ecosystem
                     </p>
@@ -491,7 +513,6 @@ function InviteForm() {
                       ))}
                     </div>
                   </div>
-                )}
 
                 <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: '1.6' }}>
                   If you have any questions, please reply to this email or contact us at{' '}
