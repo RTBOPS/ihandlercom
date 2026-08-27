@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The complete i-Handler App guide for pilots and passengers: every screen, every button, from permits to touchdown.">
+<title>i-Handler Pilot Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#FBF9F6; --card:#FFFFFF; --ink:#221C16; --muted:#6E6259;
+    --accent:#C2512D; --accent-ink:#FFFFFF; --line:#E6DFD5; --chip:#F3EDE4;
+    --code-bg:#F7F3EC; --ok:#3E7A4E; --warn:#A8681C; --danger:#B3362A;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#17130F; --card:#201B15; --ink:#EDE6DC; --muted:#A79A8D;
+      --accent:#E0764C; --accent-ink:#1B120C; --line:#382F27; --chip:#2A231C;
+      --code-bg:#241E17; --ok:#7FBA8C; --warn:#D9A05B; --danger:#E58579;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17130F; --card:#201B15; --ink:#EDE6DC; --muted:#A79A8D;
+    --accent:#E0764C; --accent-ink:#1B120C; --line:#382F27; --chip:#2A231C;
+    --code-bg:#241E17; --ok:#7FBA8C; --warn:#D9A05B; --danger:#E58579;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Public Sans",system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.65}
+  .wrap{max-width:920px; margin:0 auto; padding:56px 24px 96px}
+  header.masthead{border-bottom:2px solid var(--ink); padding-bottom:28px; margin-bottom:8px}
+  .logo{max-width:280px; width:60%; height:auto; display:block; margin-bottom:22px}
+  .kicker{font-family:"Archivo",sans-serif; font-weight:600; text-transform:uppercase;
+    letter-spacing:.14em; font-size:12px; color:var(--accent); margin:0 0 10px}
+  h1{font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(30px,5vw,44px);
+    line-height:1.08; margin:0 0 14px; text-wrap:balance}
+  .lede{font-size:18px; color:var(--muted); max-width:62ch; margin:0}
+  nav.toc{margin:34px 0 10px; padding:18px 22px; background:var(--card); border:1px solid var(--line); border-radius:10px}
+  nav.toc p{font-family:"Archivo",sans-serif; font-weight:700; text-transform:uppercase;
+    letter-spacing:.1em; font-size:11.5px; color:var(--muted); margin:0 0 8px}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:32px; font-size:14.5px}
+  nav.toc li{margin:3px 0; break-inside:avoid}
+  nav.toc a{color:var(--ink); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  section{margin:52px 0}
+  .eyebrow{font-family:"Archivo",sans-serif; font-weight:700; text-transform:uppercase;
+    letter-spacing:.12em; font-size:12px; color:var(--muted); margin:0 0 4px}
+  h2{font-family:"Archivo",sans-serif; font-weight:700; font-size:26px; margin:0 0 16px; text-wrap:balance}
+  h3{font-family:"Archivo",sans-serif; font-weight:600; font-size:18px; margin:26px 0 8px}
+  p{max-width:70ch}
+  ol.steps{padding-left:0; list-style:none; counter-reset:step; max-width:none}
+  ol.steps>li{counter-increment:step; position:relative; padding:0 0 18px 52px; margin:0}
+  ol.steps>li::before{content:counter(step); position:absolute; left:0; top:-2px;
+    width:34px; height:34px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
+    font-family:"Archivo",sans-serif; font-weight:700; font-size:15px;
+    display:flex; align-items:center; justify-content:center}
+  ol.steps>li:not(:last-child)::after{content:""; position:absolute; left:16px; top:36px; bottom:2px;
+    width:2px; background:var(--line)}
+  ol.steps b, li b{font-family:"Archivo",sans-serif; font-weight:700}
+  ul{padding-left:22px; max-width:72ch}
+  li{margin:5px 0}
+  .gallery{display:flex; flex-wrap:wrap; gap:16px; margin:18px 0}
+  .gallery figure{margin:0; flex:1 1 240px; max-width:300px}
+  .gallery img{width:100%; border-radius:14px; border:1px solid var(--line); display:block;
+    box-shadow:0 4px 18px rgba(0,0,0,.07)}
+  .gallery figcaption{font-size:13px; color:var(--muted); margin-top:7px; line-height:1.45}
+  .note{border:1px solid var(--line); background:var(--chip); border-radius:10px;
+    padding:14px 18px; font-size:14.5px; margin:14px 0}
+  .note b{font-family:"Archivo",sans-serif}
+  .live{border:1.5px solid var(--danger); background:var(--chip); border-radius:10px;
+    padding:14px 18px; font-size:14.5px; margin:14px 0}
+  .live b{font-family:"Archivo",sans-serif; color:var(--danger)}
+  .tip{border-left:3px solid var(--accent); padding:2px 0 2px 16px; margin:14px 0; font-size:14.5px; color:var(--muted)}
+  table{border-collapse:collapse; width:100%; font-size:14px}
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--card); margin:10px 0}
+  th{font-family:"Archivo",sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+    font-size:11px; text-align:left; color:var(--muted); border-bottom:1px solid var(--line); padding:9px 13px}
+  td{border-bottom:1px solid var(--line); padding:9px 13px; vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600; white-space:nowrap; font-family:"Archivo",sans-serif; font-size:13.5px}
+  details{border:1px solid var(--line); border-radius:10px; background:var(--card); margin:12px 0; padding:0}
+  details summary{cursor:pointer; padding:12px 18px; font-family:"Archivo",sans-serif; font-weight:700;
+    font-size:14px; color:var(--accent); list-style-position:inside}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  details .inner{padding:6px 16px 14px}
+  a{color:var(--accent)}
+  @media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+</style>
+</head>
+<body>
+
+
+
+
+<div class="wrap">
+<header class="masthead">
+  <img class="logo" src="/app/guide-img/img-01.png" alt="i-Handler.app — International Aviation Support">
+  <p class="kicker">Pilot User Guide · v2 · August 2026</p>
+  <h1>Your trip, from permit to touchdown</h1>
+  <p class="lede">The complete guide to i-Handler.app for pilots: every screen, every button, and the full workflow — set up your profile once, then run every international trip from your phone.</p>
+</header>
+
+<nav class="toc">
+  <p>Contents</p>
+  <ol>
+    <li><a href="#account">Create your account</a></li>
+    <li><a href="#documents">Your profile and documents</a></li>
+    <li><a href="#aircraft">Your aircraft</a></li>
+    <li><a href="#home">Home: Flight Schedules</a></li>
+    <li><a href="#trip">Create a flight</a></li>
+    <li><a href="#details">Flight details</a></li>
+    <li><a href="#docs">Flight documents</a></li>
+    <li><a href="#passengers">Passengers and crew</a></li>
+    <li><a href="#directory">Airports, FBOs and handlers</a></li>
+    <li><a href="#comms">Chat, live tracker and AI Assistant</a></li>
+    <li><a href="#pax">The passenger experience</a></li>
+    <li><a href="#live">Live filings and payments</a></li>
+    <li><a href="#help">Account, settings and help</a></li>
+  </ol>
+</nav>
+
+<section id="account">
+  <p class="eyebrow">1 · Getting started</p>
+  <h2>Create your account</h2>
+  <ol class="steps">
+    <li>Open <a href="https://i-handler.app">i-handler.app</a> and tap <b>Register</b>.</li>
+    <li>Enter your email and password (twice), and choose <b>I'm a pilot</b> in the selector (passengers pick <b>I'm a passenger</b> and get a simplified app).</li>
+    <li>Tap <b>Create Account</b> — by doing so you accept the linked <b>Privacy Policy</b>.</li>
+    <li>Complete your profile (next section). Every field and image marked in red is required.</li>
+    <li>New pilot accounts are reviewed; if you see the approval-pending screen, wait for the i-Handler team to activate you. You'll then land on <b>Flight Schedules</b>, your home screen.</li>
+  </ol>
+  <details><summary>All buttons on the start screens</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Screen</th><th>Control</th><th>What it does</th></tr>
+      <tr><td>Onboarding</td><td>Language selector (top right)</td><td>Changes the app language</td></tr>
+      <tr><td>Onboarding</td><td>Login / Register</td><td>Open the sign-in or sign-up form</td></tr>
+      <tr><td>Login</td><td>Email Address · Password</td><td>Your credentials; the eye icon shows/hides the password</td></tr>
+      <tr><td>Login</td><td>Forgot Password?</td><td>Sends a reset link to your email ("A link was sent with the data to reset your password.")</td></tr>
+      <tr><td>Login</td><td>Login</td><td>Signs you in; goes to Flight Schedules, or to Complete your profile if it's not finished</td></tr>
+      <tr><td>Register</td><td>Please Select…</td><td>Options: <b>I'm a passenger</b> · <b>I'm a pilot</b></td></tr>
+      <tr><td>Register</td><td>Create Account</td><td>Creates the account (passwords must match: "Passwords don't match!")</td></tr>
+      <tr><td>Approval screen</td><td>Log out</td><td>Signs out and returns to the start screen</td></tr>
+    </table></div>
+  </div></details>
+</section>
+
+<section id="documents">
+  <p class="eyebrow">2 · One-time setup</p>
+  <h2>Your profile and documents</h2>
+  <p>You load each document <strong>once</strong>; every permit request, manifest and form afterwards reuses them automatically.</p>
+  <ol class="steps">
+    <li>On <b>Complete your profile</b>, upload the images that apply: <b>Passport data page, Pilot License front and back, Medical Certificate, Driver License</b>.</li>
+    <li>Tap <b>Scan Passport MRZ</b>: point the camera at the two machine-readable lines of your passport — the app fills your passport number, names, nationality, dates automatically. Review and confirm.</li>
+    <li>Use <b>Scan Pilot License</b> and <b>Scan Medical Certificate</b> the same way — the medical expiry is even computed from FAA/ICAO rules by class and age, for you to verify.</li>
+    <li>Fill your <b>status</b> (PIC, COP, MEC, MED, ODC, 1FA), personal address, <b>address in the USA</b> (the <b>Same Address</b> button copies it), CBP credentials if you file eAPIS, and an <b>emergency contact</b>.</li>
+    <li>Tap <b>Submit Profile Information</b>. You can edit everything later from <b>My Account → Profile Settings</b>.</li>
+  </ol>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-02.png" alt="Edit profile — document carousel"><figcaption><b>Edit your profile</b> — the 5-document carousel (Passport, License front/back, Medical, Driver License), passport data and even <b>additional passports for dual nationality</b>.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-03.png" alt="License and medical section"><figcaption><b>Pilot License &amp; Medical</b> — CREW license number and country, medical expiry, CBP user code, plus your USA address with the Same Address shortcut.</figcaption></figure>
+  </div>
+  <div class="note"><b>Why it matters:</b> an expired passport physically blocks you from being added to a crew or passenger list ("You cannot add this user… their passport has expired"), and document expiry alarms warn you before that ever happens.</div>
+  <details><summary>All fields and controls on the profile form</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Control</th><th>What it does</th></tr>
+      <tr><td>Upload zones</td><td>Passport Data Page · Pilot License Front/Back · Pilot Medical Certificate · Driver License — each shows "Uploading file…" then "Success!"</td></tr>
+      <tr><td>Status</td><td>Dropdown: PIC · COP · PAX · MEC · MED · ODC · 1FA</td></tr>
+      <tr><td>Scan Passport MRZ</td><td>Camera scan; fills passport number, first/middle/last names, nationality, issuing country, dates</td></tr>
+      <tr><td>Passport fields</td><td>Number · Date of Issue · Expiration Date · Issuing Country · Nationality (searchable country lists)</td></tr>
+      <tr><td>Identity</td><td>Name · Middle Name · Last Name · Second Last Name · Gender (Male/Female) · Place and Date of Birth</td></tr>
+      <tr><td>Personal Address</td><td>Telephone · Street · City · State · ZIP · Country</td></tr>
+      <tr><td>Address in USA</td><td>Same fields; <b>Same Address</b> copies your personal address</td></tr>
+      <tr><td>CREW Member Documents</td><td>CREW License Number · Scan Pilot License · License issuing country · Medical expiry date · Scan Medical Certificate</td></tr>
+      <tr><td>CBP</td><td>CBP User · CBP Password (used for eAPIS filings)</td></tr>
+      <tr><td>Emergency Data</td><td>Contact name, middle/last names, telephone, email</td></tr>
+      <tr><td>Submit Profile Information</td><td>Saves and takes you to Flight Schedules</td></tr>
+    </table></div>
+    <p style="font-size:13.5px;color:var(--muted)">Required selections enforced with messages like "Passport Date of Issue is required!", "Nationality is required!", "Gender selection is required!".</p>
+  </div></details>
+</section>
+
+<section id="aircraft">
+  <p class="eyebrow">3 · One-time setup</p>
+  <h2>Your aircraft</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-04.png" alt="My Aircraft List"><figcaption><b>Aircraft → My Aircraft List</b> — your fleet with photo, type, ICAO code, MTOW and capacity. The <b>+</b> button adds a new aircraft.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-05.png" alt="Aircraft details"><figcaption><b>Aircraft detail</b> — four tabs: General, Flight Plan, Dinghies, Insurance. The pencil opens Edit.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-06.png" alt="New Aircraft form"><figcaption><b>New Aircraft</b> — registration, documents and the full ICAO flight-plan profile.</figcaption></figure>
+  </div>
+  <ol class="steps">
+    <li>Menu → <b>Aircraft</b> → <b>+</b>.</li>
+    <li>Upload the <b>aircraft picture, airworthiness certificate and registration certificate</b>.</li>
+    <li>Type the registration and tap <b>FAA Autofill (N-Number)</b> — model, serial and manufacturer fill themselves — or <b>Scan Reg / AW Certificate</b> to read them from the paper document with the camera.</li>
+    <li>Complete the <b>ICAO flight-plan profile once</b>: flight rules, surveillance, equipment, PBN, wake category, survival equipment, dinghies. Every future ICAO FPL is generated from this.</li>
+    <li>Add the <b>insurance</b> (company, policy number, expiry date, policy images) and tap <b>Create Aircraft</b>.</li>
+  </ol>
+  <h3>Documents &amp; Images, tab by tab</h3>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-07.png" alt="Airworthiness certificate"><figcaption><b>Documents &amp; Images carousel</b> — swipe between the aircraft photo, the <b>airworthiness certificate</b> and the <b>registration certificate</b>.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-08.png" alt="Full aircraft configuration"><figcaption><b>General tab</b> — the complete configuration: ELT hex, CBP decal, MTOW, cruise fuel flow and taxi fuel for the NAVLOG, endurance for the FPL, capacity and colors.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-09.png" alt="Flight Plan tab"><figcaption><b>Flight Plan tab</b> — the saved ICAO profile: rules, type, surveillance, survival equipment, jackets, radios… this is what fills box 10/18/19 of every FPL.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-10.png" alt="Insurance tab with additional documents"><figcaption><b>Insurance tab</b> — company, policy and expiry plus the <b>Additional documents</b> card: registration &amp; airworthiness expiries, <b>LOPA (seat map)</b>, <b>AIU (Mexico permit)</b> and the <b>full insurance policy PDF</b>.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-11.png" alt="Insurance certificate pages"><figcaption><b>Insurance policy images</b> — the two certificate pages, stored with the aircraft and attached to permit requests automatically.</figcaption></figure>
+  </div>
+  <div class="note"><b>LOPA, AIU and the full policy:</b> upload them once per aircraft in the Insurance tab's Additional documents. They travel with your paperwork — the LOPA joins the trip document pack and the AIU is used for Mexico operations.</div>
+  <details><summary>All fields and options on the aircraft form</summary><div class="inner">
+    <div class="tablewrap"><table>
+      <tr><th>Control</th><th>What it does / options</th></tr>
+      <tr><td>Upload zones</td><td>Aircraft Picture · Airworthiness Certificate · Registration Certificate (both certificate images are required to save)</td></tr>
+      <tr><td>FAA Autofill (N-Number)</td><td>Looks up the FAA registry and fills Model, Serial, Manufacturer</td></tr>
+      <tr><td>Scan Reg / AW Certificate</td><td>Camera scan → confirmation screen → fills registration, model, serial, Mode-S, manufacturer; can even offer to create the Operator from the owner found on the document</td></tr>
+      <tr><td>Identity fields</td><td>Registration · Call Sign · Color · Model · Serial · Mode-S Hex · ICAO 4-letter code · Manufacturer (search dialog) · Owner (searchable) · New Owner (creates an Operator)</td></tr>
+      <tr><td>Ops numbers</td><td>ELT Code (Hex) · CBP Decal Number · MTOW (lb) · Capacity</td></tr>
+      <tr><td>Flight rules</td><td>I - IFR · V - VFR · Y - YFR · Z - ZFR</td></tr>
+      <tr><td>Type of flight (ICAO)</td><td>S scheduled · N non-scheduled · G general aviation · M military · D DVFR · X other</td></tr>
+      <tr><td>ICAO Surveillance</td><td>Multi-select: A, B1, B2, C, D1, E, G1, H, I, L, N, P, S, U1, U2, V1, V2, X (Mode A/C/S, ADS-B/C variants)</td></tr>
+      <tr><td>ICAO Equipment</td><td>Multi-select, 40 options (A GBAS … Z other; includes G GNSS, R PBN approved, W RVSM, Y VHF 8.33)</td></tr>
+      <tr><td>ICAO PBN</td><td>Multi-select, 24 options (A1 RNAV 10 … T2 RNP AR APCH)</td></tr>
+      <tr><td>Survival / Jackets / Radio</td><td>Survival: Polar·Desert·Maritime·Jungle·Jackets — Jackets: Light·Fluorescent·UHF·VHF — Radio: UHF·VHF·ELT</td></tr>
+      <tr><td>Wake category</td><td>L Light · M Medium · H Heavy</td></tr>
+      <tr><td>Dinghies</td><td>Capacity · Number · Covered (True/False) · Color (Orange/Yellow/Red)</td></tr>
+      <tr><td>Insurance</td><td>Company · Policy number · Expiration date · Main + secondary policy images</td></tr>
+      <tr><td>Create Aircraft</td><td>Validates and saves ("Aircraft information successfully created!")</td></tr>
+      <tr><td>Edit Aircraft (from detail)</td><td>Same form + <b>Make this aircraft profile public</b> switch + trash icon to delete (with confirmation)</td></tr>
+    </table></div>
+  </div></details>
+  <h3>Operators</h3>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-12.png" alt="New operator with signature pad"><figcaption><b>Operator</b> — company logo, public-profile and aircraft-owner switches, address, person of contact… and the <b>signature pad</b>: the POC signs once and that signature appears on the GENDEC and official requests.</figcaption></figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Control</th><th>What it does</th></tr>
+    <tr><td>Menu → Operator</td><td>Your operator companies list; + creates a new one</td></tr>
+    <tr><td>Company Logo</td><td>Upload the operator's logo</td></tr>
+    <tr><td>Make this Operator profile public</td><td>Lets other users select it as owner/operator</td></tr>
+    <tr><td>Make this Operator Aircraft Owner</td><td>Marks it as the aircraft's owner</td></tr>
+    <tr><td>Company + POC fields</td><td>Name, address, country, person of contact (positions: Pilot, Owner, Dispatcher, Supervisor, Manager, Legal Representative, CFO, CEO), phone, email, webpage</td></tr>
+    <tr><td>Person of contact Signature / Reset POC Signature</td><td>Draw the signature · clear and redraw</td></tr>
+    <tr><td>Create Operator</td><td>Saves ("Operator data has been successfully created!")</td></tr>
+  </table></div>
+</section>
+
+<section id="home">
+  <p class="eyebrow">4 · Flying</p>
+  <h2>Home: Flight Schedules</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-13.png" alt="Flight Schedules list"><figcaption><b>Flight Schedules</b> — your agenda. Tabs <b>Active · Past · Scheduled</b>, date range filters and search by ICAO, airport or flight number.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-14.png" alt="Calendar view"><figcaption><b>Calendar view</b> — the month at a glance; tap a day to see its flights. The "2 weeks" chip jumps ahead.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-15.png" alt="Main menu"><figcaption><b>Main menu</b> (hamburger) — every area of the app, one tap away.</figcaption></figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Control</th><th>What it does</th></tr>
+    <tr><td>List / Calendar</td><td>Switch between the flight list and the monthly calendar</td></tr>
+    <tr><td>Start date / End date</td><td>Filter the list by date range</td></tr>
+    <tr><td>Search bar</td><td>Search by ICAO, airport or flight #</td></tr>
+    <tr><td>Active · Past · Scheduled</td><td>Filter by flight state; cards are color-coded (past red, today green, future yellow)</td></tr>
+    <tr><td>Flight card (tap)</td><td>Opens <b>Flight details</b></td></tr>
+    <tr><td>Flight card (long-press)</td><td><b>Delete Flight</b> dialog (Cancel / Confirm)</td></tr>
+    <tr><td>Duplicate Flight</td><td>Clones the flight so you only change the dates (Clon Flight form)</td></tr>
+    <tr><td>+ (bottom right)</td><td>Starts a <b>New Flight</b></td></tr>
+    <tr><td>Bell (top right)</td><td>Notifications</td></tr>
+    <tr><td>Donate icon</td><td>Support / Donations page</td></tr>
+  </table></div>
+  <h3>The main menu</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Menu item</th><th>Goes to</th></tr>
+    <tr><td>Flights</td><td>Flight Schedules (home)</td></tr>
+    <tr><td>Passengers / Pilots</td><td>Your saved passenger and crew lists</td></tr>
+    <tr><td>Aircraft</td><td>My Aircraft List</td></tr>
+    <tr><td>Operator</td><td>Your operator companies</td></tr>
+    <tr><td>My Account</td><td>Profile and settings</td></tr>
+    <tr><td>Airports / FBO's / Handler</td><td>The service directory</td></tr>
+    <tr><td>Messages</td><td>Chat inbox</td></tr>
+    <tr><td>AI Assistant</td><td>Your aviation AI (needs an active or scheduled flight)</td></tr>
+    <tr><td>Support / Donations</td><td>Support the platform</td></tr>
+    <tr><td>Settings and Privacy · Exit</td><td>Privacy policy · sign out</td></tr>
+  </table></div>
+  <p style="font-size:13.5px;color:var(--muted)">Admin accounts also see <b>Permits</b> and <b>Transactions</b> in the menu.</p>
+</section>
+
+<section id="trip">
+  <p class="eyebrow">5 · Flying</p>
+  <h2>Create a flight</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-16.png" alt="New Flight — schedule"><figcaption><b>New Flight (1/3)</b> — departure and arrival: airport search, date, local time, and UTC computed automatically (AUTO).</figcaption></figure>
+    <figure><img src="/app/guide-img/img-17.png" alt="New Flight — route and selections"><figcaption><b>New Flight (2/3)</b> — alternate, type of flight, speed, level, <b>Get route (AIP)</b> — the Latin-America route generator — plus aircraft, operator and crew selection.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-18.png" alt="Type of flight options"><figcaption><b>Type Of Flight</b> options: Private, Commercial, Cargo, Diplomatic, Ferry, Military, Medevac, Charter, Humanitary.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-19.png" alt="New Flight — resume and actions"><figcaption><b>New Flight (3/3)</b> — passenger selection, the live <b>Resume</b> summary, and the two exits: <b>Save Flight</b> (draft, no charge) or <b>Request Flight Documents</b>.</figcaption></figure>
+  </div>
+  <ol class="steps">
+    <li>Tap <b>+</b> on the home screen.</li>
+    <li><b>Departure &amp; Arrival:</b> search each airport by ICAO, set date and local time — UTC fills itself (AUTO).</li>
+    <li>Pick the <b>Type Of Flight</b>, and optionally alternate airport, speed, flight level, remarks. Tap <b>Get route (AIP)</b> to generate the route point-to-point.</li>
+    <li>Add <b>Overflight Countries (OFLP permits)</b> for every country you'll overfly — 16 countries have their official form automated (Anguilla, Austria, Bahamas, Belize, Bermuda, Bolivia, Chile, Guatemala, Honduras, Micronesia, Namibia, Nicaragua, Oman, Seychelles, Uganda, Venezuela).</li>
+    <li>Select <b>Aircraft</b>, <b>Operator</b>, <b>FBO or Handler</b>, <b>Pilot in Command / Second in Command</b>, and your <b>passengers</b> (or create new ones on the spot).</li>
+    <li>Check the <b>Resume</b> card, add extra legs with <b>Add New Leg</b> if needed, then either <b>Save Flight</b> (draft — finish later, no charge) or <b>Request Flight Documents</b> (see <a href="#live">Live filings</a>).</li>
+  </ol>
+  <div class="note"><b>Charter flights:</b> choosing <b>Charter</b> reveals the Outbound Flight Information block (carrier code, flight number, suffix, crew member status CRW/CR1–CR5/KC…). Arrivals into certain countries (Belize, Bermuda, Bolivia, Guatemala, Honduras, Namibia, Nicaragua, Oman, Seychelles, Uganda, Venezuela, Chile) also ask for <b>Return Flight Information</b>.</div>
+  <div class="tip">Required to submit: departure and arrival dates, type of flight, aircraft, operator and PIC — the form tells you exactly what's missing.</div>
+</section>
+
+<section id="details">
+  <p class="eyebrow">6 · Flying</p>
+  <h2>Flight details</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-20.png" alt="Flight information"><figcaption><b>Flight Information</b> — the trip at a glance: airports, dates, local and UTC times, alternate, purpose, route, speed and level.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-21.png" alt="Live METAR"><figcaption><b>METAR</b> — live weather for each airport of the trip, one tap away.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-22.png" alt="Operator, aircraft, crew, pax"><figcaption><b>The team of your flight</b> — operator, FBO/handler, aircraft, crew and passengers, plus Additional OFLPs and <b>Generate Documents</b>.</figcaption></figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Control</th><th>What it does</th></tr>
+    <tr><td>METAR (each airport)</td><td>Opens the current METAR in a dialog</td></tr>
+    <tr><td>Chat icon (top bar)</td><td>Opens the flight's chat room</td></tr>
+    <tr><td>Robot icon (top bar)</td><td>Opens the AI Assistant</td></tr>
+    <tr><td>Operator / Handler / Aircraft cards</td><td>Open each profile</td></tr>
+    <tr><td>Additional OFLPs → + Add</td><td>Add overflight permits after the flight was created</td></tr>
+    <tr><td>Generate Documents</td><td>Opens the <b>Flight Documents</b> center (next section)</td></tr>
+    <tr><td>Copy Link / Email Link</td><td>When your requested trip documents are ready, share the PDF pack link</td></tr>
+    <tr><td>Permits &amp; Pay</td><td>Appears when the flight has overflight countries — see <a href="#live">Live filings</a></td></tr>
+    <tr><td>Flight Status (admin)</td><td>Canceled · Delayed · Arrived · On Route · Diverted · Ready + <b>Change</b></td></tr>
+  </table></div>
+</section>
+
+<section id="docs">
+  <p class="eyebrow">7 · Flying</p>
+  <h2>Flight documents</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-23.png" alt="Flight documents overview"><figcaption><b>Flight Documents</b> — country flags, trip summary, <b>route map</b>, <b>visa information</b> and immigration &amp; customs details for your destination.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-24.png" alt="Document generation buttons"><figcaption><b>One tap per document</b> — Flight Plan (Autorouter), ICAO FPL, WX Report, Trip Info, manifests, GENDEC, NAVLOG… and the live filing buttons at the bottom.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-25.png" alt="GENDEC PDF generated"><figcaption><b>GENDEC generated live</b> from the flight data — preview it and <b>Download</b>.</figcaption></figure>
+  </div>
+  <p>Every document is generated <strong>from your trip data</strong> — nothing is typed twice. Tap a button to preview the PDF and download it:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Button</th><th>Document</th></tr>
+    <tr><td>File Flight Plan (Autorouter)</td><td>File your flight plan through Autorouter</td></tr>
+    <tr><td>ICAO Flight Plan</td><td>The ICAO FPL, built from your aircraft's saved profile</td></tr>
+    <tr><td>WX Report</td><td>Weather report (METAR/TAF/NOTAMs) for the trip</td></tr>
+    <tr><td>Trip Information</td><td>Trip summary sheet</td></tr>
+    <tr><td>PAX / CREW / CREW+PAX Manifest</td><td>Manifests with passport data of everyone on board</td></tr>
+    <tr><td>GENDEC</td><td>General Declaration, signed</td></tr>
+    <tr><td>NAVLOG — For Information ONLY</td><td>Navigation log of the route</td></tr>
+    <tr><td>Flight Information / Customs &amp; Immigration</td><td>Flight info sheet for authorities</td></tr>
+    <tr><td>CBP178</td><td>US operations only</td></tr>
+    <tr><td>OFLP &lt;country&gt; → View / Email</td><td>The official overflight/landing form of each selected country, pre-filled (Belize and Chile even auto-fill the authority's own web form)</td></tr>
+  </table></div>
+  <h3>Every document, generated and previewed</h3>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-26.png" alt="ICAO Flight Plan PDF"><figcaption><b>ICAO Flight Plan</b> — the official FPL form filled end to end: equipment, PBN, survival, dinghies, PIC and license.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-27.png" alt="WX Report PDF"><figcaption><b>WX Report</b> — weather brief for the route.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-28.png" alt="Trip Information PDF"><figcaption><b>Trip Information</b> — the trip summary sheet.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-29.png" alt="PAX Manifest with QR"><figcaption><b>PAX Manifest</b> — passport image plus a card per traveler with <b>QR and PDF417 codes</b>: scan-ready identification for authorities.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-30.png" alt="NAVLOG PDF"><figcaption><b>NAVLOG</b> — aircraft performance, both airports (runways, hours, frequencies), route legs, winds aloft and times.</figcaption></figure>
+  </div>
+  <h3>Immigration &amp; customs for your destination</h3>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-31.png" alt="Immigration and customs section"><figcaption><b>Immigration &amp; customs — MBPV</b> — destination-specific guidance, and one tap to generate the paper customs form pre-filled.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-32.png" alt="Customs form filler"><figcaption><b>Complete your form</b> — the official form of the destination (here Turks &amp; Caicos Customs) pre-filled with the traveler's data; tap the highlighted boxes to finish, sign, then <b>share / print / save</b>. Crew and passengers can each complete their own.</figcaption></figure>
+  </div>
+  <h3>Sending the paperwork</h3>
+  <ul>
+    <li><b>Overflight &amp; Landing Permit Request</b> — a formal email to the civil aviation authority, pre-written in the official A/–S/ format with your GENDEC, flight info and country form attached. You preview everything before sending.</li>
+    <li><b>FBO | Handler Service Request</b> — the ground-handling request email to your FBO/handler with the full document pack.</li>
+    <li><b>CREW | Flight Documents</b> — sends the whole kit to your crew.</li>
+  </ul>
+</section>
+
+<section id="passengers">
+  <p class="eyebrow">8 · People</p>
+  <h2>Passengers and crew</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-33.png" alt="Passenger list"><figcaption><b>Passenger List</b> — search, edit, request data-sharing consent, or remove.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-34.png" alt="New passenger"><figcaption><b>New Passenger</b> — scan the passport MRZ and the profile fills itself.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-35.png" alt="New pilot profile"><figcaption><b>New Pilot Profile</b> — same flow for crew: passport, license front/back, medical and driver license, with camera scanning for each document.</figcaption></figure>
+  </div>
+  <ol class="steps">
+    <li>Menu → <b>Passengers</b> (or <b>Pilots</b> for crew) → <b>+</b>. Search first — the app reminds you to check whether the person already exists.</li>
+    <li>Tap <b>Scan Passport MRZ</b>, confirm the extracted data, add contact and address details, and <b>Create Profile</b>.</li>
+    <li>Saved people are reusable on every future flight. The <b>person-add icon</b> on a row sends them a consent-request email so they manage their own data in the app.</li>
+    <li>Passengers get their own app experience: trip information before and during the flight, their immigration QR, and direct messaging with you.</li>
+  </ol>
+  <div class="note"><b>Safety net:</b> anyone whose passport is expired is blocked from being added to a flight, with a clear warning — and their row shows an "Expired Passport" badge in the list.</div>
+</section>
+
+<section id="directory">
+  <p class="eyebrow">9 · Resources</p>
+  <h2>Airports, FBOs and handlers</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-36.png" alt="Airport details"><figcaption><b>Airport detail</b> — diagram, identifiers, country and OFLP price; the full database covers 10,000+ airports.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-37.png" alt="FBO list"><figcaption><b>FBO directory</b> — tap the phone number to call right from the app; the eye opens the full profile with contacts.</figcaption></figure>
+  </div>
+  <ul>
+    <li><b>Airports</b> — search by ICAO/IATA/name; details include frequencies, contacts per service (tower, customs, immigration, PPR, AIS…), hours, fuel, fire category and remarks.</li>
+    <li><b>FBO's / Handler</b> — full contact sheets (phones with one-tap call, email, SITA/AFTN, frequency, person of contact). Your selected FBO/handler joins the flight's chat room.</li>
+    <li>The <b>+</b> button lets you add missing airports, FBOs or handlers to the directory.</li>
+  </ul>
+</section>
+
+<section id="comms">
+  <p class="eyebrow">10 · Communication</p>
+  <h2>Chat, live tracker and AI Assistant</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-38.png" alt="Chat inbox"><figcaption><b>Messages</b> — every conversation in one inbox: handler chats per operation (N114W – MBPV…), fuel chats, and direct pilot–passenger threads per trip. Swipe tabs Active/Archived; the box icon archives.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-39.png" alt="Flight chat room"><figcaption><b>Flight chat room</b> — one thread per operation (here: N114W – MBPV) with text and image attachments.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-40.png" alt="Live flight tracker (sample data)"><figcaption><b>Live flight tracker</b> — real-time ADS-B position from the flight's chat. <em>Illustration with sample data; the tracker shows live data while the aircraft is airborne.</em></figcaption></figure>
+    <figure><img src="/app/guide-img/img-41.png" alt="AI Assistant answer"><figcaption><b>AI Assistant</b> — a real answer: FBO phones and emails, fuel desk contact and next steps for MBPV.</figcaption></figure>
+  </div>
+  <ul>
+    <li><b>Chat room per operation</b> — everyone serving your flight (crew, FBO, handler) in one thread. Attach images with the clip; Enter sends.</li>
+    <li><b>Live flight tracker</b> — the <b>@</b> icon in the flight chat opens live ADS-B tracking of the aircraft (registration + hex code). Advisory only; works while the aircraft is transmitting in the air.</li>
+    <li><b>AI Assistant</b> — ask anything about airports, FBOs, handlers, customs, hours, fuel or country requirements; mention the ICAO code for precision. Available while you have an active or scheduled flight. Advisory only — verify with official sources.</li>
+  </ul>
+</section>
+
+<section id="pax">
+  <p class="eyebrow">11 · Passengers</p>
+  <h2>The passenger experience</h2>
+  <p>Passengers register with <b>I'm a passenger</b> and get their own simplified app — everything about their trip, nothing they don't need.</p>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-42.png" alt="Passenger flight list"><figcaption><b>Their flights</b> — the same Active / Past / Scheduled agenda, showing only the trips they're on (no create/edit controls).</figcaption></figure>
+    <figure><img src="/app/guide-img/img-43.png" alt="My Trip"><figcaption><b>My Trip</b> — trip number and legs, <b>Your aircraft</b> (with operator), <b>Trip guidelines</b> (arrive 45 min early, baggage limits, immigration reminders) and <b>Weather at destination</b> with a 4-day forecast.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-44.png" alt="Immigration and hotel itinerary"><figcaption><b>Immigration &amp; customs</b> — the passenger generates their own pre-filled customs form; <b>My hotel / itinerary</b> shares where they're staying with the pilot; below, <b>live news from the destination</b>.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-45.png" alt="Passenger chat with pilot"><figcaption><b>Direct chat with the pilot</b>, one thread per trip — with the same <b>Track flight</b> live tracker.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-46.png" alt="Passenger documents"><figcaption><b>Their own documents</b> — passport and driver license with camera scan, dates and dual-nationality passports, kept current by the passenger themselves.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-47.png" alt="Passenger menu"><figcaption><b>Their menu</b> — Flights, My Account, Messages, Support/Donations, Report a Bug, Settings and Privacy.</figcaption></figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Screen / control</th><th>What it does</th></tr>
+    <tr><td>Flight card → My Trip</td><td>Opens the passenger trip view (trip number, legs, aircraft, operator)</td></tr>
+    <tr><td>Trip guidelines</td><td>What to bring and when to arrive, per trip</td></tr>
+    <tr><td>Weather at destination</td><td>Current conditions + forecast around arrival day</td></tr>
+    <tr><td>Generate customs form (PDF)</td><td>The destination's official immigration/customs form pre-filled with their data — complete, sign, share or print</td></tr>
+    <tr><td>My hotel / itinerary → Save itinerary</td><td>Hotel, address, check-in/out and notes — shared with the pilot</td></tr>
+    <tr><td>News from &lt;destination&gt;</td><td>Live headlines about where they're going</td></tr>
+    <tr><td>Chat icon → trip chat</td><td>Direct messaging with their pilot; @ opens the live flight tracker</td></tr>
+    <tr><td>My Account → Edit Profile</td><td>Passport &amp; driver license carousel, passport data, additional passports (dual nationality), address</td></tr>
+    <tr><td>Consent flow</td><td>When a pilot adds them to a flight, they get an email + in-app request; accepting shares their details with that pilot ("Information Successfully Shared..!")</td></tr>
+  </table></div>
+</section>
+
+<section id="live">
+  <p class="eyebrow">12 · Live operations</p>
+  <h2>Live filings and payments</h2>
+  <div class="live"><b>⚠️ These buttons act on the real world.</b> They transmit data to government systems or move money — use them only when your flight information is final. (They are documented here without having been triggered.)</div>
+  <div class="tablewrap"><table>
+    <tr><th>Button</th><th>Where</th><th>What it does</th></tr>
+    <tr><td>Request Flight Documents</td><td>New Flight / Clon Flight</td><td>Confirms, charges via <b>PayPal</b>, records the transaction and submits your documentation request to the i-Handler ops team. Use <b>Save Flight</b> instead while you're still editing.</td></tr>
+    <tr><td>Permits &amp; Pay → Confirm &amp; Pay</td><td>Flight details</td><td>Checkout of the flight's overflight permits: per-country fees + <b>$25.00 USD i-handler service fee</b>, all in USD. The button records the payment immediately — review the breakdown first.</td></tr>
+    <tr><td>Send eAPIS Departure / Arrival to CBP</td><td>Flight Documents</td><td>Generates the eAPIS XML manifest and transmits it to <b>US Customs and Border Protection</b>. After filing, call or email the port of entry to secure your landing-rights slot (the app reminds you). Once sent, the button shows your eAPIS confirmation code.</td></tr>
+    <tr><td>Send eAPIS to MEXICO</td><td>Flight Documents (arrivals into Mexico)</td><td>Builds the Mexican APIS Excel and opens the pre-written email to the authority for your review before sending.</td></tr>
+    <tr><td>Send CARICOM UN/EDIFACT</td><td>Flight Documents (CARICOM countries)</td><td>Transmits the UN/EDIFACT PAXLST/CREW lists (inbound and outbound) to CARICOM border systems and shows the API response.</td></tr>
+    <tr><td>Send Email Authorization / FBO / Crew emails</td><td>Email previews</td><td>Each one shows the complete email and attachments first; <b>Cancel</b> backs out, the send button transmits from operation@i-handler.app.</td></tr>
+  </table></div>
+</section>
+
+<section id="help">
+  <p class="eyebrow">13 · Account</p>
+  <h2>Account, settings and help</h2>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-48.png" alt="My Account"><figcaption><b>My Account</b> — profile settings, general settings, language, email/password updates and log out.</figcaption></figure>
+    <figure><img src="/app/guide-img/img-49.png" alt="General settings"><figcaption><b>General Settings</b> — photo, display name, phone and the notifications switch.</figcaption></figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Need</th><th>Where</th></tr>
+    <tr><td>Edit your pilot profile / documents</td><td>My Account → Profile Settings → Edit Profile</td></tr>
+    <tr><td>Photo, name, phone, notifications</td><td>My Account → General Settings</td></tr>
+    <tr><td>Change email or password</td><td>My Account → Update Email / Update Password</td></tr>
+    <tr><td>Push your profile or aircraft to ForeFlight</td><td>ForeFlight page — enter your ForeFlight credentials, tick <b>Push Pilot Profile</b> and/or <b>Push Aircraft</b>, tap <b>Push to ForeFlight</b></td></tr>
+    <tr><td>Support the platform</td><td>Menu → Support / Donations</td></tr>
+    <tr><td>Privacy policy</td><td>Menu → Settings and Privacy</td></tr>
+    <tr><td>Delete your account</td><td>My Account → Delete Account (permanent — the app asks you to confirm)</td></tr>
+    <tr><td>Sign out</td><td>Menu → Exit, or My Account → Log out</td></tr>
+  </table></div>
+  <h3>Support &amp; Donations — help improve the software</h3>
+  <div class="gallery">
+    <figure><img src="/app/guide-img/img-50.png" alt="Crypto and PayPal donations"><figcaption><b>Support &amp; Donations</b> — support development with <b>Bitcoin, Ethereum or XRP</b> (QR + Copy address) or <b>PayPal</b> (Go to PayPal). Reachable from the menu or the donate icon on the home bar.</figcaption></figure>
+  </div>
+  <div class="note" style="margin-top:18px"><b>Welcome aboard.</b> Load your documents once, and your next international trip files itself from one dashboard. Blue skies!</div>
+</section>
+</div>
+
+</body>
+</html>

@@ -12,6 +12,7 @@ const t = {
     hero2: 'en tu bolsillo.',
     heroSub: 'Planificación de vuelos, información de aeropuertos, permisos de sobrevuelo, documentación de aeronaves y coordinación con handlers y FBOs — todo desde una sola app, en tiempo real.',
     webApp: 'Abrir Web App',
+    guide: 'Guía de usuario',
     statsA: 'Aeropuertos',
     statsC: 'Países con cobertura',
     statsH: 'Handlers y FBOs',
@@ -41,6 +42,7 @@ const t = {
     hero2: 'in your pocket.',
     heroSub: 'Flight planning, airport information, overflight permits, aircraft documentation and coordination with handlers and FBOs — all from a single app, in real time.',
     webApp: 'Open Web App',
+    guide: 'User Guide',
     statsA: 'Airports',
     statsC: 'Countries covered',
     statsH: 'Handlers & FBOs',
@@ -70,6 +72,7 @@ const t = {
     hero2: 'no seu bolso.',
     heroSub: 'Planejamento de voo, informações de aeroportos, licenças de sobrevoo, documentação de aeronaves e coordenação com handlers e FBOs — tudo em um único app, em tempo real.',
     webApp: 'Abrir Web App',
+    guide: 'Guia do usuário',
     statsA: 'Aeroportos',
     statsC: 'Países cobertos',
     statsH: 'Handlers e FBOs',
@@ -170,6 +173,11 @@ export default function IHandlerAppPage() {
                   className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-[#F34707]/20 border border-[#F34707]/40 text-white hover:bg-[#F34707]/30 transition-colors">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
                   <div className="text-left"><div className="text-[10px] text-white/60 leading-none">Open</div><div className="text-sm font-semibold leading-tight">{txt.webApp}</div></div>
+                </a>
+                <a href="/app/guide.html" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-colors">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                  <div className="text-left"><div className="text-[10px] text-white/60 leading-none">Read the</div><div className="text-sm font-semibold leading-tight">{txt.guide}</div></div>
                 </a>
               </div>
             </div>
